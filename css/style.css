@@ -338,7 +338,7 @@ section { padding: var(--space-9) 0; }
 .network-photo { margin: var(--space-6) 0 0; }
 .network-photo img { width: 100%; aspect-ratio: 4/3; object-fit: cover; }
 .network-photo figcaption { font-size: 0.8rem; color: var(--text-muted); margin-top: var(--space-2); }
-.network-media img { width: 100%; border: var(--border-hairline); }
+.network-media img { width: 100%; height: auto; object-fit: contain; object-position: center; border: var(--border-hairline); }
 .network-video { margin-top: var(--space-7); border: var(--border-hairline); }
 .network-video video { width: 100%; aspect-ratio: 16/9; object-fit: cover; display: block; background: var(--dark-blue); }
 
