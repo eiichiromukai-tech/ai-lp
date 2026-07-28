@@ -4,10 +4,19 @@
 
 **注意**: 本サイトには実在する会社の会社概要情報（所在地・電話番号・宅建免許番号等）を掲載しています。公開前に必ず内容の正確性をご確認ください。
 
+## デザインシステム
+
+`REMAX_LP_Design_Prompt.md` の指示に基づき、**CBRE Japanのレイアウト言語 × RE/MAXブランドアイデンティティ（2026年版）のカラー・フォント**でリデザイン済みです。
+
+- **レイアウト**: 白/クリーム/濃紺を基調に、細い罫線（ヘアライン）で区切るセクション、左寄せの見出し、ダッシュ＋テキストの控えめなCTA（`.link-cta`）など、CBRE Japanの余白重視な構成を採用
+- **カラー**: RE/MAX公式パレットを`css/style.css`の`:root`にCSS変数として厳密値で定義（Red `#FF1200` / Blue `#0043FF` / Cream `#F7F5EE` / Black / White / Dark Red `#650000` / Dark Blue `#000B35` / Bridge Red・Blue / Sky Blue / Dark Charcoal Gray）。背景は白・クリーム・黒中心、赤をCTA・アクセント、青を補助アクセントとして限定的に使用
+- **フォント**: Google Fonts経由で Montserrat（Web推奨・ロゴ/見出し/数字）+ Zen Kaku Gothic New（日本語本文、Gothamに近い幾何学的な角ゴシック。Montserratは和文グリフを持たないため自動フォールバック）
+- **コントラスト対応**: 赤地に白文字は基準（4.5:1）未達だったため検証のうえ、赤ボタンは黒文字（5.3:1）、ホバー時は濃赤地に白文字に切り替え
+
 ## 技術構成
 
 - 素のHTML / CSS / JavaScript（ビルド不要）
-- フォント: Google Fonts（Noto Sans JP, Shippori Mincho）
+- フォント: Google Fonts（Montserrat, Zen Kaku Gothic New）
 - 画像: `images/` 配下のショッピングモール・マーケット写真（ヒーロー背景・取扱物件イメージギャラリー用、いずれもイメージ写真である旨を明記）
 
 ## ファイル構成
@@ -57,9 +66,10 @@ images/         … ヒーロー背景・取扱物件イメージギャラリー
 - [ ] 会社の実写真（オフィス外観・メンバー写真等）に差し替え
 - [ ] お問い合わせフォーム／サブCTAフォームの送信先（バックエンド or フォームサービス）を接続
 - [ ] `.strength-fact` 内の「◯」プレースホルダを実数値に差し替え（`index.html` に `TODO` コメントあり）
-- [ ] RE/MAXブランドカラー（レッド/ブルー）に合わせたデザイン調整の要否を検討（現状は独自の紺/ゴールド配色）
-- [ ] OGP画像・favicon の追加
+- [ ] OGP画像・favicon の追加（RE/MAXブランドカラーに合わせて作成）
+- [ ] Gotham / Berthold Akzidenz Grotesk のライセンスがある場合、Montserratから差し替え
 - [x] GitHub Pagesで公開済み: https://eiichiromukai-tech.github.io/ai-lp/
+- [x] CBRE Japan × RE/MAXブランド（2026年版）準拠のデザインリニューアル（`REMAX_LP_Design_Prompt.md`参照）
 
 ## ローカルでの確認方法
 
