@@ -6,29 +6,71 @@
   /* トップページの件数・一覧はすべて掲載中の物件のみを対象にする */
   var props = P.activeProperties();
 
+  /* ヒーロー検索で選択中の取引種別。種別・エリアの件数もこれに追従する */
+  var deal = 'rent';
   var bound = false;
 
+  function dealProps() {
+    return props.filter(function (p) { return P.dealOf(p) === deal; });
+  }
+
   P.onReady('home', function () {
+    deal = 'rent';
+    renderAll();
+    renderHistory();
+    if (!bound) {
+      bound = true;
+      bindDealToggle();
+      bindCountPreview();
+      document.addEventListener('favorites:changed', renderHistory);
+    }
+    updateCount();
+  });
+
+  function renderAll() {
     renderTypeGrid();
     renderAreaSelect();
     renderAreaGrid();
     renderFeatured();
-    renderHistory();
-    bindCountPreview();
-    if (!bound) {
-      bound = true;
-      document.addEventListener('favorites:changed', renderHistory);
-    }
-  });
+  }
+
+  /* 賃貸／売買の切り替え */
+  function bindDealToggle() {
+    var group = document.getElementById('hs-deal');
+    if (!group) return;
+    group.addEventListener('change', function (e) {
+      if (!e.target || e.target.name !== 'deal') return;
+      deal = e.target.value === 'sale' ? 'sale' : 'rent';
+
+      var rentField = document.getElementById('hs-rent-field');
+      var priceField = document.getElementById('hs-price-field');
+      if (rentField) rentField.hidden = deal === 'sale';
+      if (priceField) priceField.hidden = deal !== 'sale';
+
+      /* 切り替え時に金額条件を持ち越さない */
+      var rentSel = document.getElementById('hs-rent');
+      var priceSel = document.getElementById('hs-price');
+      if (rentSel) rentSel.value = '';
+      if (priceSel) priceSel.value = '';
+
+      renderAll();
+      updateCount();
+    });
+  }
+
+  function dealParam() {
+    return deal === 'sale' ? 'deal=sale&' : '';
+  }
 
   /* 種別から探す */
   function renderTypeGrid() {
     var el = document.getElementById('type-grid');
     if (!el) return;
+    var list = dealProps();
     el.innerHTML = P.data.types.map(function (t) {
-      var n = props.filter(function (p) { return p.type === t.value; }).length;
+      var n = list.filter(function (p) { return p.type === t.value; }).length;
       return '<li class="type-item">' +
-        '<a href="properties.html?type=' + t.value + '">' +
+        '<a href="properties.html?' + dealParam() + 'type=' + t.value + '">' +
           '<span class="type-icon" aria-hidden="true">' + typeIcon(t.value) + '</span>' +
           '<span class="type-label">' + t.label + '</span>' +
           '<span class="type-count">' + n + '件</span>' +
@@ -52,8 +94,9 @@
     var sel = document.getElementById('hs-area');
     if (!sel) return;
     sel.innerHTML = '<option value="">すべてのエリア</option>';
+    var list = dealProps();
     P.data.areas.forEach(function (a) {
-      var n = props.filter(function (p) { return p.ward === a; }).length;
+      var n = list.filter(function (p) { return p.ward === a; }).length;
       if (!n) return;
       var opt = document.createElement('option');
       opt.value = a;
@@ -66,12 +109,13 @@
   function renderAreaGrid() {
     var el = document.getElementById('area-grid');
     if (!el) return;
+    var list = dealProps();
     el.innerHTML = P.data.areas.map(function (a) {
-      var n = props.filter(function (p) { return p.ward === a; }).length;
+      var n = list.filter(function (p) { return p.ward === a; }).length;
       var cls = n ? '' : ' is-empty';
       var inner = '<span class="area-name">' + a + '</span><span class="area-count">' + n + '件</span>';
       return '<li class="area-item' + cls + '">' +
-        (n ? '<a href="properties.html?area=' + encodeURIComponent(a) + '">' + inner + '</a>'
+        (n ? '<a href="properties.html?' + dealParam() + 'area=' + encodeURIComponent(a) + '">' + inner + '</a>'
            : '<span>' + inner + '</span>') +
         '</li>';
     }).join('');
@@ -81,7 +125,7 @@
   function renderFeatured() {
     var el = document.getElementById('featured-grid');
     if (!el) return;
-    var list = P.sortProperties(props, 'new').slice(0, 6);
+    var list = P.sortProperties(dealProps(), 'new').slice(0, 6);
     el.innerHTML = list.map(P.propertyCard).join('');
   }
 
@@ -96,27 +140,40 @@
   }
 
   /* 検索ボタンに該当件数をリアルタイム表示 */
+  function updateCount() {
+    var badge = document.getElementById('hs-count');
+    if (!badge) return;
+    badge.textContent = '（' + P.filterProperties(props, heroConditions()).length + '件）';
+  }
+
   function bindCountPreview() {
     var form = document.getElementById('hero-search');
-    var badge = document.getElementById('hs-count');
-    if (!form || !badge) return;
+    if (!form) return;
+    form.addEventListener('input', updateCount);
+    form.addEventListener('change', updateCount);
+    /* 素のGET送信だと未入力の項目まで空のクエリになるので、自前で組み立てる。
+       1ファイルのプレビュー版ではルーター側が遷移を担当するため何もしない */
+    form.addEventListener('submit', function (e) {
+      if (window.PORTAL_SPA) return;
+      e.preventDefault();
+      var qs = P.buildQuery(heroConditions());
+      location.href = 'properties.html' + (qs ? '?' + qs : '');
+    });
+  }
 
-    var update = function () {
-      var c = {
-        types: value('hs-type') ? [value('hs-type')] : [],
-        areas: value('hs-area') ? [value('hs-area')] : [],
-        rentMax: value('hs-rent') ? Number(value('hs-rent')) : null,
-        keyword: value('hs-q')
-      };
-      badge.textContent = '（' + P.filterProperties(props, c).length + '件）';
-    };
-    var value = function (id) {
-      var el = document.getElementById(id);
-      return el ? el.value : '';
-    };
+  function value(id) {
+    var el = document.getElementById(id);
+    return el ? el.value : '';
+  }
 
-    form.addEventListener('input', update);
-    form.addEventListener('change', update);
-    update();
+  function heroConditions() {
+    return {
+      deal: deal,
+      types: value('hs-type') ? [value('hs-type')] : [],
+      areas: value('hs-area') ? [value('hs-area')] : [],
+      rentMax: deal === 'rent' && value('hs-rent') ? Number(value('hs-rent')) : null,
+      priceMax: deal === 'sale' && value('hs-price') ? Number(value('hs-price')) : null,
+      keyword: value('hs-q')
+    };
   }
 })();

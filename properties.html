@@ -17,14 +17,14 @@
 
 <header class="site-header" id="header">
   <div class="container header-inner">
-    <a href="index.html" class="logo"><img src="images/COMPASS_BLACK_Side.png" width="2700" height="600" alt="RE/MAX COMPASS" class="logo-img"></a>
+    <a href="index.html" class="logo"><img src="images/COMPASS_BLACK_Primary.png" width="1200" height="600" alt="RE/MAX COMPASS" class="logo-img"></a>
     <nav class="main-nav" id="main-nav" aria-label="メインナビゲーション">
       <ul>
-        <li><a href="properties.html">物件を探す</a></li>
+        <li><a href="properties.html">賃貸で探す</a></li>
+        <li><a href="properties.html?deal=sale">売買で探す</a></li>
         <li><a href="properties.html?type=shop">店舗</a></li>
         <li><a href="properties.html?type=office">オフィス</a></li>
-        <li><a href="properties.html?type=warehouse">倉庫・工場</a></li>
-        <li><a href="owner.html">物件オーナー様へ</a></li>
+        <li><a href="owner.html">オーナー様へ</a></li>
         <li><a href="contact.html">お問い合わせ</a></li>
       </ul>
     </nav>
@@ -63,6 +63,14 @@
         </div>
 
         <form id="filter-form">
+          <fieldset class="filter-group">
+            <legend class="filter-label">取引種別</legend>
+            <div class="deal-segment" id="f-deal">
+              <label><input type="radio" name="deal" value="rent" checked><span>賃貸</span></label>
+              <label><input type="radio" name="deal" value="sale"><span>売買</span></label>
+            </div>
+          </fieldset>
+
           <div class="filter-group">
             <label class="filter-label" for="f-keyword">フリーワード</label>
             <input type="search" id="f-keyword" name="keyword" placeholder="駅名・エリア・居抜き など">
@@ -78,7 +86,7 @@
             <div class="check-list check-list-2col" id="f-areas"></div>
           </fieldset>
 
-          <fieldset class="filter-group">
+          <fieldset class="filter-group" id="f-rent-group">
             <legend class="filter-label">月額賃料</legend>
             <div class="range-row">
               <select id="f-rent-min" name="rentMin">
@@ -96,6 +104,27 @@
                 <option value="1000000">〜100万円</option>
                 <option value="2000000">〜200万円</option>
                 <option value="5000000">〜500万円</option>
+              </select>
+            </div>
+          </fieldset>
+
+          <fieldset class="filter-group" id="f-price-group" hidden>
+            <legend class="filter-label">販売価格</legend>
+            <div class="range-row">
+              <select id="f-price-min" name="priceMin">
+                <option value="">下限なし</option>
+                <option value="100000000">1億円〜</option>
+                <option value="300000000">3億円〜</option>
+                <option value="500000000">5億円〜</option>
+                <option value="1000000000">10億円〜</option>
+              </select>
+              <span class="range-sep">〜</span>
+              <select id="f-price-max" name="priceMax">
+                <option value="">上限なし</option>
+                <option value="100000000">〜1億円</option>
+                <option value="300000000">〜3億円</option>
+                <option value="500000000">〜5億円</option>
+                <option value="1000000000">〜10億円</option>
               </select>
             </div>
           </fieldset>
@@ -141,21 +170,14 @@
       <section class="results" aria-label="検索結果">
         <div class="results-head">
           <div class="results-count">
-            <h1 class="results-title">物件検索</h1>
+            <h1 class="results-title" id="results-title">賃貸物件を探す</h1>
             <p id="result-summary" aria-live="polite">検索中…</p>
           </div>
           <div class="results-tools">
             <button type="button" class="btn btn-ghost filter-open" id="filter-open">絞り込み</button>
             <label class="sort-field">
               <span>並び替え</span>
-              <select id="sort-select">
-                <option value="new">新着順</option>
-                <option value="rent-asc">賃料が安い順</option>
-                <option value="rent-desc">賃料が高い順</option>
-                <option value="area-desc">面積が広い順</option>
-                <option value="area-asc">面積が狭い順</option>
-                <option value="unit-asc">坪単価が安い順</option>
-              </select>
+              <select id="sort-select"></select>
             </label>
           </div>
         </div>
@@ -195,19 +217,29 @@
 <footer class="site-footer">
   <div class="container footer-inner">
     <div class="footer-brand">
-      <img src="images/COMPASS_CREAM_Side.png" width="2700" height="600" alt="RE/MAX COMPASS" class="footer-logo">
+      <img src="images/COMPASS_CREAM_Primary.png" width="1200" height="600" alt="RE/MAX COMPASS" class="footer-logo">
       <p class="footer-company">株式会社ロメッツ（屋号：RE/MAX COMPASS）</p>
       <p class="footer-address">〒101-0061 東京都千代田区神田三崎町三丁目4番9号 横山ビル3F<br>TEL 03-6261-5098／宅地建物取引業免許番号 東京都知事(1)第110605号</p>
     </div>
     <nav class="footer-nav" aria-label="フッターナビゲーション">
       <div>
-        <h3>物件を探す</h3>
+        <h3>賃貸で探す</h3>
         <ul>
           <li><a href="properties.html?type=shop">店舗</a></li>
           <li><a href="properties.html?type=office">オフィス</a></li>
           <li><a href="properties.html?type=warehouse">倉庫・工場</a></li>
           <li><a href="properties.html?type=building">一棟ビル</a></li>
           <li><a href="properties.html?type=land">事業用地</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3>売買で探す</h3>
+        <ul>
+          <li><a href="properties.html?deal=sale&amp;type=building">一棟ビル</a></li>
+          <li><a href="properties.html?deal=sale&amp;type=office">オフィス</a></li>
+          <li><a href="properties.html?deal=sale&amp;type=shop">店舗</a></li>
+          <li><a href="properties.html?deal=sale&amp;type=warehouse">倉庫・工場</a></li>
+          <li><a href="properties.html?deal=sale&amp;type=land">事業用地</a></li>
         </ul>
       </div>
       <div>

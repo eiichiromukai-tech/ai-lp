@@ -17,7 +17,10 @@
 
     document.title = p.title + '｜RE/MAX COMPASS 物件ポータル';
     var meta = document.querySelector('meta[name="description"]');
-    if (meta) meta.setAttribute('content', p.title + '（' + p.ward + '）｜' + P.formatRent(p.rent) + '／月・' + p.areaTsubo.toFixed(1) + '坪。' + p.description.slice(0, 70));
+    if (meta) {
+      meta.setAttribute('content', p.title + '（' + p.ward + '）｜' + P.formatAmount(p) +
+        (P.isSale(p) ? '' : '／月') + '・' + p.areaTsubo.toFixed(1) + '坪。' + p.description.slice(0, 70));
+    }
 
     root.innerHTML = detailHtml(p);
     P.pushHistory(p.id);
@@ -36,9 +39,11 @@
   function detailHtml(p) {
     var img = P.placeholderImage(p);
     var closed = P.isClosed(p);
+    var sale = P.isSale(p);
     /* おすすめには成約済を出さない */
     var similar = P.activeProperties().filter(function (o) {
-      return o.id !== p.id && (o.type === p.type || o.ward === p.ward);
+      return o.id !== p.id && P.dealOf(o) === P.dealOf(p) &&
+        (o.type === p.type || o.ward === p.ward);
     }).slice(0, 3);
 
     return '' +
@@ -46,12 +51,13 @@
       '<nav class="breadcrumb" aria-label="パンくずリスト"><ol>' +
         '<li><a href="index.html">ホーム</a></li>' +
         '<li><a href="properties.html">物件検索</a></li>' +
-        '<li><a href="properties.html?type=' + p.type + '">' + P.TYPE_LABEL[p.type] + '</a></li>' +
+        '<li><a href="properties.html?deal=' + P.dealOf(p) + '">' + P.DEAL_CONFIG[P.dealOf(p)].label + '</a></li>' +
+        '<li><a href="properties.html?deal=' + P.dealOf(p) + '&type=' + p.type + '">' + P.TYPE_LABEL[p.type] + '</a></li>' +
         '<li aria-current="page">' + P.escapeHtml(p.title) + '</li>' +
       '</ol></nav>' +
 
       '<div class="detail-head">' +
-        '<div class="detail-badges">' + P.statusBadge(p) +
+        '<div class="detail-badges">' + P.dealBadge(p) + P.statusBadge(p) +
           '<span class="badge badge-type">' + P.TYPE_LABEL[p.type] + '</span>' +
           '<span class="detail-id">物件番号 ' + p.id + '</span></div>' +
         '<h1 class="detail-title">' + P.escapeHtml(p.title) + '</h1>' +
@@ -62,7 +68,7 @@
         '<h2>この物件は成約済みです</h2>' +
         '<p>募集は終了しています。過去の取扱実績として掲載しています。同じエリア・条件の物件をお探しの場合はご相談ください。</p>' +
         '<div class="closed-actions">' +
-          '<a href="properties.html?type=' + p.type + '&area=' + encodeURIComponent(p.ward) + '" class="btn btn-primary">同じ条件の物件を探す</a>' +
+          '<a href="properties.html?deal=' + P.dealOf(p) + '&type=' + p.type + '&area=' + encodeURIComponent(p.ward) + '" class="btn btn-primary">同じ条件の物件を探す</a>' +
           '<a href="contact.html" class="link-cta">条件を伝えて探してもらう</a>' +
         '</div></div>' : '') +
 
@@ -85,22 +91,28 @@
             '<h2>物件概要</h2>' +
             '<table class="spec-table"><tbody>' +
               row('物件番号', p.id) +
+              row('取引種別', P.DEAL_CONFIG[P.dealOf(p)].label) +
               row('物件種別', P.TYPE_LABEL[p.type]) +
               row('所在地', p.address) +
               row('交通', (p.access || []).map(function (a) {
                 return a.line + '「' + a.station + '」駅 徒歩' + a.walk + '分';
               }).join('<br>') || '—', true) +
-              row('月額賃料', P.formatRent(p.rent) + (p.rent ? '（税別）' : '')) +
-              row('共益費・管理費', p.managementFee ? P.formatYen(p.managementFee) + '／月' : 'なし') +
-              row('坪単価', p.tsuboUnitPrice ? p.tsuboUnitPrice.toLocaleString('ja-JP') + '円／坪' : '—') +
-              row('敷金・保証金', P.formatMonths(p.deposit)) +
-              row('礼金', P.formatMonths(p.keyMoney)) +
+              (sale
+                ? row('販売価格', P.formatPrice(p.price) + (p.price ? '（税別）' : '')) +
+                  row('表面利回り', P.formatYield(p.yieldRate)) +
+                  row('坪単価', p.tsuboUnitPrice ? p.tsuboUnitPrice.toLocaleString('ja-JP') + '円／坪' : '—') +
+                  row('権利形態', p.tenure || '—')
+                : row('月額賃料', P.formatRent(p.rent) + (p.rent ? '（税別）' : '')) +
+                  row('共益費・管理費', p.managementFee ? P.formatYen(p.managementFee) + '／月' : 'なし') +
+                  row('坪単価', p.tsuboUnitPrice ? p.tsuboUnitPrice.toLocaleString('ja-JP') + '円／坪' : '—') +
+                  row('敷金・保証金', P.formatMonths(p.deposit)) +
+                  row('礼金', P.formatMonths(p.keyMoney))) +
               row('面積', P.formatArea(p)) +
               row('階数', p.floor + (p.floorsTotal ? '（地上' + p.floorsTotal + '階建）' : '')) +
               row('構造', p.structure) +
               row('築年', p.builtYear ? p.builtYear + '年' : '—') +
               row('用途', (p.usage || []).join('／') || '—') +
-              row('入居可能時期', p.availableFrom) +
+              row(sale ? '引渡し時期' : '入居可能時期', p.availableFrom) +
               row('取引態様', '仲介') +
               row('情報更新日', P.formatDate(p.updatedAt)) +
             '</tbody></table>' +
@@ -110,21 +122,28 @@
             '<h2>ご契約までの流れ</h2>' +
             '<ol class="flow-list">' +
               '<li><span class="flow-step">STEP 1</span><h3>お問い合わせ</h3><p>本ページのフォームまたはお電話でご連絡ください。ご相談は無料です。</p></li>' +
-              '<li><span class="flow-step">STEP 2</span><h3>詳細資料のご案内</h3><p>図面・現地写真・詳細条件をお送りし、ご希望に応じて内見を調整します。</p></li>' +
-              '<li><span class="flow-step">STEP 3</span><h3>条件交渉・申込</h3><p>賃料・フリーレント・契約期間などの条件をオーナー様と交渉します。</p></li>' +
-              '<li><span class="flow-step">STEP 4</span><h3>重要事項説明・契約</h3><p>宅地建物取引士が重要事項をご説明のうえ、ご契約手続きを行います。</p></li>' +
+              (sale
+                ? '<li><span class="flow-step">STEP 2</span><h3>資料のご開示</h3><p>謄本・図面・レントロール・修繕履歴などをお送りし、現地内覧を調整します。</p></li>' +
+                  '<li><span class="flow-step">STEP 3</span><h3>買付・条件交渉</h3><p>買付証明書のご提出後、価格・引渡し条件を売主様と交渉します。</p></li>' +
+                  '<li><span class="flow-step">STEP 4</span><h3>売買契約・決済</h3><p>宅地建物取引士が重要事項をご説明のうえ契約を締結し、決済・引渡しを行います。</p></li>'
+                : '<li><span class="flow-step">STEP 2</span><h3>詳細資料のご案内</h3><p>図面・現地写真・詳細条件をお送りし、ご希望に応じて内見を調整します。</p></li>' +
+                  '<li><span class="flow-step">STEP 3</span><h3>条件交渉・申込</h3><p>賃料・フリーレント・契約期間などの条件をオーナー様と交渉します。</p></li>' +
+                  '<li><span class="flow-step">STEP 4</span><h3>重要事項説明・契約</h3><p>宅地建物取引士が重要事項をご説明のうえ、ご契約手続きを行います。</p></li>') +
             '</ol>' +
           '</section>') +
         '</div>' +
 
         '<aside class="detail-side">' +
           '<div class="side-card">' +
-            '<p class="side-rent"><span class="rent-value">' + P.formatRent(p.rent) + '</span><span class="rent-unit">／月（税別）</span></p>' +
+            '<p class="side-rent"><span class="rent-value">' + P.formatAmount(p) + '</span>' +
+              '<span class="rent-unit">' + (sale ? '（税別）' : '／月（税別）') + '</span></p>' +
             '<dl class="side-spec">' +
-              '<div><dt>共益費</dt><dd>' + (p.managementFee ? P.formatYen(p.managementFee) + '／月' : 'なし') + '</dd></div>' +
+              (sale
+                ? '<div><dt>表面利回り</dt><dd>' + P.formatYield(p.yieldRate) + '</dd></div>'
+                : '<div><dt>共益費</dt><dd>' + (p.managementFee ? P.formatYen(p.managementFee) + '／月' : 'なし') + '</dd></div>') +
               '<div><dt>面積</dt><dd>' + p.areaTsubo.toFixed(1) + '坪</dd></div>' +
               '<div><dt>階数</dt><dd>' + P.escapeHtml(p.floor) + '</dd></div>' +
-              '<div><dt>入居時期</dt><dd>' + P.escapeHtml(p.availableFrom) + '</dd></div>' +
+              '<div><dt>' + (sale ? '引渡し' : '入居時期') + '</dt><dd>' + P.escapeHtml(p.availableFrom) + '</dd></div>' +
             '</dl>' +
             (closed
               ? '<p class="side-closed">この物件は成約済みです</p>' +

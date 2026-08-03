@@ -17,14 +17,14 @@
 
 <header class="site-header" id="header">
   <div class="container header-inner">
-    <a href="index.html" class="logo"><img src="images/COMPASS_BLACK_Side.png" width="2700" height="600" alt="RE/MAX COMPASS" class="logo-img"></a>
+    <a href="index.html" class="logo"><img src="images/COMPASS_BLACK_Primary.png" width="1200" height="600" alt="RE/MAX COMPASS" class="logo-img"></a>
     <nav class="main-nav" id="main-nav" aria-label="メインナビゲーション">
       <ul>
-        <li><a href="properties.html">物件を探す</a></li>
+        <li><a href="properties.html">賃貸で探す</a></li>
+        <li><a href="properties.html?deal=sale">売買で探す</a></li>
         <li><a href="properties.html?type=shop">店舗</a></li>
         <li><a href="properties.html?type=office">オフィス</a></li>
-        <li><a href="properties.html?type=warehouse">倉庫・工場</a></li>
-        <li><a href="owner.html">物件オーナー様へ</a></li>
+        <li><a href="owner.html">オーナー様へ</a></li>
         <li><a href="contact.html">お問い合わせ</a></li>
       </ul>
     </nav>
@@ -54,6 +54,10 @@
       <p class="portal-hero-sub">店舗・オフィス・倉庫・一棟ビル・事業用地。RE/MAX COMPASSが取り扱う事業用物件を、エリアと条件から検索できます。</p>
 
       <form class="hero-search" id="hero-search" action="properties.html" method="get">
+        <div class="deal-segment deal-segment-hero" id="hs-deal">
+          <label><input type="radio" name="deal" value="rent" checked><span>賃貸で探す</span></label>
+          <label><input type="radio" name="deal" value="sale"><span>売買で探す</span></label>
+        </div>
         <div class="hero-search-row">
           <div class="hs-field">
             <label for="hs-type">物件種別</label>
@@ -72,7 +76,7 @@
               <option value="">すべてのエリア</option>
             </select>
           </div>
-          <div class="hs-field">
+          <div class="hs-field" id="hs-rent-field">
             <label for="hs-rent">賃料上限</label>
             <select id="hs-rent" name="rentMax">
               <option value="">上限なし</option>
@@ -81,6 +85,16 @@
               <option value="1000000">100万円以下</option>
               <option value="2000000">200万円以下</option>
               <option value="5000000">500万円以下</option>
+            </select>
+          </div>
+          <div class="hs-field" id="hs-price-field" hidden>
+            <label for="hs-price">価格上限</label>
+            <select id="hs-price" name="priceMax">
+              <option value="">上限なし</option>
+              <option value="100000000">1億円以下</option>
+              <option value="300000000">3億円以下</option>
+              <option value="500000000">5億円以下</option>
+              <option value="1000000000">10億円以下</option>
             </select>
           </div>
           <div class="hs-field hs-field-kw">
@@ -97,6 +111,7 @@
         <li><a href="properties.html?feature=%E3%82%BB%E3%83%83%E3%83%88%E3%82%A2%E3%83%83%E3%83%97">セットアップオフィス</a></li>
         <li><a href="properties.html?walk=5">駅徒歩5分以内</a></li>
         <li><a href="properties.html?status=new">新着物件</a></li>
+        <li><a href="properties.html?deal=sale&amp;type=building">売買・一棟ビル</a></li>
       </ul>
     </div>
   </section>
@@ -184,19 +199,29 @@
 <footer class="site-footer">
   <div class="container footer-inner">
     <div class="footer-brand">
-      <img src="images/COMPASS_CREAM_Side.png" width="2700" height="600" alt="RE/MAX COMPASS" class="footer-logo">
+      <img src="images/COMPASS_CREAM_Primary.png" width="1200" height="600" alt="RE/MAX COMPASS" class="footer-logo">
       <p class="footer-company">株式会社ロメッツ（屋号：RE/MAX COMPASS）</p>
       <p class="footer-address">〒101-0061 東京都千代田区神田三崎町三丁目4番9号 横山ビル3F<br>TEL 03-6261-5098／宅地建物取引業免許番号 東京都知事(1)第110605号</p>
     </div>
     <nav class="footer-nav" aria-label="フッターナビゲーション">
       <div>
-        <h3>物件を探す</h3>
+        <h3>賃貸で探す</h3>
         <ul>
           <li><a href="properties.html?type=shop">店舗</a></li>
           <li><a href="properties.html?type=office">オフィス</a></li>
           <li><a href="properties.html?type=warehouse">倉庫・工場</a></li>
           <li><a href="properties.html?type=building">一棟ビル</a></li>
           <li><a href="properties.html?type=land">事業用地</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3>売買で探す</h3>
+        <ul>
+          <li><a href="properties.html?deal=sale&amp;type=building">一棟ビル</a></li>
+          <li><a href="properties.html?deal=sale&amp;type=office">オフィス</a></li>
+          <li><a href="properties.html?deal=sale&amp;type=shop">店舗</a></li>
+          <li><a href="properties.html?deal=sale&amp;type=warehouse">倉庫・工場</a></li>
+          <li><a href="properties.html?deal=sale&amp;type=land">事業用地</a></li>
         </ul>
       </div>
       <div>

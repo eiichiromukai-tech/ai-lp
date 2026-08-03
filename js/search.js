@@ -9,10 +9,60 @@
   var state = null;
   var bound = false;
 
+  /* 並び替えの選択肢は取引種別で入れ替える */
+  var SORT_OPTIONS = {
+    rent: [
+      ['new', '新着順'],
+      ['rent-asc', '賃料が安い順'],
+      ['rent-desc', '賃料が高い順'],
+      ['area-desc', '面積が広い順'],
+      ['area-asc', '面積が狭い順'],
+      ['unit-asc', '坪単価が安い順']
+    ],
+    sale: [
+      ['new', '新着順'],
+      ['rent-asc', '価格が安い順'],
+      ['rent-desc', '価格が高い順'],
+      ['yield-desc', '利回りが高い順'],
+      ['area-desc', '面積が広い順'],
+      ['area-asc', '面積が狭い順'],
+      ['unit-asc', '坪単価が安い順']
+    ]
+  };
+
+  function renderSortOptions() {
+    var sel = document.getElementById('sort-select');
+    if (!sel) return;
+    var options = SORT_OPTIONS[state.deal] || SORT_OPTIONS.rent;
+    var keep = options.some(function (o) { return o[0] === state.sort; }) ? state.sort : 'new';
+    state.sort = keep;
+    sel.innerHTML = options.map(function (o) {
+      return '<option value="' + o[0] + '"' + (o[0] === keep ? ' selected' : '') + '>' + o[1] + '</option>';
+    }).join('');
+  }
+
+  /* 取引種別に応じて金額レンジの表示を切り替える */
+  function syncDealUI() {
+    var sale = state.deal === 'sale';
+    var rentGroup = document.getElementById('f-rent-group');
+    var priceGroup = document.getElementById('f-price-group');
+    if (rentGroup) rentGroup.hidden = sale;
+    if (priceGroup) priceGroup.hidden = !sale;
+
+    document.querySelectorAll('#f-deal input[name="deal"]').forEach(function (input) {
+      input.checked = input.value === state.deal;
+    });
+
+    var title = document.getElementById('results-title');
+    if (title) title.textContent = sale ? '売買物件を探す' : '賃貸物件を探す';
+    renderSortOptions();
+  }
+
   P.onReady('search', function () {
     state = P.parseQuery();
     buildCheckLists();
     syncFormFromState();
+    syncDealUI();
     if (!bound) {
       bound = true;
       bindEvents();
@@ -43,17 +93,22 @@
     }), 'features');
   }
 
-  /* 件数は成約済を除いた掲載中の物件で数える（成約済の件数のみ実数） */
+  /* 件数は選択中の取引種別かつ掲載中の物件で数える（成約済の件数のみ実数） */
+  function inDeal(list) {
+    var deal = (state && state.deal) || 'rent';
+    return list.filter(function (p) { return P.dealOf(p) === deal; });
+  }
+
   function countBy(key, value) {
-    return P.activeProperties().filter(function (p) { return p[key] === value; }).length;
+    return inDeal(P.activeProperties()).filter(function (p) { return p[key] === value; }).length;
   }
 
   function countFeature(f) {
-    return P.activeProperties().filter(function (p) { return p.features.indexOf(f) !== -1; }).length;
+    return inDeal(P.activeProperties()).filter(function (p) { return p.features.indexOf(f) !== -1; }).length;
   }
 
   function countStatus(s) {
-    return ALL.filter(function (p) { return P.displayStatus(p) === s; }).length;
+    return inDeal(ALL).filter(function (p) { return P.displayStatus(p) === s; }).length;
   }
 
   function fill(id, items, group) {
@@ -74,6 +129,8 @@
     setValue('f-keyword', state.keyword);
     setValue('f-rent-min', state.rentMin);
     setValue('f-rent-max', state.rentMax);
+    setValue('f-price-min', state.priceMin);
+    setValue('f-price-max', state.priceMax);
     setValue('f-tsubo-min', state.tsuboMin);
     setValue('f-tsubo-max', state.tsuboMax);
     setValue('f-walk', state.walk);
@@ -91,9 +148,13 @@
   }
 
   function readFormIntoState() {
+    var deal = document.querySelector('#f-deal input[name="deal"]:checked');
+    state.deal = deal && deal.value === 'sale' ? 'sale' : 'rent';
     state.keyword = getValue('f-keyword');
     state.rentMin = num('f-rent-min');
     state.rentMax = num('f-rent-max');
+    state.priceMin = num('f-price-min');
+    state.priceMax = num('f-price-max');
     state.tsuboMin = num('f-tsubo-min');
     state.tsuboMax = num('f-tsubo-max');
     state.walk = num('f-walk');
@@ -121,7 +182,18 @@
     var form = document.getElementById('filter-form');
     if (form) {
       form.addEventListener('submit', function (e) { e.preventDefault(); });
-      form.addEventListener('change', function () { readFormIntoState(); state.page = 1; render(); });
+      form.addEventListener('change', function (e) {
+        var dealChanged = e.target && e.target.name === 'deal';
+        readFormIntoState();
+        state.page = 1;
+        if (dealChanged) {
+          /* 取引種別を切り替えたら金額条件は持ち越さない */
+          state.rentMin = state.rentMax = state.priceMin = state.priceMax = null;
+          syncFormFromState();
+          syncDealUI();
+        }
+        render();
+      });
       form.addEventListener('input', debounce(function () { readFormIntoState(); state.page = 1; render(); }, 250));
     }
 
@@ -181,11 +253,15 @@
 
   function resetAll() {
     state = {
+      deal: state.deal,               /* 取引種別は保持する */
       keyword: '', types: [], areas: [], features: [], status: [],
-      rentMin: null, rentMax: null, tsuboMin: null, tsuboMax: null, walk: null,
+      rentMin: null, rentMax: null, priceMin: null, priceMax: null,
+      tsuboMin: null, tsuboMax: null, walk: null,
       sort: 'new', page: 1
     };
     syncFormFromState();
+    syncDealUI();
+    buildCheckLists();
     render();
   }
 
@@ -246,6 +322,8 @@
     (state.features || []).forEach(function (f) { push('features', f, f); });
     if (state.rentMin != null) push('rentMin', state.rentMin, P.formatRent(state.rentMin) + '以上');
     if (state.rentMax != null) push('rentMax', state.rentMax, P.formatRent(state.rentMax) + '以下');
+    if (state.priceMin != null) push('priceMin', state.priceMin, P.formatPrice(state.priceMin) + '以上');
+    if (state.priceMax != null) push('priceMax', state.priceMax, P.formatPrice(state.priceMax) + '以下');
     if (state.tsuboMin != null) push('tsuboMin', state.tsuboMin, state.tsuboMin + '坪以上');
     if (state.tsuboMax != null) push('tsuboMax', state.tsuboMax, state.tsuboMax + '坪以下');
     if (state.walk != null) push('walk', state.walk, '駅徒歩' + state.walk + '分以内');

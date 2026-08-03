@@ -29,13 +29,23 @@ MASTERS.types.forEach(function (t) {
   TYPE_VALUE_TO_LABEL[t.value] = t.label;
 });
 
+const DEAL_LABEL_TO_VALUE = {};
+const DEAL_VALUE_TO_LABEL = {};
+MASTERS.deals.forEach(function (d) {
+  DEAL_LABEL_TO_VALUE[d.label] = d.value;
+  DEAL_VALUE_TO_LABEL[d.value] = d.label;
+});
+
 const STATUS_LABEL_TO_VALUE = { '募集中': 'available', '商談中': 'negotiating', '成約済': 'closed' };
 const STATUS_VALUE_TO_LABEL = { available: '募集中', negotiating: '商談中', closed: '成約済' };
 
-/* CSVの列。順番がそのままスプレッドシートの列順になります */
+/* CSVの列。順番がそのままスプレッドシートの列順になります。
+   賃貸／売買で使う列が違います（賃貸=月額賃料〜礼金、売買=販売価格〜権利形態）。
+   使わない側は空欄のままにしてください。 */
 const COLUMNS = [
   { key: 'id', header: '物件番号' },
   { key: 'title', header: '物件名' },
+  { key: 'deal', header: '取引種別' },
   { key: 'type', header: '物件種別' },
   { key: 'status', header: '募集状況' },
   { key: 'ward', header: 'エリア' },
@@ -45,6 +55,9 @@ const COLUMNS = [
   { key: 'managementFee', header: '共益費(円)' },
   { key: 'deposit', header: '敷金(ヶ月)' },
   { key: 'keyMoney', header: '礼金(ヶ月)' },
+  { key: 'price', header: '販売価格(円)' },
+  { key: 'yieldRate', header: '表面利回り(%)' },
+  { key: 'tenure', header: '権利形態' },
   { key: 'areaTsubo', header: '面積(坪)' },
   { key: 'floor', header: '階数' },
   { key: 'floorsTotal', header: '建物階数' },
@@ -52,7 +65,7 @@ const COLUMNS = [
   { key: 'structure', header: '構造' },
   { key: 'features', header: 'こだわり条件' },
   { key: 'usage', header: '用途' },
-  { key: 'availableFrom', header: '入居可能時期' },
+  { key: 'availableFrom', header: '入居可能時期・引渡し時期' },
   { key: 'updatedAt', header: '情報更新日' },
   { key: 'description', header: '物件説明' }
 ];
@@ -92,13 +105,20 @@ function decodeList(text) {
 /* 物件オブジェクト → CSVの1行 */
 function toRow(p) {
   return COLUMNS.map(function (col) {
+    const sale = p.deal === 'sale';
     switch (col.key) {
+      case 'deal': return DEAL_VALUE_TO_LABEL[p.deal] || DEAL_VALUE_TO_LABEL.rent;
       case 'type': return TYPE_VALUE_TO_LABEL[p.type] || p.type;
       case 'status': return STATUS_VALUE_TO_LABEL[p.status] || p.status;
       case 'access': return encodeAccess(p.access);
       case 'features': return encodeList(p.features);
       case 'usage': return encodeList(p.usage);
       case 'builtYear': return p.builtYear == null ? '' : p.builtYear;
+      /* 取引種別で使わない側の金額列は空欄で書き出す */
+      case 'rent': case 'managementFee': case 'deposit': case 'keyMoney':
+        return sale ? '' : (p[col.key] == null ? '' : p[col.key]);
+      case 'price': case 'yieldRate': case 'tenure':
+        return sale ? (p[col.key] == null ? '' : p[col.key]) : '';
       default: return p[col.key] == null ? '' : p[col.key];
     }
   });
@@ -117,6 +137,11 @@ function num(value, label, rowLabel, errors, opts) {
   return n;
 }
 
+function headerOf(key) {
+  const col = COLUMNS.find(function (c) { return c.key === key; });
+  return col ? col.header : key;
+}
+
 /* CSVの1行 → 物件オブジェクト。errors / warnings に問題を積む */
 function fromRow(cells, index, errors, warnings) {
   const get = function (key) {
@@ -133,6 +158,14 @@ function fromRow(cells, index, errors, warnings) {
 
   p.title = get('title');
   if (!p.title) errors.push(rowLabel + '物件名は必須です');
+
+  const dealLabel = get('deal') || '賃貸';
+  p.deal = DEAL_LABEL_TO_VALUE[dealLabel];
+  if (!p.deal) {
+    errors.push(rowLabel + '取引種別「' + dealLabel + '」は使用できません（' +
+      Object.keys(DEAL_LABEL_TO_VALUE).join('／') + '）');
+  }
+  const isSale = p.deal === 'sale';
 
   const typeLabel = get('type');
   p.type = TYPE_LABEL_TO_VALUE[typeLabel];
@@ -157,10 +190,30 @@ function fromRow(cells, index, errors, warnings) {
   p.address = get('address');
   p.access = decodeAccess(get('access'), errors, rowLabel);
 
-  p.rent = num(get('rent'), '月額賃料', rowLabel, errors, { required: true });
-  p.managementFee = num(get('managementFee'), '共益費', rowLabel, errors);
-  p.deposit = num(get('deposit'), '敷金', rowLabel, errors);
-  p.keyMoney = num(get('keyMoney'), '礼金', rowLabel, errors);
+  /* 金額は取引種別ごとに必須列が変わる。使わない側は0で埋める */
+  p.rent = isSale ? 0 : num(get('rent'), '月額賃料', rowLabel, errors, { required: true });
+  p.managementFee = isSale ? 0 : num(get('managementFee'), '共益費', rowLabel, errors);
+  p.deposit = isSale ? 0 : num(get('deposit'), '敷金', rowLabel, errors);
+  p.keyMoney = isSale ? 0 : num(get('keyMoney'), '礼金', rowLabel, errors);
+
+  p.price = isSale ? num(get('price'), '販売価格', rowLabel, errors, { required: true }) : 0;
+  p.yieldRate = isSale ? num(get('yieldRate'), '表面利回り', rowLabel, errors) : 0;
+  p.tenure = isSale ? (get('tenure') || '所有権') : '';
+
+  if (isSale) {
+    ['rent', 'managementFee', 'deposit', 'keyMoney'].forEach(function (key) {
+      if (get(key) !== '') {
+        warnings.push(rowLabel + '売買の物件に' + headerOf(key) + 'が入力されています（無視します）');
+      }
+    });
+  } else {
+    ['price', 'yieldRate', 'tenure'].forEach(function (key) {
+      if (get(key) !== '') {
+        warnings.push(rowLabel + '賃貸の物件に' + headerOf(key) + 'が入力されています（無視します）');
+      }
+    });
+  }
+
   p.areaTsubo = num(get('areaTsubo'), '面積', rowLabel, errors, { required: true });
   p.floor = get('floor') || '—';
   p.floorsTotal = num(get('floorsTotal'), '建物階数', rowLabel, errors);
@@ -192,11 +245,18 @@ function fromRow(cells, index, errors, warnings) {
   if (!p.description) warnings.push(rowLabel + '物件説明が空です');
 
   /* 桁間違いの検知（エラーではなく警告） */
-  if (Number.isFinite(p.rent) && p.rent > 0 && p.rent < 10000) {
+  if (!isSale && Number.isFinite(p.rent) && p.rent > 0 && p.rent < 10000) {
     warnings.push(rowLabel + '月額賃料が' + p.rent + '円です。万円単位で入力していませんか');
   }
-  if (Number.isFinite(p.rent) && p.rent > 50000000) {
+  if (!isSale && Number.isFinite(p.rent) && p.rent > 50000000) {
     warnings.push(rowLabel + '月額賃料が' + p.rent.toLocaleString('ja-JP') + '円です。桁が多すぎませんか');
+  }
+  if (isSale && Number.isFinite(p.price) && p.price > 0 && p.price < 1000000) {
+    warnings.push(rowLabel + '販売価格が' + p.price.toLocaleString('ja-JP') +
+      '円です。万円単位で入力していませんか');
+  }
+  if (isSale && Number.isFinite(p.yieldRate) && p.yieldRate > 30) {
+    warnings.push(rowLabel + '表面利回りが' + p.yieldRate + '%です。値を確認してください');
   }
   if (Number.isFinite(p.areaTsubo) && p.areaTsubo > 1000) {
     warnings.push(rowLabel + '面積が' + p.areaTsubo + '坪です。m²で入力していませんか');

@@ -8,11 +8,24 @@
 (function (global) {
   'use strict';
 
-  var DATA = global.PORTAL_DATA || { properties: [], types: [], features: [], areas: [] };
+  var DATA = global.PORTAL_DATA || { properties: [], deals: [], types: [], features: [], areas: [] };
 
   /* ---------- 定数 ---------- */
   var TYPE_LABEL = {};
   DATA.types.forEach(function (t) { TYPE_LABEL[t.value] = t.label; });
+
+  var DEAL_LABEL = {};
+  (DATA.deals || []).forEach(function (d) { DEAL_LABEL[d.value] = d.label; });
+
+  /* 取引種別ごとの表示の違いをここに集約する */
+  var DEAL_CONFIG = {
+    rent: { label: '賃貸', amountLabel: '月額賃料', amountSuffix: '／月', unitLabel: '坪単価' },
+    sale: { label: '売買', amountLabel: '販売価格', amountSuffix: '', unitLabel: '坪単価' }
+  };
+
+  function dealOf(p) { return p.deal === 'sale' ? 'sale' : 'rent'; }
+  function dealConfig(p) { return DEAL_CONFIG[dealOf(p)]; }
+  function isSale(p) { return dealOf(p) === 'sale'; }
 
   /* 表示用の募集状況。'new' は updatedAt から自動判定する派生ステータスで、
      データ側で持つのは available / negotiating / closed の3つ。 */
@@ -56,6 +69,26 @@
       return str + '万円';
     }
     return yen.toLocaleString('ja-JP') + '円';
+  }
+
+  /* 売買価格は億／万で区切る（1,450,000,000 → 14億5,000万円） */
+  function formatPrice(yen) {
+    if (!yen) return '応相談';
+    var oku = Math.floor(yen / 100000000);
+    var man = Math.floor((yen % 100000000) / 10000);
+    if (oku && man) return oku + '億' + man.toLocaleString('ja-JP') + '万円';
+    if (oku) return oku + '億円';
+    if (man) return man.toLocaleString('ja-JP') + '万円';
+    return yen.toLocaleString('ja-JP') + '円';
+  }
+
+  /* 取引種別に応じた金額表示 */
+  function formatAmount(p) {
+    return isSale(p) ? formatPrice(p.price) : formatRent(p.rent);
+  }
+
+  function formatYield(rate) {
+    return rate ? rate.toFixed(1) + '%' : '—';
   }
 
   function formatYen(yen) {
@@ -184,11 +217,14 @@
     return list.filter(function (p) {
       /* 成約済は明示的に指定されたときだけ検索結果に含める */
       if (isClosed(p) && !wantsClosed) return false;
+      if (c.deal && dealOf(p) !== c.deal) return false;
+      if (c.priceMin != null && (!isSale(p) || p.price < c.priceMin)) return false;
+      if (c.priceMax != null && (!isSale(p) || p.price > c.priceMax)) return false;
       if (c.types && c.types.length && c.types.indexOf(p.type) === -1) return false;
       if (c.areas && c.areas.length && c.areas.indexOf(p.ward) === -1) return false;
       if (c.status && c.status.length && c.status.indexOf(displayStatus(p)) === -1) return false;
-      if (c.rentMin != null && p.rent < c.rentMin) return false;
-      if (c.rentMax != null && p.rent > c.rentMax) return false;
+      if (c.rentMin != null && (isSale(p) || p.rent < c.rentMin)) return false;
+      if (c.rentMax != null && (isSale(p) || p.rent > c.rentMax)) return false;
       if (c.tsuboMin != null && p.areaTsubo < c.tsuboMin) return false;
       if (c.tsuboMax != null && p.areaTsubo > c.tsuboMax) return false;
       if (c.walk != null && minWalk(p) > c.walk) return false;
@@ -213,13 +249,15 @@
     });
   }
 
+  /* 金額の並び替えは取引種別ごとの amount（賃料 or 価格）で比較する */
   var SORTERS = {
     'new': function (a, b) { return b.updatedAt.localeCompare(a.updatedAt); },
-    'rent-asc': function (a, b) { return a.rent - b.rent; },
-    'rent-desc': function (a, b) { return b.rent - a.rent; },
+    'rent-asc': function (a, b) { return a.amount - b.amount; },
+    'rent-desc': function (a, b) { return b.amount - a.amount; },
     'area-desc': function (a, b) { return b.areaTsubo - a.areaTsubo; },
     'area-asc': function (a, b) { return a.areaTsubo - b.areaTsubo; },
-    'unit-asc': function (a, b) { return a.tsuboUnitPrice - b.tsuboUnitPrice; }
+    'unit-asc': function (a, b) { return a.tsuboUnitPrice - b.tsuboUnitPrice; },
+    'yield-desc': function (a, b) { return (b.yieldRate || 0) - (a.yieldRate || 0); }
   };
 
   function sortProperties(list, key) {
@@ -288,24 +326,34 @@
     return '<span class="badge badge-' + s + '">' + (STATUS_LABEL[s] || '') + '</span>';
   }
 
+  function dealBadge(p) {
+    var d = dealOf(p);
+    return '<span class="badge badge-deal badge-deal-' + d + '">' + DEAL_CONFIG[d].label + '</span>';
+  }
+
   function propertyCard(p) {
     var fav = isFavorite(p.id);
+    var sale = isSale(p);
     return '' +
       '<article class="p-card' + (isClosed(p) ? ' p-card-closed' : '') + '">' +
         '<a class="p-card-link" href="property.html?id=' + encodeURIComponent(p.id) + '">' +
           '<div class="p-card-media">' +
             '<img src="' + placeholderImage(p) + '" alt="' + escapeHtml(p.title) + 'のイメージ" width="480" height="320" loading="lazy">' +
-            '<div class="p-card-badges">' + statusBadge(p) + '<span class="badge badge-type">' + (TYPE_LABEL[p.type] || '') + '</span></div>' +
+            '<div class="p-card-badges">' + dealBadge(p) + statusBadge(p) +
+              '<span class="badge badge-type">' + (TYPE_LABEL[p.type] || '') + '</span></div>' +
           '</div>' +
           '<div class="p-card-body">' +
             '<h3 class="p-card-title">' + escapeHtml(p.title) + '</h3>' +
             '<p class="p-card-access">' + escapeHtml(nearestAccess(p)) + '</p>' +
-            '<p class="p-card-rent"><span class="rent-value">' + formatRent(p.rent) + '</span><span class="rent-unit">／月</span>' +
+            '<p class="p-card-rent"><span class="rent-value">' + formatAmount(p) + '</span>' +
+              (sale ? '' : '<span class="rent-unit">／月</span>') +
               '<span class="p-card-unit">坪単価 ' + p.tsuboUnitPrice.toLocaleString('ja-JP') + '円</span></p>' +
             '<dl class="p-card-spec">' +
               '<div><dt>面積</dt><dd>' + p.areaTsubo.toFixed(1) + '坪</dd></div>' +
               '<div><dt>階数</dt><dd>' + escapeHtml(p.floor) + '</dd></div>' +
-              '<div><dt>入居</dt><dd>' + escapeHtml(p.availableFrom) + '</dd></div>' +
+              (sale
+                ? '<div><dt>表面利回り</dt><dd>' + formatYield(p.yieldRate) + '</dd></div>'
+                : '<div><dt>入居</dt><dd>' + escapeHtml(p.availableFrom) + '</dd></div>') +
             '</dl>' +
             '<ul class="p-card-tags">' + p.features.slice(0, 3).map(function (f) {
               return '<li>' + escapeHtml(f) + '</li>';
@@ -412,8 +460,12 @@
       var v = params.get(k);
       return v === null || v === '' ? null : Number(v);
     };
+    var deal = params.get('deal');
     return {
+      deal: deal === 'sale' ? 'sale' : 'rent',   /* 既定は賃貸 */
       keyword: params.get('q') || '',
+      priceMin: num('priceMin'),
+      priceMax: num('priceMax'),
       types: multi('type'),
       areas: multi('area'),
       features: multi('feature'),
@@ -430,13 +482,14 @@
 
   function buildQuery(c) {
     var params = new URLSearchParams();
+    if (c.deal === 'sale') params.set('deal', 'sale');
     if (c.keyword) params.set('q', c.keyword);
     ['types:type', 'areas:area', 'features:feature', 'status:status'].forEach(function (pair) {
       var parts = pair.split(':');
       var arr = c[parts[0]];
       if (arr && arr.length) params.set(parts[1], arr.join(','));
     });
-    ['rentMin', 'rentMax', 'tsuboMin', 'tsuboMax', 'walk'].forEach(function (k) {
+    ['rentMin', 'rentMax', 'priceMin', 'priceMax', 'tsuboMin', 'tsuboMax', 'walk'].forEach(function (k) {
       if (c[k] != null && c[k] !== '') params.set(k, c[k]);
     });
     if (c.sort && c.sort !== 'new') params.set('sort', c.sort);
@@ -447,6 +500,15 @@
   global.Portal = {
     data: DATA,
     TYPE_LABEL: TYPE_LABEL,
+    DEAL_LABEL: DEAL_LABEL,
+    DEAL_CONFIG: DEAL_CONFIG,
+    dealOf: dealOf,
+    dealConfig: dealConfig,
+    isSale: isSale,
+    dealBadge: dealBadge,
+    formatPrice: formatPrice,
+    formatAmount: formatAmount,
+    formatYield: formatYield,
     STATUS_LABEL: STATUS_LABEL,
     NEW_DAYS: NEW_DAYS,
     isNew: isNew,

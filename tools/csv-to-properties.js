@@ -82,6 +82,7 @@ function renderProperty(p) {
   lines.push('    {');
   lines.push('      id: ' + q(p.id) + ',');
   lines.push('      title: ' + q(p.title) + ',');
+  lines.push('      deal: ' + q(p.deal) + ',');
   lines.push('      type: ' + q(p.type) + ',');
   lines.push('      status: ' + q(p.status) + ',');
   lines.push('      ward: ' + q(p.ward) + ',');
@@ -95,10 +96,13 @@ function renderProperty(p) {
   } else {
     lines.push('      access: [],');
   }
-  lines.push('      rent: ' + p.rent + ',');
-  lines.push('      managementFee: ' + p.managementFee + ',');
-  lines.push('      deposit: ' + p.deposit + ',');
-  lines.push('      keyMoney: ' + p.keyMoney + ',');
+  lines.push('      rent: ' + p.rent + ', managementFee: ' + p.managementFee +
+    ', deposit: ' + p.deposit + ', keyMoney: ' + p.keyMoney + ',');
+  if (p.deal === 'sale') {
+    lines.push('      price: ' + p.price + ',');
+    lines.push('      yieldRate: ' + p.yieldRate + ',');
+    lines.push('      tenure: ' + q(p.tenure) + ',');
+  }
   lines.push('      areaTsubo: ' + p.areaTsubo + ',');
   lines.push('      floor: ' + q(p.floor) + ',');
   lines.push('      floorsTotal: ' + p.floorsTotal + ',');
@@ -156,7 +160,13 @@ const statusCount = properties.reduce(function (acc, p) {
   return acc;
 }, {});
 
+const dealCount = properties.reduce(function (acc, p) {
+  acc[p.deal] = (acc[p.deal] || 0) + 1;
+  return acc;
+}, {});
+
 console.log('data/properties.js を更新しました: ' + properties.length + '件' +
+  '（賃貸 ' + (dealCount.rent || 0) + '／売買 ' + (dealCount.sale || 0) + '）' +
   '（募集中 ' + (statusCount.available || 0) +
   '／商談中 ' + (statusCount.negotiating || 0) +
   '／成約済 ' + (statusCount.closed || 0) + '）');

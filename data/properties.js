@@ -10,6 +10,11 @@
 (function (global) {
   'use strict';
 
+  var DEAL_TYPES = [
+    { value: 'rent', label: '賃貸' },
+    { value: 'sale', label: '売買' }
+  ];
+
   var PROPERTY_TYPES = [
     { value: 'shop', label: '店舗' },
     { value: 'office', label: 'オフィス' },
@@ -36,6 +41,7 @@
     {
       id: 'CMP-1001',
       title: '神田三崎町 1階路面店舗（居抜き）',
+      deal: 'rent',
       type: 'shop',
       status: 'available',
       ward: '千代田区',
@@ -44,10 +50,7 @@
         { line: 'JR中央・総武線', station: '水道橋', walk: 3 },
         { line: '都営三田線', station: '水道橋', walk: 5 }
       ],
-      rent: 480000,
-      managementFee: 35000,
-      deposit: 10,
-      keyMoney: 0,
+      rent: 480000, managementFee: 35000, deposit: 10, keyMoney: 0,
       areaTsubo: 22.4,
       floor: '1F',
       floorsTotal: 8,
@@ -62,6 +65,7 @@
     {
       id: 'CMP-1002',
       title: '丸の内 ハイグレードオフィス 6F',
+      deal: 'rent',
       type: 'office',
       status: 'available',
       ward: '千代田区',
@@ -70,10 +74,7 @@
         { line: 'JR各線', station: '東京', walk: 4 },
         { line: '東京メトロ千代田線', station: '二重橋前', walk: 2 }
       ],
-      rent: 3850000,
-      managementFee: 0,
-      deposit: 12,
-      keyMoney: 0,
+      rent: 3850000, managementFee: 0, deposit: 12, keyMoney: 0,
       areaTsubo: 110,
       floor: '6F',
       floorsTotal: 22,
@@ -88,6 +89,7 @@
     {
       id: 'CMP-1003',
       title: '銀座並木通り 2F 路面近接店舗',
+      deal: 'rent',
       type: 'shop',
       status: 'negotiating',
       ward: '中央区',
@@ -96,10 +98,7 @@
         { line: '東京メトロ銀座線', station: '銀座', walk: 2 },
         { line: 'JR山手線', station: '有楽町', walk: 7 }
       ],
-      rent: 1650000,
-      managementFee: 120000,
-      deposit: 12,
-      keyMoney: 0,
+      rent: 1650000, managementFee: 120000, deposit: 12, keyMoney: 0,
       areaTsubo: 34.8,
       floor: '2F',
       floorsTotal: 9,
@@ -114,6 +113,7 @@
     {
       id: 'CMP-1004',
       title: '西新宿 セットアップオフィス 11F',
+      deal: 'rent',
       type: 'office',
       status: 'available',
       ward: '新宿区',
@@ -122,10 +122,7 @@
         { line: '都営大江戸線', station: '都庁前', walk: 4 },
         { line: 'JR各線', station: '新宿', walk: 9 }
       ],
-      rent: 1420000,
-      managementFee: 96000,
-      deposit: 10,
-      keyMoney: 0,
+      rent: 1420000, managementFee: 96000, deposit: 10, keyMoney: 0,
       areaTsubo: 58.2,
       floor: '11F',
       floorsTotal: 20,
@@ -140,6 +137,7 @@
     {
       id: 'CMP-1005',
       title: '青山通り 路面区画（スケルトン）',
+      deal: 'rent',
       type: 'shop',
       status: 'available',
       ward: '港区',
@@ -148,10 +146,7 @@
         { line: '東京メトロ銀座線', station: '表参道', walk: 3 },
         { line: '東京メトロ半蔵門線', station: '表参道', walk: 3 }
       ],
-      rent: 2200000,
-      managementFee: 150000,
-      deposit: 12,
-      keyMoney: 2,
+      rent: 2200000, managementFee: 150000, deposit: 12, keyMoney: 2,
       areaTsubo: 41.5,
       floor: '1F',
       floorsTotal: 5,
@@ -166,6 +161,7 @@
     {
       id: 'CMP-1006',
       title: '渋谷宮益坂 飲食居抜き 地下1F',
+      deal: 'rent',
       type: 'shop',
       status: 'available',
       ward: '渋谷区',
@@ -174,10 +170,7 @@
         { line: 'JR各線', station: '渋谷', walk: 5 },
         { line: '東京メトロ銀座線', station: '渋谷', walk: 4 }
       ],
-      rent: 620000,
-      managementFee: 40000,
-      deposit: 10,
-      keyMoney: 0,
+      rent: 620000, managementFee: 40000, deposit: 10, keyMoney: 0,
       areaTsubo: 28,
       floor: 'B1F',
       floorsTotal: 6,
@@ -192,6 +185,7 @@
     {
       id: 'CMP-1007',
       title: '五反田 バックオフィス向け 8F',
+      deal: 'rent',
       type: 'office',
       status: 'available',
       ward: '品川区',
@@ -200,10 +194,7 @@
         { line: 'JR山手線', station: '五反田', walk: 6 },
         { line: '東急池上線', station: '大崎広小路', walk: 4 }
       ],
-      rent: 780000,
-      managementFee: 62000,
-      deposit: 10,
-      keyMoney: 0,
+      rent: 780000, managementFee: 62000, deposit: 10, keyMoney: 0,
       areaTsubo: 46,
       floor: '8F',
       floorsTotal: 10,
@@ -218,6 +209,7 @@
     {
       id: 'CMP-1008',
       title: '江東区新木場 物流倉庫（低温対応）',
+      deal: 'rent',
       type: 'warehouse',
       status: 'available',
       ward: '江東区',
@@ -225,10 +217,7 @@
       access: [
         { line: 'JR京葉線', station: '新木場', walk: 12 }
       ],
-      rent: 2850000,
-      managementFee: 0,
-      deposit: 6,
-      keyMoney: 0,
+      rent: 2850000, managementFee: 0, deposit: 6, keyMoney: 0,
       areaTsubo: 310,
       floor: '1F',
       floorsTotal: 3,
@@ -243,6 +232,7 @@
     {
       id: 'CMP-1009',
       title: '池袋東口 2F 物販・サービス区画',
+      deal: 'rent',
       type: 'shop',
       status: 'available',
       ward: '豊島区',
@@ -251,10 +241,7 @@
         { line: 'JR各線', station: '池袋', walk: 3 },
         { line: '東京メトロ有楽町線', station: '東池袋', walk: 6 }
       ],
-      rent: 890000,
-      managementFee: 70000,
-      deposit: 10,
-      keyMoney: 1,
+      rent: 890000, managementFee: 70000, deposit: 10, keyMoney: 1,
       areaTsubo: 37.2,
       floor: '2F',
       floorsTotal: 7,
@@ -269,6 +256,7 @@
     {
       id: 'CMP-1010',
       title: '浅草雷門通り 一棟ビル（4層）',
+      deal: 'rent',
       type: 'building',
       status: 'available',
       ward: '台東区',
@@ -277,10 +265,7 @@
         { line: '東京メトロ銀座線', station: '浅草', walk: 4 },
         { line: '都営浅草線', station: '浅草', walk: 5 }
       ],
-      rent: 2400000,
-      managementFee: 0,
-      deposit: 12,
-      keyMoney: 0,
+      rent: 2400000, managementFee: 0, deposit: 12, keyMoney: 0,
       areaTsubo: 96,
       floor: '1F-4F',
       floorsTotal: 4,
@@ -295,6 +280,7 @@
     {
       id: 'CMP-1011',
       title: '中目黒 高架下 小規模路面店舗',
+      deal: 'rent',
       type: 'shop',
       status: 'available',
       ward: '目黒区',
@@ -303,10 +289,7 @@
         { line: '東急東横線', station: '中目黒', walk: 2 },
         { line: '東京メトロ日比谷線', station: '中目黒', walk: 2 }
       ],
-      rent: 385000,
-      managementFee: 25000,
-      deposit: 10,
-      keyMoney: 0,
+      rent: 385000, managementFee: 25000, deposit: 10, keyMoney: 0,
       areaTsubo: 14.6,
       floor: '1F',
       floorsTotal: 1,
@@ -321,6 +304,7 @@
     {
       id: 'CMP-1012',
       title: '三軒茶屋 2F スクール・サロン向け',
+      deal: 'rent',
       type: 'shop',
       status: 'closed',
       ward: '世田谷区',
@@ -328,10 +312,7 @@
       access: [
         { line: '東急田園都市線', station: '三軒茶屋', walk: 4 }
       ],
-      rent: 320000,
-      managementFee: 20000,
-      deposit: 8,
-      keyMoney: 0,
+      rent: 320000, managementFee: 20000, deposit: 8, keyMoney: 0,
       areaTsubo: 19.8,
       floor: '2F',
       floorsTotal: 5,
@@ -346,6 +327,7 @@
     {
       id: 'CMP-1013',
       title: '日本橋室町 オフィス 4F（分割可）',
+      deal: 'rent',
       type: 'office',
       status: 'available',
       ward: '中央区',
@@ -354,10 +336,7 @@
         { line: '東京メトロ銀座線', station: '三越前', walk: 3 },
         { line: 'JR総武快速線', station: '新日本橋', walk: 4 }
       ],
-      rent: 1180000,
-      managementFee: 88000,
-      deposit: 12,
-      keyMoney: 0,
+      rent: 1180000, managementFee: 88000, deposit: 12, keyMoney: 0,
       areaTsubo: 52.5,
       floor: '4F',
       floorsTotal: 11,
@@ -372,6 +351,7 @@
     {
       id: 'CMP-1014',
       title: '錦糸町 大型飲食区画 1F・B1F',
+      deal: 'rent',
       type: 'shop',
       status: 'negotiating',
       ward: '墨田区',
@@ -380,10 +360,7 @@
         { line: 'JR総武線', station: '錦糸町', walk: 3 },
         { line: '東京メトロ半蔵門線', station: '錦糸町', walk: 5 }
       ],
-      rent: 1250000,
-      managementFee: 90000,
-      deposit: 10,
-      keyMoney: 0,
+      rent: 1250000, managementFee: 90000, deposit: 10, keyMoney: 0,
       areaTsubo: 68,
       floor: '1F・B1F',
       floorsTotal: 6,
@@ -398,6 +375,7 @@
     {
       id: 'CMP-1015',
       title: '大井町 事業用地（約180坪）',
+      deal: 'rent',
       type: 'land',
       status: 'available',
       ward: '品川区',
@@ -405,10 +383,7 @@
       access: [
         { line: 'JR京浜東北線', station: '大井町', walk: 8 }
       ],
-      rent: 1450000,
-      managementFee: 0,
-      deposit: 6,
-      keyMoney: 0,
+      rent: 1450000, managementFee: 0, deposit: 6, keyMoney: 0,
       areaTsubo: 182,
       floor: '—',
       floorsTotal: 0,
@@ -423,6 +398,7 @@
     {
       id: 'CMP-1016',
       title: '恵比寿 デザイナーズオフィス 3F',
+      deal: 'rent',
       type: 'office',
       status: 'available',
       ward: '渋谷区',
@@ -431,10 +407,7 @@
         { line: 'JR山手線', station: '恵比寿', walk: 4 },
         { line: '東京メトロ日比谷線', station: '恵比寿', walk: 5 }
       ],
-      rent: 940000,
-      managementFee: 60000,
-      deposit: 10,
-      keyMoney: 0,
+      rent: 940000, managementFee: 60000, deposit: 10, keyMoney: 0,
       areaTsubo: 38.4,
       floor: '3F',
       floorsTotal: 6,
@@ -449,6 +422,7 @@
     {
       id: 'CMP-1017',
       title: '田町 ロードサイド倉庫兼事務所',
+      deal: 'rent',
       type: 'warehouse',
       status: 'available',
       ward: '港区',
@@ -456,10 +430,7 @@
       access: [
         { line: 'JR山手線', station: '田町', walk: 11 }
       ],
-      rent: 1380000,
-      managementFee: 0,
-      deposit: 6,
-      keyMoney: 0,
+      rent: 1380000, managementFee: 0, deposit: 6, keyMoney: 0,
       areaTsubo: 120,
       floor: '1F・2F',
       floorsTotal: 2,
@@ -474,6 +445,7 @@
     {
       id: 'CMP-1018',
       title: '神保町 古書店街 1F小型区画',
+      deal: 'rent',
       type: 'shop',
       status: 'available',
       ward: '千代田区',
@@ -482,10 +454,7 @@
         { line: '都営三田線', station: '神保町', walk: 3 },
         { line: '東京メトロ半蔵門線', station: '神保町', walk: 3 }
       ],
-      rent: 265000,
-      managementFee: 18000,
-      deposit: 10,
-      keyMoney: 0,
+      rent: 265000, managementFee: 18000, deposit: 10, keyMoney: 0,
       areaTsubo: 11.2,
       floor: '1F',
       floorsTotal: 5,
@@ -500,6 +469,7 @@
     {
       id: 'CMP-1019',
       title: '新橋 飲食ビル 3F 居抜き',
+      deal: 'rent',
       type: 'shop',
       status: 'closed',
       ward: '港区',
@@ -508,10 +478,7 @@
         { line: 'JR各線', station: '新橋', walk: 4 },
         { line: '都営浅草線', station: '新橋', walk: 3 }
       ],
-      rent: 430000,
-      managementFee: 30000,
-      deposit: 10,
-      keyMoney: 0,
+      rent: 430000, managementFee: 30000, deposit: 10, keyMoney: 0,
       areaTsubo: 24,
       floor: '3F',
       floorsTotal: 8,
@@ -526,6 +493,7 @@
     {
       id: 'CMP-1020',
       title: '豊洲 大型オフィス ワンフロア',
+      deal: 'rent',
       type: 'office',
       status: 'available',
       ward: '江東区',
@@ -534,10 +502,7 @@
         { line: '東京メトロ有楽町線', station: '豊洲', walk: 5 },
         { line: 'ゆりかもめ', station: '豊洲', walk: 5 }
       ],
-      rent: 4200000,
-      managementFee: 0,
-      deposit: 12,
-      keyMoney: 0,
+      rent: 4200000, managementFee: 0, deposit: 12, keyMoney: 0,
       areaTsubo: 240,
       floor: '14F',
       floorsTotal: 24,
@@ -552,6 +517,7 @@
     {
       id: 'CMP-1021',
       title: '下北沢 2F カフェ居抜き',
+      deal: 'rent',
       type: 'shop',
       status: 'available',
       ward: '世田谷区',
@@ -560,10 +526,7 @@
         { line: '京王井の頭線', station: '下北沢', walk: 3 },
         { line: '小田急線', station: '下北沢', walk: 4 }
       ],
-      rent: 298000,
-      managementFee: 22000,
-      deposit: 8,
-      keyMoney: 0,
+      rent: 298000, managementFee: 22000, deposit: 8, keyMoney: 0,
       areaTsubo: 17.5,
       floor: '2F',
       floorsTotal: 4,
@@ -578,6 +541,7 @@
     {
       id: 'CMP-1022',
       title: '押上 一棟ビル（テナント付き）',
+      deal: 'rent',
       type: 'building',
       status: 'available',
       ward: '墨田区',
@@ -585,10 +549,7 @@
       access: [
         { line: '東京メトロ半蔵門線', station: '押上', walk: 6 }
       ],
-      rent: 1780000,
-      managementFee: 0,
-      deposit: 10,
-      keyMoney: 0,
+      rent: 1780000, managementFee: 0, deposit: 10, keyMoney: 0,
       areaTsubo: 88,
       floor: '1F-5F',
       floorsTotal: 5,
@@ -603,6 +564,7 @@
     {
       id: 'CMP-1023',
       title: '高田馬場 スクール向け 3F',
+      deal: 'rent',
       type: 'office',
       status: 'available',
       ward: '新宿区',
@@ -611,10 +573,7 @@
         { line: 'JR山手線', station: '高田馬場', walk: 5 },
         { line: '西武新宿線', station: '高田馬場', walk: 5 }
       ],
-      rent: 520000,
-      managementFee: 38000,
-      deposit: 10,
-      keyMoney: 0,
+      rent: 520000, managementFee: 38000, deposit: 10, keyMoney: 0,
       areaTsubo: 32,
       floor: '3F',
       floorsTotal: 7,
@@ -629,6 +588,7 @@
     {
       id: 'CMP-1024',
       title: '築地 生鮮対応 1F区画',
+      deal: 'rent',
       type: 'shop',
       status: 'available',
       ward: '中央区',
@@ -637,10 +597,7 @@
         { line: '東京メトロ日比谷線', station: '築地', walk: 7 },
         { line: '都営大江戸線', station: '築地市場', walk: 5 }
       ],
-      rent: 560000,
-      managementFee: 42000,
-      deposit: 10,
-      keyMoney: 0,
+      rent: 560000, managementFee: 42000, deposit: 10, keyMoney: 0,
       areaTsubo: 26.3,
       floor: '1F',
       floorsTotal: 6,
@@ -651,6 +608,270 @@
       availableFrom: '即入居可',
       updatedAt: '2026-07-27',
       description: '築地エリアの1階路面区画です。給排水・グリストラップ完備で生鮮を扱う業態にも対応。観光需要と近隣オフィス需要の両方を取り込める立地です。'
+    },
+    {
+      id: 'CMP-2001',
+      title: '神田錦町 一棟オフィスビル（満室稼働中）',
+      deal: 'sale',
+      type: 'building',
+      status: 'available',
+      ward: '千代田区',
+      address: '東京都千代田区神田錦町二丁目',
+      access: [
+        { line: '東京メトロ半蔵門線', station: '神保町', walk: 5 },
+        { line: '都営新宿線', station: '小川町', walk: 6 }
+      ],
+      rent: 0, managementFee: 0, deposit: 0, keyMoney: 0,
+      price: 980000000,
+      yieldRate: 4.2,
+      tenure: '所有権',
+      areaTsubo: 420,
+      floor: '1F-8F',
+      floorsTotal: 8,
+      builtYear: 2007,
+      structure: 'SRC造',
+      features: ['駅徒歩5分以内', 'エレベーターあり', '24時間利用可'],
+      usage: ['事務所', '店舗'],
+      availableFrom: '相談',
+      updatedAt: '2026-07-31',
+      description: '神保町・小川町の2駅が使える立地の一棟オフィスビルです。現況は満室稼働中で、テナントは事務所5社と1階店舗1店。長期入居のテナントが中心で稼働は安定しています。レントロール・修繕履歴は個別にご開示します。'
+    },
+    {
+      id: 'CMP-2002',
+      title: '日本橋 区分オフィス 7F（投資用）',
+      deal: 'sale',
+      type: 'office',
+      status: 'available',
+      ward: '中央区',
+      address: '東京都中央区日本橋本町三丁目',
+      access: [
+        { line: 'JR総武快速線', station: '新日本橋', walk: 3 },
+        { line: '東京メトロ銀座線', station: '三越前', walk: 5 }
+      ],
+      rent: 0, managementFee: 0, deposit: 0, keyMoney: 0,
+      price: 168000000,
+      yieldRate: 4.6,
+      tenure: '所有権',
+      areaTsubo: 48.5,
+      floor: '7F',
+      floorsTotal: 12,
+      builtYear: 2012,
+      structure: 'S造',
+      features: ['駅徒歩5分以内', 'エレベーターあり', '空調更新済'],
+      usage: ['事務所'],
+      availableFrom: '2026年10月',
+      updatedAt: '2026-07-28',
+      description: '日本橋エリアの区分所有オフィスです。現テナントは賃貸借契約継続中で、オーナーチェンジでの引渡しとなります。管理体制の整ったビルで、初めての区分投資にも適した規模です。'
+    },
+    {
+      id: 'CMP-2003',
+      title: '表参道 路面店舗ビル（3層）',
+      deal: 'sale',
+      type: 'building',
+      status: 'available',
+      ward: '港区',
+      address: '東京都港区南青山五丁目',
+      access: [
+        { line: '東京メトロ銀座線', station: '表参道', walk: 4 }
+      ],
+      rent: 0, managementFee: 0, deposit: 0, keyMoney: 0,
+      price: 1450000000,
+      yieldRate: 3.4,
+      tenure: '所有権',
+      areaTsubo: 186,
+      floor: '1F-3F',
+      floorsTotal: 3,
+      builtYear: 2014,
+      structure: 'RC造',
+      features: ['1階路面', '駅徒歩5分以内', '看板設置可'],
+      usage: ['店舗', '物販'],
+      availableFrom: '相談',
+      updatedAt: '2026-07-25',
+      description: '南青山の商業集積エリアに立地する3層の店舗ビルです。1階は路面店として視認性が高く、アパレル・飲食いずれの業態でも高い集客が見込めます。希少性の高い立地のため利回りは低めですが、資産性を重視する取得に向きます。'
+    },
+    {
+      id: 'CMP-2004',
+      title: '大森 事業用地（約240坪・建築条件なし）',
+      deal: 'sale',
+      type: 'land',
+      status: 'available',
+      ward: '品川区',
+      address: '東京都品川区南大井四丁目',
+      access: [
+        { line: 'JR京浜東北線', station: '大森', walk: 9 }
+      ],
+      rent: 0, managementFee: 0, deposit: 0, keyMoney: 0,
+      price: 620000000,
+      yieldRate: 0,
+      tenure: '所有権',
+      areaTsubo: 240,
+      floor: '—',
+      floorsTotal: 0,
+      builtYear: null,
+      structure: '更地',
+      features: ['駐車場あり'],
+      usage: ['事業用建物', '店舗', '倉庫'],
+      availableFrom: '即引渡し可',
+      updatedAt: '2026-07-22',
+      description: '幹線道路に接道する約240坪の事業用地です。建築条件はなく、ロードサイド店舗・物流拠点・事業所いずれの用途にも対応できます。整形地で分割検討も可能です。'
+    },
+    {
+      id: 'CMP-2005',
+      title: '錦糸町 一棟店舗ビル（テナント付き）',
+      deal: 'sale',
+      type: 'building',
+      status: 'negotiating',
+      ward: '墨田区',
+      address: '東京都墨田区江東橋四丁目',
+      access: [
+        { line: 'JR総武線', station: '錦糸町', walk: 5 }
+      ],
+      rent: 0, managementFee: 0, deposit: 0, keyMoney: 0,
+      price: 445000000,
+      yieldRate: 6.8,
+      tenure: '所有権',
+      areaTsubo: 168,
+      floor: '1F-5F',
+      floorsTotal: 5,
+      builtYear: 1998,
+      structure: 'RC造',
+      features: ['1階路面', '飲食可', '深夜営業可', '駅徒歩5分以内'],
+      usage: ['飲食店', '店舗'],
+      availableFrom: '相談',
+      updatedAt: '2026-07-19',
+      description: '錦糸町駅南口の繁華街に立地する5層の店舗ビルです。飲食テナントが各階に入居しており、利回りは6%台後半。築年は経過していますが、外壁と屋上防水は改修済みです。'
+    },
+    {
+      id: 'CMP-2006',
+      title: '西新宿 区分オフィス 15F（自社利用可）',
+      deal: 'sale',
+      type: 'office',
+      status: 'available',
+      ward: '新宿区',
+      address: '東京都新宿区西新宿七丁目',
+      access: [
+        { line: 'JR各線', station: '新宿', walk: 8 },
+        { line: '東京メトロ丸ノ内線', station: '西新宿', walk: 4 }
+      ],
+      rent: 0, managementFee: 0, deposit: 0, keyMoney: 0,
+      price: 232000000,
+      yieldRate: 4.1,
+      tenure: '所有権',
+      areaTsubo: 62,
+      floor: '15F',
+      floorsTotal: 21,
+      builtYear: 2010,
+      structure: 'S造',
+      features: ['駅徒歩5分以内', 'エレベーターあり', '24時間利用可', '空調更新済'],
+      usage: ['事務所'],
+      availableFrom: '即引渡し可',
+      updatedAt: '2026-07-16',
+      description: '空室での引渡しとなるため、自社オフィスとしての利用も投資用の賃貸運用も選べます。15階からの眺望が良く、採用面でも訴求しやすい物件です。'
+    },
+    {
+      id: 'CMP-2007',
+      title: '浅草 一棟ビル（インバウンド立地）',
+      deal: 'sale',
+      type: 'building',
+      status: 'available',
+      ward: '台東区',
+      address: '東京都台東区浅草二丁目',
+      access: [
+        { line: '東京メトロ銀座線', station: '浅草', walk: 6 },
+        { line: 'つくばエクスプレス', station: '浅草', walk: 4 }
+      ],
+      rent: 0, managementFee: 0, deposit: 0, keyMoney: 0,
+      price: 386000000,
+      yieldRate: 5.9,
+      tenure: '所有権',
+      areaTsubo: 132,
+      floor: '1F-4F',
+      floorsTotal: 4,
+      builtYear: 2004,
+      structure: 'RC造',
+      features: ['1階路面', '飲食可', '看板設置可'],
+      usage: ['店舗', '飲食店', '宿泊'],
+      availableFrom: '相談',
+      updatedAt: '2026-07-13',
+      description: '浅草寺周辺の観光動線上に立地する4層の一棟ビルです。物販・飲食に加え、宿泊業態への転用実績もあるエリアです。インバウンド需要の回復により周辺の店舗稼働は堅調に推移しています。'
+    },
+    {
+      id: 'CMP-2008',
+      title: '中目黒 店舗付き一棟（デザイナーズ）',
+      deal: 'sale',
+      type: 'building',
+      status: 'available',
+      ward: '目黒区',
+      address: '東京都目黒区青葉台一丁目',
+      access: [
+        { line: '東急東横線', station: '中目黒', walk: 7 }
+      ],
+      rent: 0, managementFee: 0, deposit: 0, keyMoney: 0,
+      price: 528000000,
+      yieldRate: 4.4,
+      tenure: '所有権',
+      areaTsubo: 148,
+      floor: '1F-4F',
+      floorsTotal: 4,
+      builtYear: 2019,
+      structure: 'RC造',
+      features: ['1階路面', '飲食可', 'エレベーターあり', '空調更新済'],
+      usage: ['店舗', '事務所'],
+      availableFrom: '相談',
+      updatedAt: '2026-07-10',
+      description: '築浅のデザイナーズ一棟ビルです。1階はカフェ、2階以上は事務所として稼働中。目黒川沿いの遊歩道に近く、感度の高い層が集まるエリアで、テナント募集にも困りにくい立地です。'
+    },
+    {
+      id: 'CMP-2009',
+      title: '新木場 倉庫（自社利用向け）',
+      deal: 'sale',
+      type: 'warehouse',
+      status: 'available',
+      ward: '江東区',
+      address: '東京都江東区新木場一丁目',
+      access: [
+        { line: 'JR京葉線', station: '新木場', walk: 15 }
+      ],
+      rent: 0, managementFee: 0, deposit: 0, keyMoney: 0,
+      price: 745000000,
+      yieldRate: 5.2,
+      tenure: '所有権',
+      areaTsubo: 380,
+      floor: '1F-2F',
+      floorsTotal: 2,
+      builtYear: 2006,
+      structure: 'S造',
+      features: ['24時間利用可', '駐車場あり'],
+      usage: ['倉庫', '軽作業', '事務所'],
+      availableFrom: '2026年12月',
+      updatedAt: '2026-07-06',
+      description: '湾岸エリアの倉庫です。1階は荷捌き・保管、2階は事務所として利用できます。大型車の接車が可能で、都心配送の拠点として自社取得を検討される事業者様に適します。'
+    },
+    {
+      id: 'CMP-2010',
+      title: '三軒茶屋 区分店舗 1F（オーナーチェンジ）',
+      deal: 'sale',
+      type: 'shop',
+      status: 'available',
+      ward: '世田谷区',
+      address: '東京都世田谷区三軒茶屋二丁目',
+      access: [
+        { line: '東急田園都市線', station: '三軒茶屋', walk: 5 }
+      ],
+      rent: 0, managementFee: 0, deposit: 0, keyMoney: 0,
+      price: 96000000,
+      yieldRate: 5.6,
+      tenure: '所有権',
+      areaTsubo: 24.5,
+      floor: '1F',
+      floorsTotal: 6,
+      builtYear: 2001,
+      structure: 'RC造',
+      features: ['1階路面', '飲食可', '駅徒歩5分以内', '看板設置可'],
+      usage: ['店舗', '飲食店'],
+      availableFrom: '相談',
+      updatedAt: '2026-07-03',
+      description: '三軒茶屋の商店街沿いにある1階の区分店舗です。飲食テナントが長期入居中で、オーナーチェンジでの引渡しとなります。1億円を下回る価格帯で、収益物件の入口として検討しやすい物件です。'
     }
   ];
   /* === PROPERTIES:END === */
@@ -668,11 +889,14 @@
       p.updatedAt = d.toISOString().slice(0, 10);
     }
     p.areaSqm = Math.round(p.areaTsubo * 3.30578 * 10) / 10;
-    p.tsuboUnitPrice = p.areaTsubo ? Math.round(p.rent / p.areaTsubo) : 0;
+    /* 賃貸は月額賃料、売買は販売価格を金額として扱う */
+    p.amount = p.deal === 'sale' ? p.price : p.rent;
+    p.tsuboUnitPrice = p.areaTsubo ? Math.round(p.amount / p.areaTsubo) : 0;
   });
 
   global.PORTAL_DATA = {
     properties: PROPERTIES,
+    deals: DEAL_TYPES,
     types: PROPERTY_TYPES,
     features: FEATURES,
     areas: AREAS
