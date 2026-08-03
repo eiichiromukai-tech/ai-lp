@@ -7,12 +7,16 @@
   var PER_PAGE = 9;
 
   var state = null;
+  var bound = false;
 
-  document.addEventListener('DOMContentLoaded', function () {
+  P.onReady('search', function () {
     state = P.parseQuery();
     buildCheckLists();
     syncFormFromState();
-    bindEvents();
+    if (!bound) {
+      bound = true;
+      bindEvents();
+    }
     render();
   });
 
@@ -159,11 +163,15 @@
       window.scrollTo({ top: document.querySelector('.results-head').offsetTop - 100, behavior: 'smooth' });
     });
 
-    window.addEventListener('popstate', function () {
-      state = P.parseQuery();
-      syncFormFromState();
-      render();
-    });
+    /* 戻る/進むでの状態復元。単一ファイルのプレビュー版では
+       ハッシュ遷移でもpopstateが発火するため、ルーター側に任せる。 */
+    if (!window.PORTAL_SPA) {
+      window.addEventListener('popstate', function () {
+        state = P.parseQuery();
+        syncFormFromState();
+        render();
+      });
+    }
   }
 
   function resetAll() {
@@ -259,9 +267,7 @@
   }
 
   function updateUrl() {
-    var qs = P.buildQuery(state);
-    var url = window.location.pathname + (qs ? '?' + qs : '');
-    window.history.replaceState(null, '', url);
+    P.writeQuery(P.buildQuery(state));
   }
 
   function debounce(fn, wait) {

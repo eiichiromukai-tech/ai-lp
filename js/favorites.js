@@ -4,10 +4,14 @@
 
   var P = window.Portal;
 
-  document.addEventListener('DOMContentLoaded', function () {
-    render();
-    document.addEventListener('favorites:changed', render);
+  var bound = false;
 
+  P.onReady('favorites', function () {
+    render();
+    if (bound) return;
+    bound = true;
+
+    document.addEventListener('favorites:changed', render);
     document.getElementById('fav-clear').addEventListener('click', function () {
       if (!window.confirm('お気に入りをすべて削除します。よろしいですか？')) return;
       P.getFavorites().slice().forEach(function (id) { P.toggleFavorite(id); });

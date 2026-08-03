@@ -5,14 +5,19 @@
   var P = window.Portal;
   var props = P.data.properties;
 
-  document.addEventListener('DOMContentLoaded', function () {
+  var bound = false;
+
+  P.onReady('home', function () {
     renderTypeGrid();
     renderAreaSelect();
     renderAreaGrid();
     renderFeatured();
     renderHistory();
     bindCountPreview();
-    document.addEventListener('favorites:changed', renderHistory);
+    if (!bound) {
+      bound = true;
+      document.addEventListener('favorites:changed', renderHistory);
+    }
   });
 
   /* 種別から探す */
@@ -45,6 +50,7 @@
   function renderAreaSelect() {
     var sel = document.getElementById('hs-area');
     if (!sel) return;
+    sel.innerHTML = '<option value="">すべてのエリア</option>';
     P.data.areas.forEach(function (a) {
       var n = props.filter(function (p) { return p.ward === a; }).length;
       if (!n) return;

@@ -4,8 +4,8 @@
 
   var P = window.Portal;
 
-  document.addEventListener('DOMContentLoaded', function () {
-    var id = new URLSearchParams(window.location.search).get('id');
+  P.onReady('detail', function () {
+    var id = P.currentParams().get('id');
     var p = id ? P.findById(id) : null;
     var root = document.getElementById('detail-root');
 

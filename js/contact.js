@@ -10,10 +10,15 @@
     { id: 'c-message', message: 'ご相談内容をご入力ください' }
   ];
 
-  document.addEventListener('DOMContentLoaded', function () {
+  var bound = false;
+
+  P.onReady('contact', function () {
     renderFavAttachment();
     prefillFromQuery();
-    bindForm();
+    if (!bound) {
+      bound = true;
+      bindForm();
+    }
   });
 
   /* お気に入り物件をお問い合わせに添付表示 */
@@ -34,7 +39,7 @@
 
   /* contact.html?type=shop&area=渋谷区 のような遷移に対応 */
   function prefillFromQuery() {
-    var params = new URLSearchParams(window.location.search);
+    var params = P.currentParams();
     var map = { type: 'c-type', area: 'c-area', budget: 'c-budget' };
     Object.keys(map).forEach(function (key) {
       var v = params.get(key);

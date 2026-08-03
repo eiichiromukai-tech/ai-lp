@@ -340,9 +340,39 @@
     if (year) year.textContent = String(new Date().getFullYear());
   }
 
-  /* ---------- クエリ文字列 ---------- */
+  /* ---------- クエリ文字列 ----------
+     単一ファイルのプレビュー版（window.PORTAL_SPA）ではハッシュ側の
+     クエリを参照する。通常のマルチページ構成では location.search。 */
+  function currentParams() {
+    if (global.PORTAL_SPA) {
+      var h = global.location.hash.replace(/^#/, '');
+      var i = h.indexOf('?');
+      return new URLSearchParams(i === -1 ? '' : h.slice(i + 1));
+    }
+    return new URLSearchParams(global.location.search);
+  }
+
+  function writeQuery(qs) {
+    if (global.PORTAL_SPA) {
+      var path = global.location.hash.replace(/^#/, '').split('?')[0] || '/';
+      global.history.replaceState(null, '', '#' + path + (qs ? '?' + qs : ''));
+    } else {
+      global.history.replaceState(null, '', global.location.pathname + (qs ? '?' + qs : ''));
+    }
+  }
+
+  /* ページ単位の初期化登録。プレビュー版ではルーター側から呼び出す。 */
+  function onReady(name, fn) {
+    if (global.PORTAL_SPA) {
+      global.PORTAL_INIT = global.PORTAL_INIT || {};
+      global.PORTAL_INIT[name] = fn;
+    } else {
+      document.addEventListener('DOMContentLoaded', fn);
+    }
+  }
+
   function parseQuery() {
-    var params = new URLSearchParams(global.location.search);
+    var params = currentParams();
     var multi = function (k) {
       var v = params.get(k);
       return v ? v.split(',').filter(Boolean) : [];
@@ -410,7 +440,10 @@
     updateFavoriteBadge: updateFavoriteBadge,
     initHeader: initHeader,
     parseQuery: parseQuery,
-    buildQuery: buildQuery
+    buildQuery: buildQuery,
+    currentParams: currentParams,
+    writeQuery: writeQuery,
+    onReady: onReady
   };
 
   document.addEventListener('DOMContentLoaded', function () {
