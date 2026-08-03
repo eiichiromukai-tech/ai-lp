@@ -99,7 +99,13 @@
       return {
         label: g.label,
         value: g.value,
-        areas: g.areas.map(function (a) { return { name: a, count: count(a) }; })
+        total: g.areas.reduce(function (n, a) { return n + count(a); }, 0),
+        sections: g.sections.map(function (sec) {
+          return {
+            label: g.sections.length > 1 ? sec.label : '',
+            areas: sec.areas.map(function (a) { return { name: a, count: count(a) }; })
+          };
+        })
       };
     });
   }
@@ -110,15 +116,17 @@
     if (!sel) return;
     sel.innerHTML = '<option value="">すべてのエリア</option>';
     groupsWithListings().forEach(function (g) {
-      var og = document.createElement('optgroup');
-      og.label = g.label;
-      g.areas.forEach(function (a) {
-        var opt = document.createElement('option');
-        opt.value = a.name;
-        opt.textContent = a.name + '（' + a.count + '件）';
-        og.appendChild(opt);
+      g.sections.forEach(function (sec) {
+        var og = document.createElement('optgroup');
+        og.label = sec.label ? g.label + '（' + sec.label + '）' : g.label;
+        sec.areas.forEach(function (a) {
+          var opt = document.createElement('option');
+          opt.value = a.name;
+          opt.textContent = a.name + '（' + a.count + '件）';
+          og.appendChild(opt);
+        });
+        sel.appendChild(og);
       });
-      sel.appendChild(og);
     });
   }
 
@@ -127,22 +135,24 @@
     var el = document.getElementById('area-groups');
     if (!el) return;
     el.innerHTML = groupsWithListings().map(function (g) {
-      var total = g.areas.reduce(function (n, a) { return n + a.count; }, 0);
       return '<div class="area-group">' +
         '<h3 class="area-group-title">' +
           '<a href="properties.html?' + dealParam() + 'pref=' + g.value + '">' +
-            P.escapeHtml(g.label) + '<span class="area-group-count">' + total + '件</span>' +
+            P.escapeHtml(g.label) + '<span class="area-group-count">' + g.total + '件</span>' +
           '</a>' +
         '</h3>' +
-        '<ul class="area-grid">' +
-          g.areas.map(function (a) {
-            return '<li class="area-item">' +
-              '<a href="properties.html?' + dealParam() + 'area=' + encodeURIComponent(a.name) + '">' +
-                '<span class="area-name">' + P.escapeHtml(a.name) + '</span>' +
-                '<span class="area-count">' + a.count + '件</span>' +
-              '</a></li>';
-          }).join('') +
-        '</ul>' +
+        g.sections.map(function (sec) {
+          return (sec.label ? '<p class="area-sub-label">' + P.escapeHtml(sec.label) + '</p>' : '') +
+            '<ul class="area-grid">' +
+              sec.areas.map(function (a) {
+                return '<li class="area-item">' +
+                  '<a href="properties.html?' + dealParam() + 'area=' + encodeURIComponent(a.name) + '">' +
+                    '<span class="area-name">' + P.escapeHtml(a.name) + '</span>' +
+                    '<span class="area-count">' + a.count + '件</span>' +
+                  '</a></li>';
+              }).join('') +
+            '</ul>';
+        }).join('') +
       '</div>';
     }).join('');
   }

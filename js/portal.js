@@ -29,7 +29,7 @@
 
   /* ---------- 都県（一都三県） ---------- */
   var PREFECTURES = DATA.prefectures || [];
-  var AREA_MASTER = DATA.areaMaster || {};
+  var AREA_SECTIONS = DATA.areaSections || {};
   var AREA_PREF = DATA.areaPref || {};
 
   var PREF_LABEL = {};
@@ -39,14 +39,24 @@
   function prefOf(p) { return p.pref || AREA_PREF[p.ward] || ''; }
   function prefLabel(value) { return PREF_LABEL[value] || ''; }
 
-  /* 市区の一覧を都県ごとにまとめる。keep(市区名) が false を返すものは除外し、
-     残りが1つもない都県はグループごと落とす。 */
+  /* 市区の一覧を都県ごとにまとめる。keep(市区名, 都県) が false を返すものは除外し、
+     残りが1つもない小見出し／都県は落とす。
+     戻り値: [{ value, label, sections: [{label, areas}], areas }] */
   function areaGroups(keep) {
     return PREFECTURES.map(function (pref) {
-      var areas = (AREA_MASTER[pref.value] || []).filter(function (a) {
-        return keep ? keep(a, pref.value) : true;
-      });
-      return { value: pref.value, label: pref.label, areas: areas };
+      var sections = (AREA_SECTIONS[pref.value] || []).map(function (sec) {
+        return {
+          label: sec.label,
+          areas: sec.areas.filter(function (a) { return keep ? keep(a, pref.value) : true; })
+        };
+      }).filter(function (sec) { return sec.areas.length > 0; });
+
+      return {
+        value: pref.value,
+        label: pref.label,
+        sections: sections,
+        areas: sections.reduce(function (list, sec) { return list.concat(sec.areas); }, [])
+      };
     }).filter(function (g) { return g.areas.length > 0; });
   }
 

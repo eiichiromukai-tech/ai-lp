@@ -28,8 +28,9 @@
     '駐車場あり', '駅徒歩5分以内', 'エレベーターあり', '空調更新済', '看板設置可', 'セットアップ'
   ];
 
-  /* 対応エリアは一都三県。東京都は23区、3県は事業用不動産の需要がある主要市。
-     市区を増やすときは AREA_MASTER の該当する都県に追加してください。 */
+  /* 対応エリアは一都三県。東京都は23区と26市のすべて、3県は事業用不動産の
+     需要がある主要市。市区を増やすときは AREA_MASTER の該当する都県に
+     追加してください（市区名から都県が自動で決まります）。 */
   var PREFECTURES = [
     { value: 'tokyo', label: '東京都' },
     { value: 'kanagawa', label: '神奈川県' },
@@ -37,12 +38,22 @@
     { value: 'chiba', label: '千葉県' }
   ];
 
+  /* 値は市区名の配列。東京都のように数が多い都県は
+     { 小見出し: [市区名…] } と書くと、絞り込みで小見出しごとに分かれます。 */
   var AREA_MASTER = {
-    tokyo: [
-      '千代田区', '中央区', '港区', '新宿区', '文京区', '台東区', '墨田区', '江東区',
-      '品川区', '目黒区', '大田区', '世田谷区', '渋谷区', '中野区', '杉並区', '豊島区',
-      '北区', '荒川区', '板橋区', '練馬区', '足立区', '葛飾区', '江戸川区'
-    ],
+    tokyo: {
+      '23区': [
+        '千代田区', '中央区', '港区', '新宿区', '文京区', '台東区', '墨田区', '江東区',
+        '品川区', '目黒区', '大田区', '世田谷区', '渋谷区', '中野区', '杉並区', '豊島区',
+        '北区', '荒川区', '板橋区', '練馬区', '足立区', '葛飾区', '江戸川区'
+      ],
+      '多摩・市部': [
+        '八王子市', '立川市', '武蔵野市', '三鷹市', '青梅市', '府中市', '昭島市', '調布市',
+        '町田市', '小金井市', '小平市', '日野市', '東村山市', '国分寺市', '国立市', '福生市',
+        '狛江市', '東大和市', '清瀬市', '東久留米市', '武蔵村山市', '多摩市', '稲城市',
+        '羽村市', 'あきる野市', '西東京市'
+      ]
+    },
     kanagawa: [
       '横浜市', '川崎市', '相模原市', '藤沢市', '厚木市', '海老名市',
       '大和市', '平塚市', '茅ヶ崎市', '鎌倉市', '横須賀市', '小田原市'
@@ -57,15 +68,28 @@
     ]
   };
 
-  /* 市区名 → 都県 の逆引き。物件データの pref はここから補完します */
+  /* 配列でも { 小見出し: [...] } でも受け取れるように [{label, areas}] へ揃える */
+  function toSections(value) {
+    if (Array.isArray(value)) return [{ label: '', areas: value }];
+    return Object.keys(value).map(function (k) { return { label: k, areas: value[k] }; });
+  }
+
+  /* 都県 → 小見出しの一覧、市区名 → 都県 の逆引きをまとめて作る */
+  var AREA_SECTIONS = {};
   var AREA_PREF = {};
   PREFECTURES.forEach(function (pref) {
-    (AREA_MASTER[pref.value] || []).forEach(function (name) { AREA_PREF[name] = pref.value; });
+    var sections = toSections(AREA_MASTER[pref.value] || []);
+    AREA_SECTIONS[pref.value] = sections;
+    sections.forEach(function (sec) {
+      sec.areas.forEach(function (name) { AREA_PREF[name] = pref.value; });
+    });
   });
 
-  /* 従来どおりの市区名のフラットな一覧（掲載順は都県順） */
+  /* 市区名のフラットな一覧（掲載順は都県順） */
   var AREAS = PREFECTURES.reduce(function (acc, pref) {
-    return acc.concat(AREA_MASTER[pref.value] || []);
+    return AREA_SECTIONS[pref.value].reduce(function (list, sec) {
+      return list.concat(sec.areas);
+    }, acc);
   }, []);
 
   /* === PROPERTIES:BEGIN =========================================
@@ -1202,6 +1226,176 @@
       availableFrom: '2026年11月',
       updatedAt: '2026-07-20',
       description: '圏央道相模原愛川ICに近い倉庫です。首都圏全域への配送拠点として使いやすく、自社取得のほか賃貸運用も想定できます。天井高と床荷重は資料でご確認ください。'
+    },
+    {
+      id: 'CMP-1033',
+      title: '立川駅北口 1階路面店舗（飲食可）',
+      deal: 'rent',
+      type: 'shop',
+      status: 'available',
+      ward: '立川市',
+      address: '東京都立川市曙町二丁目',
+      access: [
+        { line: 'JR中央線', station: '立川', walk: 4 },
+        { line: '多摩都市モノレール', station: '立川北', walk: 3 }
+      ],
+      rent: 680000, managementFee: 48000, deposit: 10, keyMoney: 0,
+      areaTsubo: 29.5,
+      floor: '1F',
+      floorsTotal: 7,
+      builtYear: 2009,
+      structure: 'SRC造',
+      features: ['1階路面', '飲食可', '駅徒歩5分以内', '看板設置可'],
+      usage: ['飲食店', '物販'],
+      availableFrom: '即入居可',
+      updatedAt: '2026-08-02',
+      description: '立川駅北口のサンサンロード沿いに面した1階路面店舗です。駅と大型商業施設をつなぐ動線上にあり、平日・休日ともに歩行者通行量が安定しています。多摩地区で最も商業集積が進んだエリアです。'
+    },
+    {
+      id: 'CMP-1034',
+      title: '吉祥寺 サンロード近接 店舗（居抜き）',
+      deal: 'rent',
+      type: 'shop',
+      status: 'available',
+      ward: '武蔵野市',
+      address: '東京都武蔵野市吉祥寺本町一丁目',
+      access: [
+        { line: 'JR中央線', station: '吉祥寺', walk: 4 },
+        { line: '京王井の頭線', station: '吉祥寺', walk: 4 }
+      ],
+      rent: 560000, managementFee: 40000, deposit: 10, keyMoney: 1,
+      areaTsubo: 21,
+      floor: '2F',
+      floorsTotal: 5,
+      builtYear: 2001,
+      structure: 'RC造',
+      features: ['居抜き', '飲食可', '駅徒歩5分以内'],
+      usage: ['飲食店', 'サービス'],
+      availableFrom: '即入居可',
+      updatedAt: '2026-07-30',
+      description: '吉祥寺サンロード商店街からすぐの2階店舗です。カフェ業態の居抜きで、厨房設備と客席をそのまま引き継げます。住みたい街ランキング上位の街で、平日夜と休日の集客が見込めます。'
+    },
+    {
+      id: 'CMP-1035',
+      title: '町田駅前 オフィス 5F（分割可）',
+      deal: 'rent',
+      type: 'office',
+      status: 'available',
+      ward: '町田市',
+      address: '東京都町田市原町田六丁目',
+      access: [
+        { line: 'JR横浜線', station: '町田', walk: 5 },
+        { line: '小田急小田原線', station: '町田', walk: 6 }
+      ],
+      rent: 420000, managementFee: 32000, deposit: 8, keyMoney: 0,
+      areaTsubo: 38,
+      floor: '5F',
+      floorsTotal: 9,
+      builtYear: 2006,
+      structure: 'S造',
+      features: ['駅徒歩5分以内', 'エレベーターあり', '空調更新済'],
+      usage: ['事務所'],
+      availableFrom: '2026年9月',
+      updatedAt: '2026-07-28',
+      description: '町田駅前のオフィスビル5階です。神奈川県北部と多摩地区の両方をカバーできる立地で、営業拠点に適します。半区画での分割賃貸も相談可能です。'
+    },
+    {
+      id: 'CMP-1036',
+      title: '八王子 倉庫（幹線道路沿い）',
+      deal: 'rent',
+      type: 'warehouse',
+      status: 'available',
+      ward: '八王子市',
+      address: '東京都八王子市石川町',
+      access: [
+        { line: 'JR八高線', station: '北八王子', walk: 14 }
+      ],
+      rent: 890000, managementFee: 0, deposit: 6, keyMoney: 0,
+      areaTsubo: 310,
+      floor: '1F-2F',
+      floorsTotal: 2,
+      builtYear: 2008,
+      structure: 'S造',
+      features: ['24時間利用可', '駐車場あり'],
+      usage: ['倉庫', '軽作業', '事務所'],
+      availableFrom: '即入居可',
+      updatedAt: '2026-07-25',
+      description: '国道16号に近い八王子の倉庫です。中央道八王子ICへのアクセスが良く、多摩地区・神奈川県北部への配送拠点として使えます。1階が保管・荷捌き、2階が事務所と休憩室です。'
+    },
+    {
+      id: 'CMP-1037',
+      title: '三鷹駅前 セットアップオフィス 4F',
+      deal: 'rent',
+      type: 'office',
+      status: 'negotiating',
+      ward: '三鷹市',
+      address: '東京都三鷹市下連雀三丁目',
+      access: [
+        { line: 'JR中央線', station: '三鷹', walk: 3 }
+      ],
+      rent: 365000, managementFee: 28000, deposit: 8, keyMoney: 0,
+      areaTsubo: 27.5,
+      floor: '4F',
+      floorsTotal: 8,
+      builtYear: 2014,
+      structure: 'S造',
+      features: ['セットアップ', '駅徒歩5分以内', 'エレベーターあり', '24時間利用可'],
+      usage: ['事務所'],
+      availableFrom: '相談',
+      updatedAt: '2026-07-22',
+      description: '三鷹駅南口すぐのセットアップオフィスです。会議室1室と執務席20席が施工済みで、内装工事なしで入居できます。新宿まで直通で、都心オフィスの分室としても検討しやすい規模です。'
+    },
+    {
+      id: 'CMP-2015',
+      title: '府中 一棟オフィスビル（駅近・満室）',
+      deal: 'sale',
+      type: 'building',
+      status: 'available',
+      ward: '府中市',
+      address: '東京都府中市宮西町一丁目',
+      access: [
+        { line: '京王線', station: '府中', walk: 4 }
+      ],
+      rent: 0, managementFee: 0, deposit: 0, keyMoney: 0,
+      price: 385000000,
+      yieldRate: 6.3,
+      tenure: '所有権',
+      areaTsubo: 168,
+      floor: '1F-5F',
+      floorsTotal: 5,
+      builtYear: 2002,
+      structure: 'RC造',
+      features: ['駅徒歩5分以内', 'エレベーターあり', '1階路面'],
+      usage: ['事務所', '店舗'],
+      availableFrom: '相談',
+      updatedAt: '2026-07-29',
+      description: '府中駅から徒歩4分の一棟オフィスビルです。1階は路面店舗、2階以上は事務所として満室稼働しています。多摩地区の行政・商業の中心で、テナント需要が安定したエリアです。'
+    },
+    {
+      id: 'CMP-2016',
+      title: '多摩 事業用地（約280坪・建築条件なし）',
+      deal: 'sale',
+      type: 'land',
+      status: 'available',
+      ward: '多摩市',
+      address: '東京都多摩市和田',
+      access: [
+        { line: '京王相模原線', station: '京王永山', walk: 18 }
+      ],
+      rent: 0, managementFee: 0, deposit: 0, keyMoney: 0,
+      price: 198000000,
+      yieldRate: 0,
+      tenure: '所有権',
+      areaTsubo: 280,
+      floor: '—',
+      floorsTotal: 0,
+      builtYear: null,
+      structure: '更地',
+      features: ['駐車場あり'],
+      usage: ['事業用建物', '店舗', '倉庫'],
+      availableFrom: '即引渡し可',
+      updatedAt: '2026-07-19',
+      description: '多摩市の幹線道路に接道する約280坪の事業用地です。建築条件はなく、ロードサイド店舗や事業所として利用できます。周辺は住宅地で、生活密着型の業態にも向きます。'
     }
   ];
   /* === PROPERTIES:END === */
@@ -1232,7 +1426,7 @@
     types: PROPERTY_TYPES,
     features: FEATURES,
     prefectures: PREFECTURES,
-    areaMaster: AREA_MASTER,
+    areaSections: AREA_SECTIONS,
     areaPref: AREA_PREF,
     areas: AREAS
   };

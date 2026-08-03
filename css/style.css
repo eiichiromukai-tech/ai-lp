@@ -378,6 +378,12 @@ input::placeholder, textarea::placeholder { color: #9a9a9a; }
 .area-group-title a { display: flex; align-items: baseline; gap: var(--space-2); }
 .area-group-title a:hover { color: var(--red); }
 .area-group-count { font-size: 0.72rem; font-weight: 700; color: var(--text-muted); }
+/* 都県内の小見出し（東京都の 23区／多摩・市部 など） */
+.area-sub-label {
+  font-size: 0.74rem; font-weight: 700; letter-spacing: 0.06em;
+  color: var(--text-muted); margin: 0 0 var(--space-2);
+}
+.area-sub-label:not(:first-of-type) { margin-top: var(--space-3); }
 
 /* ===== Why block ===== */
 .why-block { padding: var(--space-8) 0; }
@@ -442,6 +448,11 @@ input::placeholder, textarea::placeholder { color: #9a9a9a; }
   color: var(--text-muted); margin: 0 0 4px; padding-bottom: 3px;
   border-bottom: 1px solid var(--line);
 }
+.check-sub-label {
+  font-size: 0.7rem; font-weight: 700; color: var(--text-muted);
+  margin: var(--space-2) 0 2px; opacity: 0.8;
+}
+.check-sub-label:first-of-type { margin-top: 6px; }
 .check-item {
   display: flex; align-items: center; gap: 8px; padding: 5px 4px;
   font-size: 0.83rem; cursor: pointer; border-radius: var(--radius);

@@ -91,8 +91,14 @@
     }).map(function (g) {
       return {
         label: g.label,
-        items: g.areas.map(function (a) {
-          return { value: a, label: a, count: countBy('ward', a) };
+        /* 東京都のように小見出しを持つ都県は、さらに 23区／多摩・市部 で分ける */
+        sections: g.sections.map(function (sec) {
+          return {
+            label: g.sections.length > 1 ? sec.label : '',
+            items: sec.areas.map(function (a) {
+              return { value: a, label: a, count: countBy('ward', a) };
+            })
+          };
         })
       };
     }), 'areas');
@@ -146,18 +152,21 @@
     }).join('');
   }
 
-  /* 見出し付きのチェックリスト（都県ごとのエリア一覧） */
+  /* 見出し付きのチェックリスト（都県ごと、必要なら都県内の小見出しごと） */
   function fillGrouped(id, groups, group) {
     var el = document.getElementById(id);
     if (!el) return;
     el.innerHTML = groups.map(function (g, gi) {
       return '<div class="check-group">' +
         '<p class="check-group-label">' + P.escapeHtml(g.label) + '</p>' +
-        '<div class="check-list check-list-2col">' +
-          g.items.map(function (it, i) {
-            return checkItem(id + '-' + gi + '-' + i, group, it);
-          }).join('') +
-        '</div>' +
+        g.sections.map(function (sec, si) {
+          return (sec.label ? '<p class="check-sub-label">' + P.escapeHtml(sec.label) + '</p>' : '') +
+            '<div class="check-list check-list-2col">' +
+              sec.items.map(function (it, i) {
+                return checkItem(id + '-' + gi + '-' + si + '-' + i, group, it);
+              }).join('') +
+            '</div>';
+        }).join('') +
       '</div>';
     }).join('');
   }
