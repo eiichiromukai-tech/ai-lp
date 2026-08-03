@@ -76,10 +76,25 @@
       return { value: t.value, label: t.label, count: countBy('type', t.value) };
     }), 'types');
 
-    fill('f-areas', P.data.areas.filter(function (a) {
+    fill('f-prefs', (P.data.prefectures || []).filter(function (pref) {
+      return countPref(pref.value) > 0;
+    }).map(function (pref) {
+      return { value: pref.value, label: pref.label, count: countPref(pref.value) };
+    }), 'prefs');
+
+    /* エリアは都県ごとに見出しを付けて並べる。掲載のない市区は出さない。
+       都県が選ばれているときは、その都県の市区だけに絞る。 */
+    var prefs = (state && state.prefs) || [];
+    fillGrouped('f-areas', P.areaGroups(function (a, pref) {
+      if (prefs.length && prefs.indexOf(pref) === -1) return false;
       return countBy('ward', a) > 0;
-    }).map(function (a) {
-      return { value: a, label: a, count: countBy('ward', a) };
+    }).map(function (g) {
+      return {
+        label: g.label,
+        items: g.areas.map(function (a) {
+          return { value: a, label: a, count: countBy('ward', a) };
+        })
+      };
     }), 'areas');
 
     fill('f-status', Object.keys(P.STATUS_LABEL).map(function (s) {
@@ -103,6 +118,18 @@
     return inDeal(P.activeProperties()).filter(function (p) { return p[key] === value; }).length;
   }
 
+  function dropAreasOutsidePrefs() {
+    var prefs = state.prefs || [];
+    if (!prefs.length) return;
+    state.areas = (state.areas || []).filter(function (a) {
+      return prefs.indexOf(P.data.areaPref[a]) !== -1;
+    });
+  }
+
+  function countPref(value) {
+    return inDeal(P.activeProperties()).filter(function (p) { return P.prefOf(p) === value; }).length;
+  }
+
   function countFeature(f) {
     return inDeal(P.activeProperties()).filter(function (p) { return p.features.indexOf(f) !== -1; }).length;
   }
@@ -115,13 +142,32 @@
     var el = document.getElementById(id);
     if (!el) return;
     el.innerHTML = items.map(function (it, i) {
-      var inputId = id + '-' + i;
-      return '<label class="check-item" for="' + inputId + '">' +
-        '<input type="checkbox" id="' + inputId + '" data-group="' + group + '" value="' + P.escapeHtml(it.value) + '">' +
-        '<span class="check-text">' + P.escapeHtml(it.label) + '</span>' +
-        '<span class="check-count">' + it.count + '</span>' +
-      '</label>';
+      return checkItem(id + '-' + i, group, it);
     }).join('');
+  }
+
+  /* 見出し付きのチェックリスト（都県ごとのエリア一覧） */
+  function fillGrouped(id, groups, group) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    el.innerHTML = groups.map(function (g, gi) {
+      return '<div class="check-group">' +
+        '<p class="check-group-label">' + P.escapeHtml(g.label) + '</p>' +
+        '<div class="check-list check-list-2col">' +
+          g.items.map(function (it, i) {
+            return checkItem(id + '-' + gi + '-' + i, group, it);
+          }).join('') +
+        '</div>' +
+      '</div>';
+    }).join('');
+  }
+
+  function checkItem(inputId, group, it) {
+    return '<label class="check-item" for="' + inputId + '">' +
+      '<input type="checkbox" id="' + inputId + '" data-group="' + group + '" value="' + P.escapeHtml(it.value) + '">' +
+      '<span class="check-text">' + P.escapeHtml(it.label) + '</span>' +
+      '<span class="check-count">' + it.count + '</span>' +
+    '</label>';
   }
 
   /* ---------- state ⇄ フォーム ---------- */
@@ -160,7 +206,7 @@
     state.walk = num('f-walk');
     state.sort = getValue('sort-select') || 'new';
 
-    ['types', 'areas', 'status', 'features'].forEach(function (g) {
+    ['types', 'prefs', 'areas', 'status', 'features'].forEach(function (g) {
       state[g] = Array.prototype.slice
         .call(document.querySelectorAll('[data-group="' + g + '"]:checked'))
         .map(function (i) { return i.value; });
@@ -184,6 +230,7 @@
       form.addEventListener('submit', function (e) { e.preventDefault(); });
       form.addEventListener('change', function (e) {
         var dealChanged = e.target && e.target.name === 'deal';
+        var prefChanged = e.target && e.target.getAttribute('data-group') === 'prefs';
         readFormIntoState();
         state.page = 1;
         if (dealChanged) {
@@ -191,6 +238,12 @@
           state.rentMin = state.rentMax = state.priceMin = state.priceMax = null;
           syncFormFromState();
           syncDealUI();
+        }
+        if (prefChanged) {
+          /* 都県を絞ったら、その外側で選ばれていた市区は外す */
+          dropAreasOutsidePrefs();
+          buildCheckLists();
+          syncFormFromState();
         }
         render();
       });
@@ -254,7 +307,7 @@
   function resetAll() {
     state = {
       deal: state.deal,               /* 取引種別は保持する */
-      keyword: '', types: [], areas: [], features: [], status: [],
+      keyword: '', types: [], prefs: [], areas: [], features: [], status: [],
       rentMin: null, rentMax: null, priceMin: null, priceMax: null,
       tsuboMin: null, tsuboMax: null, walk: null,
       sort: 'new', page: 1
@@ -274,6 +327,7 @@
       state[group] = null;
     }
     state.page = 1;
+    if (group === 'prefs') buildCheckLists();   /* エリアの一覧が広がる */
     syncFormFromState();
     render();
   }
@@ -317,6 +371,7 @@
 
     if (state.keyword) push('keyword', state.keyword, '「' + state.keyword + '」');
     (state.types || []).forEach(function (t) { push('types', t, P.TYPE_LABEL[t] || t); });
+    (state.prefs || []).forEach(function (v) { push('prefs', v, P.prefLabel(v)); });
     (state.areas || []).forEach(function (a) { push('areas', a, a); });
     (state.status || []).forEach(function (s) { push('status', s, P.STATUS_LABEL[s] || s); });
     (state.features || []).forEach(function (f) { push('features', f, f); });

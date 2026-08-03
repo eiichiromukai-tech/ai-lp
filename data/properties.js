@@ -28,10 +28,45 @@
     '駐車場あり', '駅徒歩5分以内', 'エレベーターあり', '空調更新済', '看板設置可', 'セットアップ'
   ];
 
-  var AREAS = [
-    '千代田区', '中央区', '港区', '新宿区', '渋谷区', '品川区',
-    '目黒区', '世田谷区', '豊島区', '台東区', '墨田区', '江東区'
+  /* 対応エリアは一都三県。東京都は23区、3県は事業用不動産の需要がある主要市。
+     市区を増やすときは AREA_MASTER の該当する都県に追加してください。 */
+  var PREFECTURES = [
+    { value: 'tokyo', label: '東京都' },
+    { value: 'kanagawa', label: '神奈川県' },
+    { value: 'saitama', label: '埼玉県' },
+    { value: 'chiba', label: '千葉県' }
   ];
+
+  var AREA_MASTER = {
+    tokyo: [
+      '千代田区', '中央区', '港区', '新宿区', '文京区', '台東区', '墨田区', '江東区',
+      '品川区', '目黒区', '大田区', '世田谷区', '渋谷区', '中野区', '杉並区', '豊島区',
+      '北区', '荒川区', '板橋区', '練馬区', '足立区', '葛飾区', '江戸川区'
+    ],
+    kanagawa: [
+      '横浜市', '川崎市', '相模原市', '藤沢市', '厚木市', '海老名市',
+      '大和市', '平塚市', '茅ヶ崎市', '鎌倉市', '横須賀市', '小田原市'
+    ],
+    saitama: [
+      'さいたま市', '川口市', '川越市', '所沢市', '越谷市', '草加市',
+      '春日部市', '上尾市', '戸田市', '新座市', '熊谷市'
+    ],
+    chiba: [
+      '千葉市', '船橋市', '柏市', '松戸市', '市川市', '浦安市',
+      '習志野市', '流山市', '八千代市', '木更津市', '成田市'
+    ]
+  };
+
+  /* 市区名 → 都県 の逆引き。物件データの pref はここから補完します */
+  var AREA_PREF = {};
+  PREFECTURES.forEach(function (pref) {
+    (AREA_MASTER[pref.value] || []).forEach(function (name) { AREA_PREF[name] = pref.value; });
+  });
+
+  /* 従来どおりの市区名のフラットな一覧（掲載順は都県順） */
+  var AREAS = PREFECTURES.reduce(function (acc, pref) {
+    return acc.concat(AREA_MASTER[pref.value] || []);
+  }, []);
 
   /* === PROPERTIES:BEGIN =========================================
      この配列は tools/csv-to-properties.js が data/properties.csv から
@@ -872,6 +907,301 @@
       availableFrom: '相談',
       updatedAt: '2026-07-03',
       description: '三軒茶屋の商店街沿いにある1階の区分店舗です。飲食テナントが長期入居中で、オーナーチェンジでの引渡しとなります。1億円を下回る価格帯で、収益物件の入口として検討しやすい物件です。'
+    },
+    {
+      id: 'CMP-1025',
+      title: '横浜駅西口 1階路面店舗（飲食可）',
+      deal: 'rent',
+      type: 'shop',
+      status: 'available',
+      ward: '横浜市',
+      address: '神奈川県横浜市西区南幸二丁目',
+      access: [
+        { line: 'JR各線', station: '横浜', walk: 4 },
+        { line: '東急東横線', station: '横浜', walk: 5 }
+      ],
+      rent: 880000, managementFee: 65000, deposit: 10, keyMoney: 0,
+      areaTsubo: 32.5,
+      floor: '1F',
+      floorsTotal: 8,
+      builtYear: 2008,
+      structure: 'SRC造',
+      features: ['1階路面', '飲食可', '深夜営業可', '駅徒歩5分以内', '看板設置可'],
+      usage: ['飲食店', '物販'],
+      availableFrom: '即入居可',
+      updatedAt: '2026-08-01',
+      description: '横浜駅西口の繁華街に面した1階路面店舗です。前面道路の歩行者通行量が多く、視認性の高い間口を確保しています。重飲食も相談可能で、深夜営業の実績もあるビルです。'
+    },
+    {
+      id: 'CMP-1026',
+      title: '川崎駅前 オフィス 6F（セットアップ）',
+      deal: 'rent',
+      type: 'office',
+      status: 'available',
+      ward: '川崎市',
+      address: '神奈川県川崎市川崎区駅前本町',
+      access: [
+        { line: 'JR東海道線', station: '川崎', walk: 3 },
+        { line: '京急本線', station: '京急川崎', walk: 6 }
+      ],
+      rent: 1120000, managementFee: 84000, deposit: 10, keyMoney: 0,
+      areaTsubo: 78,
+      floor: '6F',
+      floorsTotal: 12,
+      builtYear: 2013,
+      structure: 'S造',
+      features: ['セットアップ', '駅徒歩5分以内', 'エレベーターあり', '24時間利用可', '空調更新済'],
+      usage: ['事務所'],
+      availableFrom: '2026年9月',
+      updatedAt: '2026-07-29',
+      description: '川崎駅から徒歩3分のセットアップオフィスです。会議室2室とフリーアドレス席が施工済みで、内装工事なしで入居できます。東京都心へのアクセスも良く、支店開設に適します。'
+    },
+    {
+      id: 'CMP-1027',
+      title: '大宮駅東口 路面店舗（居抜き）',
+      deal: 'rent',
+      type: 'shop',
+      status: 'available',
+      ward: 'さいたま市',
+      address: '埼玉県さいたま市大宮区宮町一丁目',
+      access: [
+        { line: 'JR各線', station: '大宮', walk: 5 }
+      ],
+      rent: 620000, managementFee: 45000, deposit: 10, keyMoney: 1,
+      areaTsubo: 26,
+      floor: '1F',
+      floorsTotal: 5,
+      builtYear: 2003,
+      structure: 'RC造',
+      features: ['1階路面', '居抜き', '飲食可', '駅徒歩5分以内', '看板設置可'],
+      usage: ['飲食店', '店舗'],
+      availableFrom: '即入居可',
+      updatedAt: '2026-07-27',
+      description: '大宮駅東口の商店街沿いにある居抜き店舗です。前テナントの厨房設備・客席をそのまま引き継げるため、開業までの初期費用を抑えられます。'
+    },
+    {
+      id: 'CMP-1028',
+      title: '船橋 倉庫（幹線道路沿い・大型車接車可）',
+      deal: 'rent',
+      type: 'warehouse',
+      status: 'available',
+      ward: '船橋市',
+      address: '千葉県船橋市西浦三丁目',
+      access: [
+        { line: 'JR京葉線', station: '二俣新町', walk: 12 }
+      ],
+      rent: 1450000, managementFee: 0, deposit: 6, keyMoney: 0,
+      areaTsubo: 420,
+      floor: '1F-2F',
+      floorsTotal: 2,
+      builtYear: 2011,
+      structure: 'S造',
+      features: ['24時間利用可', '駐車場あり'],
+      usage: ['倉庫', '軽作業', '事務所'],
+      availableFrom: '2026年10月',
+      updatedAt: '2026-07-24',
+      description: '京葉道路に近い立地の倉庫です。大型車の接車が可能なプラットフォームを備え、1階が荷捌き・保管、2階が事務所という構成です。都内配送と千葉県内配送の両方に対応できます。'
+    },
+    {
+      id: 'CMP-1029',
+      title: '柏駅前 2階店舗（スケルトン）',
+      deal: 'rent',
+      type: 'shop',
+      status: 'negotiating',
+      ward: '柏市',
+      address: '千葉県柏市柏一丁目',
+      access: [
+        { line: 'JR常磐線', station: '柏', walk: 3 },
+        { line: '東武アーバンパークライン', station: '柏', walk: 3 }
+      ],
+      rent: 450000, managementFee: 32000, deposit: 10, keyMoney: 0,
+      areaTsubo: 28,
+      floor: '2F',
+      floorsTotal: 6,
+      builtYear: 1999,
+      structure: 'RC造',
+      features: ['スケルトン', '飲食可', '駅徒歩5分以内', '看板設置可'],
+      usage: ['飲食店', 'サービス'],
+      availableFrom: '相談',
+      updatedAt: '2026-07-21',
+      description: '柏駅東口のペデストリアンデッキに近い2階店舗です。スケルトン渡しのため、業態に合わせた自由な内装計画が可能です。物販・サービス業でも相談を承ります。'
+    },
+    {
+      id: 'CMP-1030',
+      title: '川口 工場・倉庫（電力容量に余裕）',
+      deal: 'rent',
+      type: 'warehouse',
+      status: 'available',
+      ward: '川口市',
+      address: '埼玉県川口市領家四丁目',
+      access: [
+        { line: 'JR京浜東北線', station: '川口', walk: 18 }
+      ],
+      rent: 980000, managementFee: 0, deposit: 6, keyMoney: 0,
+      areaTsubo: 265,
+      floor: '1F',
+      floorsTotal: 1,
+      builtYear: 2005,
+      structure: 'S造',
+      features: ['24時間利用可', '駐車場あり'],
+      usage: ['工場', '倉庫', '軽作業'],
+      availableFrom: '即入居可',
+      updatedAt: '2026-07-18',
+      description: '川口の準工業地域にある平屋の工場・倉庫です。動力電源の容量に余裕があり、製造ラインの設置にも対応できます。敷地内に大型車の駐車スペースを確保しています。'
+    },
+    {
+      id: 'CMP-1031',
+      title: '藤沢駅南口 1階店舗（角地）',
+      deal: 'rent',
+      type: 'shop',
+      status: 'available',
+      ward: '藤沢市',
+      address: '神奈川県藤沢市南藤沢',
+      access: [
+        { line: 'JR東海道線', station: '藤沢', walk: 6 },
+        { line: '小田急江ノ島線', station: '藤沢', walk: 5 }
+      ],
+      rent: 520000, managementFee: 38000, deposit: 10, keyMoney: 0,
+      areaTsubo: 24,
+      floor: '1F',
+      floorsTotal: 4,
+      builtYear: 2016,
+      structure: 'RC造',
+      features: ['1階路面', '飲食可', '看板設置可'],
+      usage: ['飲食店', '物販', 'サービス'],
+      availableFrom: '2026年9月',
+      updatedAt: '2026-07-15',
+      description: '藤沢駅南口の商店街にある角地の1階店舗です。二面接道で視認性が高く、テラス席の設置についても相談可能です。周辺は休日の人通りが多いエリアです。'
+    },
+    {
+      id: 'CMP-1032',
+      title: '松戸 オフィス 4F（駅直結ビル）',
+      deal: 'rent',
+      type: 'office',
+      status: 'available',
+      ward: '松戸市',
+      address: '千葉県松戸市本町',
+      access: [
+        { line: 'JR常磐線', station: '松戸', walk: 2 },
+        { line: '新京成線', station: '松戸', walk: 2 }
+      ],
+      rent: 385000, managementFee: 28000, deposit: 8, keyMoney: 0,
+      areaTsubo: 32,
+      floor: '4F',
+      floorsTotal: 9,
+      builtYear: 2007,
+      structure: 'S造',
+      features: ['駅徒歩5分以内', 'エレベーターあり', '空調更新済'],
+      usage: ['事務所'],
+      availableFrom: '即入居可',
+      updatedAt: '2026-07-12',
+      description: '松戸駅から徒歩2分のオフィスビルです。常磐線で都心へ直結しながら賃料水準を抑えられるため、バックオフィスや営業拠点の設置に向いています。'
+    },
+    {
+      id: 'CMP-2011',
+      title: '横浜関内 一棟オフィスビル（満室稼働中）',
+      deal: 'sale',
+      type: 'building',
+      status: 'available',
+      ward: '横浜市',
+      address: '神奈川県横浜市中区尾上町三丁目',
+      access: [
+        { line: 'JR根岸線', station: '関内', walk: 4 },
+        { line: '横浜市営地下鉄', station: '関内', walk: 5 }
+      ],
+      rent: 0, managementFee: 0, deposit: 0, keyMoney: 0,
+      price: 720000000,
+      yieldRate: 5.4,
+      tenure: '所有権',
+      areaTsubo: 310,
+      floor: '1F-7F',
+      floorsTotal: 7,
+      builtYear: 2003,
+      structure: 'SRC造',
+      features: ['駅徒歩5分以内', 'エレベーターあり', '24時間利用可'],
+      usage: ['事務所', '店舗'],
+      availableFrom: '相談',
+      updatedAt: '2026-07-31',
+      description: '関内駅至近の一棟オフィスビルです。現況は満室稼働で、事務所テナント中心に長期入居が続いています。レントロールと修繕履歴は個別にご開示します。'
+    },
+    {
+      id: 'CMP-2012',
+      title: '千葉中央 一棟店舗ビル（テナント付き）',
+      deal: 'sale',
+      type: 'building',
+      status: 'available',
+      ward: '千葉市',
+      address: '千葉県千葉市中央区富士見二丁目',
+      access: [
+        { line: 'JR総武線', station: '千葉', walk: 7 },
+        { line: '京成千葉線', station: '京成千葉', walk: 5 }
+      ],
+      rent: 0, managementFee: 0, deposit: 0, keyMoney: 0,
+      price: 298000000,
+      yieldRate: 7.2,
+      tenure: '所有権',
+      areaTsubo: 142,
+      floor: '1F-5F',
+      floorsTotal: 5,
+      builtYear: 1997,
+      structure: 'RC造',
+      features: ['1階路面', '飲食可', '深夜営業可', '看板設置可'],
+      usage: ['飲食店', '店舗'],
+      availableFrom: '相談',
+      updatedAt: '2026-07-26',
+      description: '千葉駅からの動線上、繁華街に立地する5層の店舗ビルです。各階に飲食テナントが入居しており、利回りは7%台。外壁は改修済みで、当面の大規模修繕は想定していません。'
+    },
+    {
+      id: 'CMP-2013',
+      title: '越谷 事業用地（約310坪・建築条件なし）',
+      deal: 'sale',
+      type: 'land',
+      status: 'available',
+      ward: '越谷市',
+      address: '埼玉県越谷市大字大房',
+      access: [
+        { line: '東武スカイツリーライン', station: '北越谷', walk: 16 }
+      ],
+      rent: 0, managementFee: 0, deposit: 0, keyMoney: 0,
+      price: 268000000,
+      yieldRate: 0,
+      tenure: '所有権',
+      areaTsubo: 310,
+      floor: '—',
+      floorsTotal: 0,
+      builtYear: null,
+      structure: '更地',
+      features: ['駐車場あり'],
+      usage: ['事業用建物', '店舗', '倉庫'],
+      availableFrom: '即引渡し可',
+      updatedAt: '2026-07-23',
+      description: '県道に接道する約310坪の整形地です。建築条件はなく、ロードサイド店舗・物流拠点・事業所いずれの用途にも対応できます。分割での検討も相談可能です。'
+    },
+    {
+      id: 'CMP-2014',
+      title: '相模原 倉庫（自社利用向け・圏央道近接）',
+      deal: 'sale',
+      type: 'warehouse',
+      status: 'available',
+      ward: '相模原市',
+      address: '神奈川県相模原市中央区田名',
+      access: [
+        { line: 'JR相模線', station: '上溝', walk: 22 }
+      ],
+      rent: 0, managementFee: 0, deposit: 0, keyMoney: 0,
+      price: 412000000,
+      yieldRate: 6.1,
+      tenure: '所有権',
+      areaTsubo: 480,
+      floor: '1F-2F',
+      floorsTotal: 2,
+      builtYear: 2009,
+      structure: 'S造',
+      features: ['24時間利用可', '駐車場あり'],
+      usage: ['倉庫', '工場', '軽作業'],
+      availableFrom: '2026年11月',
+      updatedAt: '2026-07-20',
+      description: '圏央道相模原愛川ICに近い倉庫です。首都圏全域への配送拠点として使いやすく、自社取得のほか賃貸運用も想定できます。天井高と床荷重は資料でご確認ください。'
     }
   ];
   /* === PROPERTIES:END === */
@@ -888,6 +1218,8 @@
       var d = new Date(FALLBACK_BASE.getTime() - i * 5 * 86400000);
       p.updatedAt = d.toISOString().slice(0, 10);
     }
+    /* 都県は市区名から補完する（マスタにない市区は空のまま） */
+    p.pref = AREA_PREF[p.ward] || '';
     p.areaSqm = Math.round(p.areaTsubo * 3.30578 * 10) / 10;
     /* 賃貸は月額賃料、売買は販売価格を金額として扱う */
     p.amount = p.deal === 'sale' ? p.price : p.rent;
@@ -899,6 +1231,9 @@
     deals: DEAL_TYPES,
     types: PROPERTY_TYPES,
     features: FEATURES,
+    prefectures: PREFECTURES,
+    areaMaster: AREA_MASTER,
+    areaPref: AREA_PREF,
     areas: AREAS
   };
 })(window);

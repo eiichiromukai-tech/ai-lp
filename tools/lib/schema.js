@@ -36,6 +36,16 @@ MASTERS.deals.forEach(function (d) {
   DEAL_VALUE_TO_LABEL[d.value] = d.label;
 });
 
+/* 都県は市区名から自動で決まる（AREA_MASTER が唯一の対応表）。
+   CSVの「都県」列は確認用で、書き出しでは埋め、読み込みでは市区と食い違えばエラーにする。 */
+const PREF_LABEL_TO_VALUE = {};
+const PREF_VALUE_TO_LABEL = {};
+(MASTERS.prefectures || []).forEach(function (p) {
+  PREF_LABEL_TO_VALUE[p.label] = p.value;
+  PREF_VALUE_TO_LABEL[p.value] = p.label;
+});
+const AREA_PREF = MASTERS.areaPref || {};
+
 const STATUS_LABEL_TO_VALUE = { '募集中': 'available', '商談中': 'negotiating', '成約済': 'closed' };
 const STATUS_VALUE_TO_LABEL = { available: '募集中', negotiating: '商談中', closed: '成約済' };
 
@@ -48,7 +58,8 @@ const COLUMNS = [
   { key: 'deal', header: '取引種別' },
   { key: 'type', header: '物件種別' },
   { key: 'status', header: '募集状況' },
-  { key: 'ward', header: 'エリア' },
+  { key: 'pref', header: '都県' },
+  { key: 'ward', header: 'エリア（市区）' },
   { key: 'address', header: '所在地' },
   { key: 'access', header: '交通' },
   { key: 'rent', header: '月額賃料(円)' },
@@ -108,6 +119,7 @@ function toRow(p) {
     const sale = p.deal === 'sale';
     switch (col.key) {
       case 'deal': return DEAL_VALUE_TO_LABEL[p.deal] || DEAL_VALUE_TO_LABEL.rent;
+      case 'pref': return PREF_VALUE_TO_LABEL[p.pref || AREA_PREF[p.ward]] || '';
       case 'type': return TYPE_VALUE_TO_LABEL[p.type] || p.type;
       case 'status': return STATUS_VALUE_TO_LABEL[p.status] || p.status;
       case 'access': return encodeAccess(p.access);
@@ -181,10 +193,24 @@ function fromRow(cells, index, errors, warnings) {
   }
 
   p.ward = get('ward');
-  if (!p.ward) errors.push(rowLabel + 'エリアは必須です');
+  if (!p.ward) errors.push(rowLabel + 'エリア（市区）は必須です');
   else if (MASTERS.areas.indexOf(p.ward) === -1) {
-    errors.push(rowLabel + 'エリア「' + p.ward + '」はマスタにありません（' +
-      'data/properties.js の AREAS に追加してください）');
+    errors.push(rowLabel + 'エリア（市区）「' + p.ward + '」はマスタにありません（' +
+      'data/properties.js の AREA_MASTER に追加してください）');
+  }
+
+  /* 都県は市区名から決まる。列に入力がある場合だけ整合性を確かめる */
+  p.pref = AREA_PREF[p.ward] || '';
+  const prefLabel = get('pref');
+  if (prefLabel) {
+    const prefValue = PREF_LABEL_TO_VALUE[prefLabel];
+    if (!prefValue) {
+      errors.push(rowLabel + '都県「' + prefLabel + '」は使用できません（' +
+        Object.keys(PREF_LABEL_TO_VALUE).join('／') + '）');
+    } else if (p.pref && prefValue !== p.pref) {
+      errors.push(rowLabel + '都県「' + prefLabel + '」とエリア「' + p.ward +
+        '」が一致しません（' + p.ward + 'は' + PREF_VALUE_TO_LABEL[p.pref] + 'です）');
+    }
   }
 
   p.address = get('address');

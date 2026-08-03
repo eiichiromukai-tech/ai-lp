@@ -89,35 +89,61 @@
     return '<svg viewBox="0 0 32 32" width="32" height="32">' + (paths[type] || paths.shop) + '</svg>';
   }
 
-  /* ヒーロー検索のエリア選択肢 */
+  /* 掲載中の物件がある市区だけを都県ごとにまとめる */
+  function groupsWithListings() {
+    var list = dealProps();
+    var count = function (a) {
+      return list.filter(function (p) { return p.ward === a; }).length;
+    };
+    return P.areaGroups(function (a) { return count(a) > 0; }).map(function (g) {
+      return {
+        label: g.label,
+        value: g.value,
+        areas: g.areas.map(function (a) { return { name: a, count: count(a) }; })
+      };
+    });
+  }
+
+  /* ヒーロー検索のエリア選択肢。一都三県あるので都県ごとにグループ分けする */
   function renderAreaSelect() {
     var sel = document.getElementById('hs-area');
     if (!sel) return;
     sel.innerHTML = '<option value="">すべてのエリア</option>';
-    var list = dealProps();
-    P.data.areas.forEach(function (a) {
-      var n = list.filter(function (p) { return p.ward === a; }).length;
-      if (!n) return;
-      var opt = document.createElement('option');
-      opt.value = a;
-      opt.textContent = a + '（' + n + '件）';
-      sel.appendChild(opt);
+    groupsWithListings().forEach(function (g) {
+      var og = document.createElement('optgroup');
+      og.label = g.label;
+      g.areas.forEach(function (a) {
+        var opt = document.createElement('option');
+        opt.value = a.name;
+        opt.textContent = a.name + '（' + a.count + '件）';
+        og.appendChild(opt);
+      });
+      sel.appendChild(og);
     });
   }
 
   /* エリアから探す */
   function renderAreaGrid() {
-    var el = document.getElementById('area-grid');
+    var el = document.getElementById('area-groups');
     if (!el) return;
-    var list = dealProps();
-    el.innerHTML = P.data.areas.map(function (a) {
-      var n = list.filter(function (p) { return p.ward === a; }).length;
-      var cls = n ? '' : ' is-empty';
-      var inner = '<span class="area-name">' + a + '</span><span class="area-count">' + n + '件</span>';
-      return '<li class="area-item' + cls + '">' +
-        (n ? '<a href="properties.html?' + dealParam() + 'area=' + encodeURIComponent(a) + '">' + inner + '</a>'
-           : '<span>' + inner + '</span>') +
-        '</li>';
+    el.innerHTML = groupsWithListings().map(function (g) {
+      var total = g.areas.reduce(function (n, a) { return n + a.count; }, 0);
+      return '<div class="area-group">' +
+        '<h3 class="area-group-title">' +
+          '<a href="properties.html?' + dealParam() + 'pref=' + g.value + '">' +
+            P.escapeHtml(g.label) + '<span class="area-group-count">' + total + '件</span>' +
+          '</a>' +
+        '</h3>' +
+        '<ul class="area-grid">' +
+          g.areas.map(function (a) {
+            return '<li class="area-item">' +
+              '<a href="properties.html?' + dealParam() + 'area=' + encodeURIComponent(a.name) + '">' +
+                '<span class="area-name">' + P.escapeHtml(a.name) + '</span>' +
+                '<span class="area-count">' + a.count + '件</span>' +
+              '</a></li>';
+          }).join('') +
+        '</ul>' +
+      '</div>';
     }).join('');
   }
 

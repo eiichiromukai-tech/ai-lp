@@ -27,6 +27,29 @@
   function dealConfig(p) { return DEAL_CONFIG[dealOf(p)]; }
   function isSale(p) { return dealOf(p) === 'sale'; }
 
+  /* ---------- 都県（一都三県） ---------- */
+  var PREFECTURES = DATA.prefectures || [];
+  var AREA_MASTER = DATA.areaMaster || {};
+  var AREA_PREF = DATA.areaPref || {};
+
+  var PREF_LABEL = {};
+  PREFECTURES.forEach(function (p) { PREF_LABEL[p.value] = p.label; });
+
+  /* 物件の都県。データ側で補完済みだが、市区名からも引けるようにしておく */
+  function prefOf(p) { return p.pref || AREA_PREF[p.ward] || ''; }
+  function prefLabel(value) { return PREF_LABEL[value] || ''; }
+
+  /* 市区の一覧を都県ごとにまとめる。keep(市区名) が false を返すものは除外し、
+     残りが1つもない都県はグループごと落とす。 */
+  function areaGroups(keep) {
+    return PREFECTURES.map(function (pref) {
+      var areas = (AREA_MASTER[pref.value] || []).filter(function (a) {
+        return keep ? keep(a, pref.value) : true;
+      });
+      return { value: pref.value, label: pref.label, areas: areas };
+    }).filter(function (g) { return g.areas.length > 0; });
+  }
+
   /* 表示用の募集状況。'new' は updatedAt から自動判定する派生ステータスで、
      データ側で持つのは available / negotiating / closed の3つ。 */
   var STATUS_LABEL = {
@@ -210,7 +233,7 @@
   }
 
   /* ---------- 絞り込み ---------- */
-  /* criteria: {keyword, types[], areas[], rentMin, rentMax, tsuboMin, tsuboMax, walk, features[], status[]} */
+  /* criteria: {keyword, prefs[], types[], areas[], rentMin, rentMax, tsuboMin, tsuboMax, walk, features[], status[]} */
   function filterProperties(list, c) {
     c = c || {};
     var wantsClosed = !!(c.status && c.status.indexOf('closed') !== -1);
@@ -221,6 +244,7 @@
       if (c.priceMin != null && (!isSale(p) || p.price < c.priceMin)) return false;
       if (c.priceMax != null && (!isSale(p) || p.price > c.priceMax)) return false;
       if (c.types && c.types.length && c.types.indexOf(p.type) === -1) return false;
+      if (c.prefs && c.prefs.length && c.prefs.indexOf(prefOf(p)) === -1) return false;
       if (c.areas && c.areas.length && c.areas.indexOf(p.ward) === -1) return false;
       if (c.status && c.status.length && c.status.indexOf(displayStatus(p)) === -1) return false;
       if (c.rentMin != null && (isSale(p) || p.rent < c.rentMin)) return false;
@@ -236,7 +260,7 @@
         var kw = c.keyword.trim().toLowerCase();
         if (kw) {
           var hay = [
-            p.title, p.address, p.ward, p.id, p.description,
+            p.title, p.address, p.ward, prefLabel(prefOf(p)), p.id, p.description,
             TYPE_LABEL[p.type],
             p.features.join(' '),
             (p.usage || []).join(' '),
@@ -467,6 +491,7 @@
       priceMin: num('priceMin'),
       priceMax: num('priceMax'),
       types: multi('type'),
+      prefs: multi('pref').filter(function (v) { return !!PREF_LABEL[v]; }),
       areas: multi('area'),
       features: multi('feature'),
       status: multi('status'),
@@ -484,7 +509,7 @@
     var params = new URLSearchParams();
     if (c.deal === 'sale') params.set('deal', 'sale');
     if (c.keyword) params.set('q', c.keyword);
-    ['types:type', 'areas:area', 'features:feature', 'status:status'].forEach(function (pair) {
+    ['types:type', 'prefs:pref', 'areas:area', 'features:feature', 'status:status'].forEach(function (pair) {
       var parts = pair.split(':');
       var arr = c[parts[0]];
       if (arr && arr.length) params.set(parts[1], arr.join(','));
@@ -505,6 +530,10 @@
     dealOf: dealOf,
     dealConfig: dealConfig,
     isSale: isSale,
+    PREF_LABEL: PREF_LABEL,
+    prefOf: prefOf,
+    prefLabel: prefLabel,
+    areaGroups: areaGroups,
     dealBadge: dealBadge,
     formatPrice: formatPrice,
     formatAmount: formatAmount,

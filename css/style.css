@@ -355,16 +355,29 @@ input::placeholder, textarea::placeholder { color: #9a9a9a; }
 
 /* ===== Area grid ===== */
 .area-block { padding: var(--space-7) 0; background: var(--cream); }
-.area-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: var(--space-2); }
+.area-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(215px, 1fr)); gap: var(--space-2); }
 .area-item a, .area-item span {
   display: flex; align-items: center; justify-content: space-between; gap: 8px;
   padding: 13px var(--space-3); background: var(--white);
   border: 1px solid var(--line); border-radius: var(--radius); font-size: 0.88rem;
 }
 .area-item a:hover { border-color: var(--red); }
-.area-name { font-weight: 700; }
-.area-count { font-size: 0.72rem; color: var(--text-muted); }
+/* 「さいたま市」など長い市名でもタイル内で折り返さないようにする */
+.area-name { font-weight: 700; white-space: nowrap; }
+.area-count { font-size: 0.72rem; color: var(--text-muted); white-space: nowrap; flex-shrink: 0; }
 .area-item.is-empty span { opacity: 0.45; }
+
+/* 一都三県：都県ごとにまとめて並べる */
+.area-groups { display: grid; gap: var(--space-5); }
+.area-group-title {
+  display: flex; align-items: baseline; gap: var(--space-2);
+  font-size: 0.86rem; font-weight: 800; letter-spacing: 0.06em;
+  margin: 0 0 var(--space-3); padding-bottom: 8px;
+  border-bottom: 1px solid var(--line-strong);
+}
+.area-group-title a { display: flex; align-items: baseline; gap: var(--space-2); }
+.area-group-title a:hover { color: var(--red); }
+.area-group-count { font-size: 0.72rem; font-weight: 700; color: var(--text-muted); }
 
 /* ===== Why block ===== */
 .why-block { padding: var(--space-8) 0; }
@@ -421,6 +434,14 @@ input::placeholder, textarea::placeholder { color: #9a9a9a; }
 
 .check-list { display: flex; flex-direction: column; gap: 2px; }
 .check-list-2col { display: grid; grid-template-columns: repeat(2, 1fr); gap: 2px 10px; }
+
+/* 都県ごとに見出しを付けたチェックリスト（エリア絞り込み） */
+.check-groups { display: grid; gap: var(--space-3); }
+.check-group-label {
+  font-size: 0.72rem; font-weight: 800; letter-spacing: 0.06em;
+  color: var(--text-muted); margin: 0 0 4px; padding-bottom: 3px;
+  border-bottom: 1px solid var(--line);
+}
 .check-item {
   display: flex; align-items: center; gap: 8px; padding: 5px 4px;
   font-size: 0.83rem; cursor: pointer; border-radius: var(--radius);
@@ -645,7 +666,6 @@ input[aria-invalid="true"], textarea[aria-invalid="true"] { border-color: var(--
 @media (max-width: 1180px) {
   .hero-search-row { grid-template-columns: repeat(2, 1fr); }
   .hs-submit { grid-column: 1 / -1; }
-  .area-grid { grid-template-columns: repeat(4, 1fr); }
 }
 
 @media (max-width: 1024px) {
@@ -691,6 +711,13 @@ input[aria-invalid="true"], textarea[aria-invalid="true"] { border-color: var(--
 
 @media (max-width: 720px) {
   :root { --header-h: 64px; }
+
+  /* エリアタイルは2列。幅が足りないので市区名と件数を縦に積む */
+  .area-grid { grid-template-columns: repeat(2, 1fr); }
+  .area-item a, .area-item span {
+    flex-direction: column; align-items: flex-start; gap: 2px; padding: 10px 12px;
+  }
+
   .logo-img { height: 50px; }
   .footer-logo { height: 58px; }
   .header-fav { font-size: 0.74rem; }
@@ -700,7 +727,6 @@ input[aria-invalid="true"], textarea[aria-invalid="true"] { border-color: var(--
   .hero-search-row { grid-template-columns: 1fr; }
 
   .type-grid { grid-template-columns: repeat(2, 1fr); }
-  .area-grid { grid-template-columns: repeat(2, 1fr); }
   .p-grid { grid-template-columns: 1fr; }
 
   .results-head { align-items: flex-start; }

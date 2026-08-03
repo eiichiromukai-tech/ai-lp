@@ -52,6 +52,8 @@
         '<li><a href="index.html">ホーム</a></li>' +
         '<li><a href="properties.html">物件検索</a></li>' +
         '<li><a href="properties.html?deal=' + P.dealOf(p) + '">' + P.DEAL_CONFIG[P.dealOf(p)].label + '</a></li>' +
+        '<li><a href="properties.html?deal=' + P.dealOf(p) + '&pref=' + P.prefOf(p) + '">' + P.prefLabel(P.prefOf(p)) + '</a></li>' +
+        '<li><a href="properties.html?deal=' + P.dealOf(p) + '&area=' + encodeURIComponent(p.ward) + '">' + P.escapeHtml(p.ward) + '</a></li>' +
         '<li><a href="properties.html?deal=' + P.dealOf(p) + '&type=' + p.type + '">' + P.TYPE_LABEL[p.type] + '</a></li>' +
         '<li aria-current="page">' + P.escapeHtml(p.title) + '</li>' +
       '</ol></nav>' +
