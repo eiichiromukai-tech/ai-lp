@@ -16,6 +16,7 @@ const fs = require('fs');
 const path = require('path');
 const csv = require('./lib/csv');
 const schema = require('./lib/schema');
+const images = require('./lib/images');
 
 const CSV_PATH = path.join(__dirname, '..', 'data', 'properties.csv');
 const JS_PATH = path.join(__dirname, '..', 'data', 'properties.js');
@@ -62,6 +63,10 @@ properties.forEach(function (p, i) {
     seen.set(p.id, i);
   }
 });
+
+/* ---------- 物件写真の取り込み ---------- */
+const photos = images.collect(properties.map(function (p) { return p.id; }), warnings);
+properties.forEach(function (p) { p.images = photos[p.id] || []; });
 
 warnings.forEach(function (w) { console.warn('警告: ' + w); });
 
@@ -112,6 +117,13 @@ function renderProperty(p) {
   lines.push('      usage: [' + p.usage.map(q).join(', ') + '],');
   lines.push('      availableFrom: ' + q(p.availableFrom) + ',');
   lines.push('      updatedAt: ' + q(p.updatedAt) + ',');
+  if (p.images.length) {
+    lines.push('      images: [');
+    lines.push(p.images.map(function (img) {
+      return '        { src: ' + q(img.src) + ', caption: ' + q(img.caption) + ' }';
+    }).join(',\n'));
+    lines.push('      ],');
+  }
   lines.push('      description: ' + q(p.description));
   lines.push('    }');
   return lines.join('\n');
@@ -165,9 +177,14 @@ const dealCount = properties.reduce(function (acc, p) {
   return acc;
 }, {});
 
+const withPhotos = properties.filter(function (p) { return p.images.length; });
+const photoCount = withPhotos.reduce(function (n, p) { return n + p.images.length; }, 0);
+
 console.log('data/properties.js を更新しました: ' + properties.length + '件' +
   '（賃貸 ' + (dealCount.rent || 0) + '／売買 ' + (dealCount.sale || 0) + '）' +
   '（募集中 ' + (statusCount.available || 0) +
   '／商談中 ' + (statusCount.negotiating || 0) +
   '／成約済 ' + (statusCount.closed || 0) + '）');
+console.log('物件写真: ' + photoCount + '枚（' + withPhotos.length + '件の物件に掲載）。' +
+  '写真のない物件は種別ごとのイメージ画像を表示します。');
 if (warnings.length) console.log('警告 ' + warnings.length + '件は内容をご確認ください。');

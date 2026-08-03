@@ -25,7 +25,7 @@
     root.innerHTML = detailHtml(p);
     P.pushHistory(p.id);
     bindForm(p);
-    bindGallery();
+    bindGallery(p);
   });
 
   function notFound() {
@@ -37,7 +37,6 @@
   }
 
   function detailHtml(p) {
-    var img = P.placeholderImage(p);
     var closed = P.isClosed(p);
     var sale = P.isSale(p);
     /* おすすめには成約済を出さない */
@@ -76,10 +75,7 @@
 
       '<div class="detail-layout">' +
         '<div class="detail-main">' +
-          '<figure class="detail-gallery">' +
-            '<img id="gallery-main" src="' + img + '" alt="' + P.escapeHtml(p.title) + 'のイメージ" width="480" height="320">' +
-            '<figcaption>※ 画像は物件種別に基づくイメージです。現地写真・図面は個別にご案内します。</figcaption>' +
-          '</figure>' +
+          galleryHtml(p) +
 
           '<section class="detail-section">' +
             '<h2>この物件について</h2>' +
@@ -119,6 +115,8 @@
               row('情報更新日', P.formatDate(p.updatedAt)) +
             '</tbody></table>' +
           '</section>' +
+
+          mapHtml(p) +
 
           (closed ? '' : '<section class="detail-section">' +
             '<h2>ご契約までの流れ</h2>' +
@@ -250,6 +248,97 @@
     });
   }
 
-  /* ギャラリー（サムネイル切替の受け口。実写真登録時に拡張） */
-  function bindGallery() { /* 実写真登録時にサムネイル切替を実装 */ }
+  /* ---------- ギャラリー ----------
+     images/properties/ に写真があればそれを、なければ種別ごとの
+     イメージ画像を1枚だけ表示する。 */
+  function galleryHtml(p) {
+    var shots = P.galleryImages(p);
+    var real = P.hasPhotos(p);
+    var first = shots[0];
+    var alt = P.escapeHtml(p.title) + (real ? '' : 'のイメージ');
+
+    return '<figure class="detail-gallery' + (real ? ' has-photos' : '') + '">' +
+      '<div class="gallery-stage">' +
+        '<img id="gallery-main" src="' + first.src + '" alt="' + alt + '" width="480" height="320">' +
+        (shots.length > 1
+          ? '<button type="button" class="gallery-nav gallery-prev" data-gallery-step="-1" aria-label="前の写真">‹</button>' +
+            '<button type="button" class="gallery-nav gallery-next" data-gallery-step="1" aria-label="次の写真">›</button>' +
+            '<p class="gallery-counter" id="gallery-counter" aria-live="polite">1 / ' + shots.length + '</p>'
+          : '') +
+      '</div>' +
+      (shots.length > 1
+        ? '<ul class="gallery-thumbs" id="gallery-thumbs">' +
+            shots.map(function (img, i) {
+              return '<li><button type="button" class="gallery-thumb' + (i === 0 ? ' is-current' : '') + '"' +
+                ' data-gallery-index="' + i + '"' + (i === 0 ? ' aria-current="true"' : '') + '>' +
+                '<img src="' + img.src + '" alt="' + P.escapeHtml(p.title) + ' 写真' + (i + 1) +
+                (img.caption ? '：' + P.escapeHtml(img.caption) : '') + '" width="120" height="80" loading="lazy">' +
+              '</button></li>';
+            }).join('') +
+          '</ul>'
+        : '') +
+      '<figcaption id="gallery-caption">' +
+        (real
+          ? (first.caption ? P.escapeHtml(first.caption) : '現地写真')
+          : '※ 画像は物件種別に基づくイメージです。現地写真・図面は個別にご案内します。') +
+      '</figcaption>' +
+    '</figure>';
+  }
+
+  /* サムネイル・矢印での切り替え */
+  function bindGallery(p) {
+    var main = document.getElementById('gallery-main');
+    var thumbs = document.getElementById('gallery-thumbs');
+    if (!main || !thumbs) return;
+
+    var shots = P.galleryImages(p);
+    var caption = document.getElementById('gallery-caption');
+    var counter = document.getElementById('gallery-counter');
+    var index = 0;
+
+    function show(next) {
+      index = (next + shots.length) % shots.length;
+      var img = shots[index];
+      main.src = img.src;
+      if (caption) caption.textContent = img.caption || '現地写真';
+      if (counter) counter.textContent = (index + 1) + ' / ' + shots.length;
+      Array.prototype.forEach.call(thumbs.querySelectorAll('.gallery-thumb'), function (btn, i) {
+        btn.classList.toggle('is-current', i === index);
+        if (i === index) btn.setAttribute('aria-current', 'true');
+        else btn.removeAttribute('aria-current');
+      });
+    }
+
+    thumbs.addEventListener('click', function (e) {
+      var btn = e.target.closest('[data-gallery-index]');
+      if (btn) show(Number(btn.getAttribute('data-gallery-index')));
+    });
+
+    document.querySelectorAll('[data-gallery-step]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        show(index + Number(btn.getAttribute('data-gallery-step')));
+      });
+    });
+  }
+
+  /* ---------- 地図 ----------
+     所在地に番地・号まで入っている物件だけ表示する。 */
+  function mapHtml(p) {
+    /* 番地まで分からない住所では地図を出さない（別の場所を指してしまうため） */
+    if (!P.canShowMap(p)) return '';
+    return '<section class="detail-section">' +
+      '<h2>地図</h2>' +
+      '<div class="detail-map">' +
+        /* 1ファイルのプレビュー版は外部の読み込みが遮断されるため、地図の代わりに案内を出す */
+        (window.PORTAL_SPA
+          ? '<p class="detail-map-fallback">プレビュー版では地図を表示できません。' +
+            '公開サイトではここにGoogleマップが表示されます。</p>'
+          : '<iframe src="' + P.escapeHtml(P.mapEmbedUrl(p)) + '" title="' + P.escapeHtml(p.address) + 'の地図"' +
+            ' loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen></iframe>') +
+      '</div>' +
+      '<p class="detail-map-note">' + P.escapeHtml(p.address) +
+        '<a class="link-cta" href="' + P.escapeHtml(P.mapLinkUrl(p)) + '" target="_blank" rel="noopener">' +
+        'Googleマップで開く</a></p>' +
+    '</section>';
+  }
 })();

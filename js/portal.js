@@ -242,6 +242,47 @@
     return 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
   }
 
+  /* ---------- 物件写真 ---------- */
+  /* 写真は images/properties/ に置かれたファイルを tools/csv-to-properties.js が
+     取り込みます。1枚もない物件は種別ごとのイメージ画像で代替します。 */
+  function hasPhotos(p) { return !!(p.images && p.images.length); }
+
+  function galleryImages(p) {
+    return hasPhotos(p)
+      ? p.images
+      : [{ src: placeholderImage(p), caption: '', placeholder: true }];
+  }
+
+  function mainImage(p) { return galleryImages(p)[0].src; }
+
+  /* ---------- 地図 ---------- */
+  var MAP = DATA.map || { enabled: false, apiKey: '', zoom: 17 };
+
+  /* 「番地」「号」「4-9」「丁目4」まで入っていれば場所を特定できたとみなす。
+     「〇〇三丁目」で終わる住所は特定できないので地図を出さない。 */
+  var STREET_NUMBER_RE = /\d+\s*番|\d+\s*号|\d+\s*[-‐‑–—−ー－]\s*\d+|丁目\s*\d/;
+
+  function hasStreetNumber(address) {
+    return STREET_NUMBER_RE.test(String(address || ''));
+  }
+
+  function canShowMap(p) {
+    return !!(MAP.enabled && p && hasStreetNumber(p.address));
+  }
+
+  function mapEmbedUrl(p) {
+    var q = encodeURIComponent(p.address);
+    var zoom = MAP.zoom || 17;
+    return MAP.apiKey
+      ? 'https://www.google.com/maps/embed/v1/place?key=' + encodeURIComponent(MAP.apiKey) +
+        '&q=' + q + '&zoom=' + zoom + '&language=ja&region=JP'
+      : 'https://maps.google.com/maps?q=' + q + '&z=' + zoom + '&hl=ja&output=embed';
+  }
+
+  function mapLinkUrl(p) {
+    return 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(p.address);
+  }
+
   /* ---------- 絞り込み ---------- */
   /* criteria: {keyword, prefs[], types[], areas[], rentMin, rentMax, tsuboMin, tsuboMax, walk, features[], status[]} */
   function filterProperties(list, c) {
@@ -372,7 +413,8 @@
       '<article class="p-card' + (isClosed(p) ? ' p-card-closed' : '') + '">' +
         '<a class="p-card-link" href="property.html?id=' + encodeURIComponent(p.id) + '">' +
           '<div class="p-card-media">' +
-            '<img src="' + placeholderImage(p) + '" alt="' + escapeHtml(p.title) + 'のイメージ" width="480" height="320" loading="lazy">' +
+            '<img src="' + mainImage(p) + '" alt="' + escapeHtml(p.title) +
+              (hasPhotos(p) ? '' : 'のイメージ') + '" width="480" height="320" loading="lazy">' +
             '<div class="p-card-badges">' + dealBadge(p) + statusBadge(p) +
               '<span class="badge badge-type">' + (TYPE_LABEL[p.type] || '') + '</span></div>' +
           '</div>' +
@@ -562,6 +604,13 @@
     nearestAccess: nearestAccess,
     minWalk: minWalk,
     placeholderImage: placeholderImage,
+    hasPhotos: hasPhotos,
+    galleryImages: galleryImages,
+    mainImage: mainImage,
+    hasStreetNumber: hasStreetNumber,
+    canShowMap: canShowMap,
+    mapEmbedUrl: mapEmbedUrl,
+    mapLinkUrl: mapLinkUrl,
     filterProperties: filterProperties,
     sortProperties: sortProperties,
     findById: findById,

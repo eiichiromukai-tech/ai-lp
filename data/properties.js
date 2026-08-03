@@ -10,6 +10,20 @@
 (function (global) {
   'use strict';
 
+  /* ---------- 地図の設定 ----------
+     所在地が「番地・号」まで入っている物件だけ、詳細ページに地図を出します
+     （丁目までしか入っていない物件は、場所を特定できないので出しません）。
+
+     apiKey が空のときは、キーのいらない埋め込みURLを使います。設定ゼロで
+     動きますが、Googleの仕様変更で止まる可能性があります。長く運用する場合は
+     Google Maps Embed API のキー（無料）を取得してここに貼ってください。
+     取得手順は README の「地図表示について」に書いてあります。 */
+  var MAP_CONFIG = {
+    enabled: true,   /* false にすると地図を一切出しません */
+    apiKey: '',      /* 例: 'AIzaSy...' */
+    zoom: 17
+  };
+
   var DEAL_TYPES = [
     { value: 'rent', label: '賃貸' },
     { value: 'sale', label: '売買' }
@@ -104,7 +118,7 @@
       type: 'shop',
       status: 'available',
       ward: '千代田区',
-      address: '東京都千代田区神田三崎町三丁目',
+      address: '東京都千代田区神田三崎町三丁目4番9号',
       access: [
         { line: 'JR中央・総武線', station: '水道橋', walk: 3 },
         { line: '都営三田線', station: '水道橋', walk: 5 }
@@ -939,7 +953,7 @@
       type: 'shop',
       status: 'available',
       ward: '横浜市',
-      address: '神奈川県横浜市西区南幸二丁目',
+      address: '神奈川県横浜市西区南幸二丁目15番1号',
       access: [
         { line: 'JR各線', station: '横浜', walk: 4 },
         { line: '東急東横線', station: '横浜', walk: 5 }
@@ -954,6 +968,18 @@
       usage: ['飲食店', '物販'],
       availableFrom: '即入居可',
       updatedAt: '2026-08-01',
+      images: [
+        { src: 'images/properties/CMP-1025-01_外観.png', caption: '外観' },
+        { src: 'images/properties/CMP-1025-02_店内.png', caption: '店内' },
+        { src: 'images/properties/CMP-1025-03_厨房.png', caption: '厨房' },
+        { src: 'images/properties/CMP-1025-04_入口.png', caption: '入口' },
+        { src: 'images/properties/CMP-1025-05_前面道路.png', caption: '前面道路' },
+        { src: 'images/properties/CMP-1025-06_2階部分.png', caption: '2階部分' },
+        { src: 'images/properties/CMP-1025-07_バックヤード.png', caption: 'バックヤード' },
+        { src: 'images/properties/CMP-1025-08_トイレ.png', caption: 'トイレ' },
+        { src: 'images/properties/CMP-1025-09_看板位置.png', caption: '看板位置' },
+        { src: 'images/properties/CMP-1025-10_周辺環境.png', caption: '周辺環境' }
+      ],
       description: '横浜駅西口の繁華街に面した1階路面店舗です。前面道路の歩行者通行量が多く、視認性の高い間口を確保しています。重飲食も相談可能で、深夜営業の実績もあるビルです。'
     },
     {
@@ -987,7 +1013,7 @@
       type: 'shop',
       status: 'available',
       ward: 'さいたま市',
-      address: '埼玉県さいたま市大宮区宮町一丁目',
+      address: '埼玉県さいたま市大宮区宮町一丁目60番地',
       access: [
         { line: 'JR各線', station: '大宮', walk: 5 }
       ],
@@ -1010,7 +1036,7 @@
       type: 'warehouse',
       status: 'available',
       ward: '船橋市',
-      address: '千葉県船橋市西浦三丁目',
+      address: '千葉県船橋市西浦三丁目1番地2',
       access: [
         { line: 'JR京葉線', station: '二俣新町', walk: 12 }
       ],
@@ -1128,7 +1154,7 @@
       type: 'building',
       status: 'available',
       ward: '横浜市',
-      address: '神奈川県横浜市中区尾上町三丁目',
+      address: '神奈川県横浜市中区尾上町三丁目35番地',
       access: [
         { line: 'JR根岸線', station: '関内', walk: 4 },
         { line: '横浜市営地下鉄', station: '関内', walk: 5 }
@@ -1146,6 +1172,11 @@
       usage: ['事務所', '店舗'],
       availableFrom: '相談',
       updatedAt: '2026-07-31',
+      images: [
+        { src: 'images/properties/CMP-2011-01_外観.png', caption: '外観' },
+        { src: 'images/properties/CMP-2011-02_エントランス.png', caption: 'エントランス' },
+        { src: 'images/properties/CMP-2011-03_基準階.png', caption: '基準階' }
+      ],
       description: '関内駅至近の一棟オフィスビルです。現況は満室稼働で、事務所テナント中心に長期入居が続いています。レントロールと修繕履歴は個別にご開示します。'
     },
     {
@@ -1234,7 +1265,7 @@
       type: 'shop',
       status: 'available',
       ward: '立川市',
-      address: '東京都立川市曙町二丁目',
+      address: '東京都立川市曙町二丁目1番1号',
       access: [
         { line: 'JR中央線', station: '立川', walk: 4 },
         { line: '多摩都市モノレール', station: '立川北', walk: 3 }
@@ -1249,6 +1280,12 @@
       usage: ['飲食店', '物販'],
       availableFrom: '即入居可',
       updatedAt: '2026-08-02',
+      images: [
+        { src: 'images/properties/CMP-1033-01_外観.png', caption: '外観' },
+        { src: 'images/properties/CMP-1033-02_店内.png', caption: '店内' },
+        { src: 'images/properties/CMP-1033-03_前面道路.png', caption: '前面道路' },
+        { src: 'images/properties/CMP-1033-04_区画図.png', caption: '区画図' }
+      ],
       description: '立川駅北口のサンサンロード沿いに面した1階路面店舗です。駅と大型商業施設をつなぐ動線上にあり、平日・休日ともに歩行者通行量が安定しています。多摩地区で最も商業集積が進んだエリアです。'
     },
     {
@@ -1258,7 +1295,7 @@
       type: 'shop',
       status: 'available',
       ward: '武蔵野市',
-      address: '東京都武蔵野市吉祥寺本町一丁目',
+      address: '東京都武蔵野市吉祥寺本町一丁目11番5号',
       access: [
         { line: 'JR中央線', station: '吉祥寺', walk: 4 },
         { line: '京王井の頭線', station: '吉祥寺', walk: 4 }
@@ -1273,6 +1310,10 @@
       usage: ['飲食店', 'サービス'],
       availableFrom: '即入居可',
       updatedAt: '2026-07-30',
+      images: [
+        { src: 'images/properties/CMP-1034-01_外観.png', caption: '外観' },
+        { src: 'images/properties/CMP-1034-02_店内.png', caption: '店内' }
+      ],
       description: '吉祥寺サンロード商店街からすぐの2階店舗です。カフェ業態の居抜きで、厨房設備と客席をそのまま引き継げます。住みたい街ランキング上位の街で、平日夜と休日の集客が見込めます。'
     },
     {
@@ -1421,6 +1462,7 @@
   });
 
   global.PORTAL_DATA = {
+    map: MAP_CONFIG,
     properties: PROPERTIES,
     deals: DEAL_TYPES,
     types: PROPERTY_TYPES,
