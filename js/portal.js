@@ -14,11 +14,38 @@
   var TYPE_LABEL = {};
   DATA.types.forEach(function (t) { TYPE_LABEL[t.value] = t.label; });
 
+  /* 表示用の募集状況。'new' は updatedAt から自動判定する派生ステータスで、
+     データ側で持つのは available / negotiating / closed の3つ。 */
   var STATUS_LABEL = {
     'new': '新着',
     'available': '募集中',
-    'negotiating': '商談中'
+    'negotiating': '商談中',
+    'closed': '成約済'
   };
+
+  /* 情報更新日から何日間を「新着」として扱うか */
+  var NEW_DAYS = 14;
+
+  function daysSince(iso) {
+    var d = new Date(iso + 'T00:00:00');
+    if (isNaN(d)) return Infinity;
+    var today = new Date();
+    today.setHours(0, 0, 0, 0);
+    return Math.floor((today - d) / 86400000);
+  }
+
+  function isClosed(p) { return p.status === 'closed'; }
+
+  function isNew(p) {
+    return !isClosed(p) && p.status !== 'negotiating' && daysSince(p.updatedAt) <= NEW_DAYS;
+  }
+
+  /* カードやバッジ、絞り込みで使う表示上の募集状況 */
+  function displayStatus(p) {
+    if (isClosed(p)) return 'closed';
+    if (p.status === 'negotiating') return 'negotiating';
+    return isNew(p) ? 'new' : 'available';
+  }
 
   /* ---------- フォーマッタ ---------- */
   function formatRent(yen) {
@@ -153,10 +180,13 @@
   /* criteria: {keyword, types[], areas[], rentMin, rentMax, tsuboMin, tsuboMax, walk, features[], status[]} */
   function filterProperties(list, c) {
     c = c || {};
+    var wantsClosed = !!(c.status && c.status.indexOf('closed') !== -1);
     return list.filter(function (p) {
+      /* 成約済は明示的に指定されたときだけ検索結果に含める */
+      if (isClosed(p) && !wantsClosed) return false;
       if (c.types && c.types.length && c.types.indexOf(p.type) === -1) return false;
       if (c.areas && c.areas.length && c.areas.indexOf(p.ward) === -1) return false;
-      if (c.status && c.status.length && c.status.indexOf(p.status) === -1) return false;
+      if (c.status && c.status.length && c.status.indexOf(displayStatus(p)) === -1) return false;
       if (c.rentMin != null && p.rent < c.rentMin) return false;
       if (c.rentMax != null && p.rent > c.rentMax) return false;
       if (c.tsuboMin != null && p.areaTsubo < c.tsuboMin) return false;
@@ -254,13 +284,14 @@
 
   /* ---------- 物件カード ---------- */
   function statusBadge(p) {
-    return '<span class="badge badge-' + p.status + '">' + (STATUS_LABEL[p.status] || '') + '</span>';
+    var s = displayStatus(p);
+    return '<span class="badge badge-' + s + '">' + (STATUS_LABEL[s] || '') + '</span>';
   }
 
   function propertyCard(p) {
     var fav = isFavorite(p.id);
     return '' +
-      '<article class="p-card">' +
+      '<article class="p-card' + (isClosed(p) ? ' p-card-closed' : '') + '">' +
         '<a class="p-card-link" href="property.html?id=' + encodeURIComponent(p.id) + '">' +
           '<div class="p-card-media">' +
             '<img src="' + placeholderImage(p) + '" alt="' + escapeHtml(p.title) + 'のイメージ" width="480" height="320" loading="lazy">' +
@@ -417,6 +448,11 @@
     data: DATA,
     TYPE_LABEL: TYPE_LABEL,
     STATUS_LABEL: STATUS_LABEL,
+    NEW_DAYS: NEW_DAYS,
+    isNew: isNew,
+    isClosed: isClosed,
+    displayStatus: displayStatus,
+    activeProperties: function () { return DATA.properties.filter(function (p) { return !isClosed(p); }); },
     formatRent: formatRent,
     formatYen: formatYen,
     formatMonths: formatMonths,

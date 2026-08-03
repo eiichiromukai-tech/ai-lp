@@ -33,7 +33,7 @@
     }), 'areas');
 
     fill('f-status', Object.keys(P.STATUS_LABEL).map(function (s) {
-      return { value: s, label: P.STATUS_LABEL[s], count: countBy('status', s) };
+      return { value: s, label: P.STATUS_LABEL[s], count: countStatus(s) };
     }), 'status');
 
     fill('f-features', P.data.features.filter(function (f) {
@@ -43,12 +43,17 @@
     }), 'features');
   }
 
+  /* 件数は成約済を除いた掲載中の物件で数える（成約済の件数のみ実数） */
   function countBy(key, value) {
-    return ALL.filter(function (p) { return p[key] === value; }).length;
+    return P.activeProperties().filter(function (p) { return p[key] === value; }).length;
   }
 
   function countFeature(f) {
-    return ALL.filter(function (p) { return p.features.indexOf(f) !== -1; }).length;
+    return P.activeProperties().filter(function (p) { return p.features.indexOf(f) !== -1; }).length;
+  }
+
+  function countStatus(s) {
+    return ALL.filter(function (p) { return P.displayStatus(p) === s; }).length;
   }
 
   function fill(id, items, group) {

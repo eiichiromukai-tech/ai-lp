@@ -3,7 +3,8 @@
   'use strict';
 
   var P = window.Portal;
-  var props = P.data.properties;
+  /* トップページの件数・一覧はすべて掲載中の物件のみを対象にする */
+  var props = P.activeProperties();
 
   var bound = false;
 

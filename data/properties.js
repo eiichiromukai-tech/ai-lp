@@ -33,7 +33,7 @@
       id: 'CMP-1001',
       title: '神田三崎町 1階路面店舗（居抜き）',
       type: 'shop',
-      status: 'new',
+      status: 'available',
       ward: '千代田区',
       address: '東京都千代田区神田三崎町三丁目',
       access: [
@@ -109,7 +109,7 @@
       id: 'CMP-1004',
       title: '西新宿 セットアップオフィス 11F',
       type: 'office',
-      status: 'new',
+      status: 'available',
       ward: '新宿区',
       address: '東京都新宿区西新宿六丁目',
       access: [
@@ -259,7 +259,7 @@
       id: 'CMP-1010',
       title: '浅草雷門通り 一棟ビル（4層）',
       type: 'building',
-      status: 'new',
+      status: 'available',
       ward: '台東区',
       address: '東京都台東区雷門二丁目',
       access: [
@@ -310,7 +310,7 @@
       id: 'CMP-1012',
       title: '三軒茶屋 2F スクール・サロン向け',
       type: 'shop',
-      status: 'available',
+      status: 'closed',
       ward: '世田谷区',
       address: '東京都世田谷区太子堂四丁目',
       access: [
@@ -408,7 +408,7 @@
       id: 'CMP-1016',
       title: '恵比寿 デザイナーズオフィス 3F',
       type: 'office',
-      status: 'new',
+      status: 'available',
       ward: '渋谷区',
       address: '東京都渋谷区恵比寿西一丁目',
       access: [
@@ -483,7 +483,7 @@
       id: 'CMP-1019',
       title: '新橋 飲食ビル 3F 居抜き',
       type: 'shop',
-      status: 'available',
+      status: 'closed',
       ward: '港区',
       address: '東京都港区新橋三丁目',
       access: [
@@ -607,7 +607,7 @@
       id: 'CMP-1024',
       title: '築地 生鮮対応 1F区画',
       type: 'shop',
-      status: 'new',
+      status: 'available',
       ward: '中央区',
       address: '東京都中央区築地六丁目',
       access: [
@@ -631,9 +631,18 @@
     }
   ];
 
-  /* 更新日が未設定の物件には既定値を補完 */
-  PROPERTIES.forEach(function (p) {
-    if (!p.updatedAt) p.updatedAt = '2026-07-20';
+  /* 面積換算と坪単価は自動計算するため、物件データ側では持ちません。
+
+     updatedAt（情報更新日）は「新着」バッジの自動判定と新着順の並び替えに
+     使います。サンプルデータでは未設定の物件に掲載順で少しずつ古い日付を
+     割り当てていますが、実データでは各物件に必ず設定してください。 */
+  var FALLBACK_BASE = new Date('2026-07-17T00:00:00');
+
+  PROPERTIES.forEach(function (p, i) {
+    if (!p.updatedAt) {
+      var d = new Date(FALLBACK_BASE.getTime() - i * 5 * 86400000);
+      p.updatedAt = d.toISOString().slice(0, 10);
+    }
     p.areaSqm = Math.round(p.areaTsubo * 3.30578 * 10) / 10;
     p.tsuboUnitPrice = p.areaTsubo ? Math.round(p.rent / p.areaTsubo) : 0;
   });

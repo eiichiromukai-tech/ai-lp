@@ -35,7 +35,9 @@
 
   function detailHtml(p) {
     var img = P.placeholderImage(p);
-    var similar = P.data.properties.filter(function (o) {
+    var closed = P.isClosed(p);
+    /* おすすめには成約済を出さない */
+    var similar = P.activeProperties().filter(function (o) {
       return o.id !== p.id && (o.type === p.type || o.ward === p.ward);
     }).slice(0, 3);
 
@@ -55,6 +57,14 @@
         '<h1 class="detail-title">' + P.escapeHtml(p.title) + '</h1>' +
         '<p class="detail-address">' + P.escapeHtml(p.address) + '／' + P.escapeHtml(P.nearestAccess(p)) + '</p>' +
       '</div>' +
+
+      (closed ? '<div class="closed-notice" role="note">' +
+        '<h2>この物件は成約済みです</h2>' +
+        '<p>募集は終了しています。過去の取扱実績として掲載しています。同じエリア・条件の物件をお探しの場合はご相談ください。</p>' +
+        '<div class="closed-actions">' +
+          '<a href="properties.html?type=' + p.type + '&area=' + encodeURIComponent(p.ward) + '" class="btn btn-primary">同じ条件の物件を探す</a>' +
+          '<a href="contact.html" class="link-cta">条件を伝えて探してもらう</a>' +
+        '</div></div>' : '') +
 
       '<div class="detail-layout">' +
         '<div class="detail-main">' +
@@ -96,7 +106,7 @@
             '</tbody></table>' +
           '</section>' +
 
-          '<section class="detail-section">' +
+          (closed ? '' : '<section class="detail-section">' +
             '<h2>ご契約までの流れ</h2>' +
             '<ol class="flow-list">' +
               '<li><span class="flow-step">STEP 1</span><h3>お問い合わせ</h3><p>本ページのフォームまたはお電話でご連絡ください。ご相談は無料です。</p></li>' +
@@ -104,7 +114,7 @@
               '<li><span class="flow-step">STEP 3</span><h3>条件交渉・申込</h3><p>賃料・フリーレント・契約期間などの条件をオーナー様と交渉します。</p></li>' +
               '<li><span class="flow-step">STEP 4</span><h3>重要事項説明・契約</h3><p>宅地建物取引士が重要事項をご説明のうえ、ご契約手続きを行います。</p></li>' +
             '</ol>' +
-          '</section>' +
+          '</section>') +
         '</div>' +
 
         '<aside class="detail-side">' +
@@ -116,19 +126,22 @@
               '<div><dt>階数</dt><dd>' + P.escapeHtml(p.floor) + '</dd></div>' +
               '<div><dt>入居時期</dt><dd>' + P.escapeHtml(p.availableFrom) + '</dd></div>' +
             '</dl>' +
-            '<a href="#detail-inquiry" class="btn btn-primary btn-block">この物件を問い合わせる</a>' +
-            '<button type="button" class="btn btn-ghost btn-block fav-btn-wide' + (P.isFavorite(p.id) ? ' is-active' : '') + '" ' +
-              'data-fav-id="' + p.id + '" aria-pressed="' + P.isFavorite(p.id) + '">お気に入りに追加</button>' +
+            (closed
+              ? '<p class="side-closed">この物件は成約済みです</p>' +
+                '<a href="contact.html" class="btn btn-primary btn-block">似た条件で相談する</a>'
+              : '<a href="#detail-inquiry" class="btn btn-primary btn-block">この物件を問い合わせる</a>' +
+                '<button type="button" class="btn btn-ghost btn-block fav-btn-wide' + (P.isFavorite(p.id) ? ' is-active' : '') + '" ' +
+                  'data-fav-id="' + p.id + '" aria-pressed="' + P.isFavorite(p.id) + '">お気に入りに追加</button>') +
             '<a href="tel:0362615098" class="side-tel"><span>お電話でのご相談</span><strong>03-6261-5098</strong><small>平日 9:30〜18:30</small></a>' +
           '</div>' +
         '</aside>' +
       '</div>' +
 
-      '<section class="detail-section detail-inquiry" id="detail-inquiry">' +
+      (closed ? '' : '<section class="detail-section detail-inquiry" id="detail-inquiry">' +
         '<h2>この物件についてお問い合わせ</h2>' +
         '<p class="section-lead">物件番号 ' + p.id + '（' + P.escapeHtml(p.title) + '）についてのお問い合わせです。図面・詳細条件をお送りします。</p>' +
         inquiryForm(p) +
-      '</section>' +
+      '</section>') +
 
       (similar.length ? '<section class="detail-section">' +
         '<h2>この物件を見た方におすすめ</h2>' +
