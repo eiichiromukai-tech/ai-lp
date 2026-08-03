@@ -28,6 +28,10 @@
     '目黒区', '世田谷区', '豊島区', '台東区', '墨田区', '江東区'
   ];
 
+  /* === PROPERTIES:BEGIN =========================================
+     この配列は tools/csv-to-properties.js が data/properties.csv から
+     生成します。スプレッドシート運用中は直接編集しないでください。
+     ============================================================= */
   var PROPERTIES = [
     {
       id: 'CMP-1001',
@@ -70,7 +74,7 @@
       managementFee: 0,
       deposit: 12,
       keyMoney: 0,
-      areaTsubo: 110.0,
+      areaTsubo: 110,
       floor: '6F',
       floorsTotal: 22,
       builtYear: 2015,
@@ -78,6 +82,7 @@
       features: ['駅徒歩5分以内', 'エレベーターあり', '24時間利用可', '空調更新済'],
       usage: ['事務所'],
       availableFrom: '2026年10月',
+      updatedAt: '2026-07-12',
       description: '東京駅至近、丸の内エリアのハイグレードビル6階フロアです。無柱空間で天井高2,800mm、OAフロア100mm、個別空調。共用部のグレードが高く、来訪の多い企業の本社機能に適します。基準階一括での賃貸が可能です。'
     },
     {
@@ -103,6 +108,7 @@
       features: ['飲食可', '看板設置可', '駅徒歩5分以内', 'エレベーターあり'],
       usage: ['飲食店', '物販', 'クリニック'],
       availableFrom: '相談',
+      updatedAt: '2026-07-07',
       description: '銀座並木通りに面したビルの2階区画。1階エントランスからの視認性が高く、外部看板の設置が可能です。ハイブランド路面店が並ぶ通りで、ブランド発信を伴う出店に適したロケーションです。'
     },
     {
@@ -154,6 +160,7 @@
       features: ['1階路面', 'スケルトン', '飲食可', '看板設置可', '駅徒歩5分以内'],
       usage: ['物販', '飲食店', 'サービス'],
       availableFrom: '2026年9月',
+      updatedAt: '2026-06-27',
       description: '青山通り沿い、表参道交差点から徒歩圏の1階路面区画です。スケルトン渡しのため、ブランドの世界観に合わせた自由な設計が可能。ファサードの間口8.5m、天井高3,600mm。'
     },
     {
@@ -171,7 +178,7 @@
       managementFee: 40000,
       deposit: 10,
       keyMoney: 0,
-      areaTsubo: 28.0,
+      areaTsubo: 28,
       floor: 'B1F',
       floorsTotal: 6,
       builtYear: 1991,
@@ -179,6 +186,7 @@
       features: ['居抜き', '飲食可', '深夜営業可', '駅徒歩5分以内'],
       usage: ['飲食店', 'バー'],
       availableFrom: '即入居可',
+      updatedAt: '2026-06-22',
       description: '宮益坂沿いのビル地下1階、バー業態の居抜き区画です。カウンター・厨房・音響設備をそのまま引き継げます。深夜営業可、周辺は夜間人口の多いエリアです。'
     },
     {
@@ -196,7 +204,7 @@
       managementFee: 62000,
       deposit: 10,
       keyMoney: 0,
-      areaTsubo: 46.0,
+      areaTsubo: 46,
       floor: '8F',
       floorsTotal: 10,
       builtYear: 2004,
@@ -204,6 +212,7 @@
       features: ['エレベーターあり', '空調更新済', '24時間利用可'],
       usage: ['事務所'],
       availableFrom: '2026年8月',
+      updatedAt: '2026-06-17',
       description: '五反田駅から徒歩6分、コストバランスに優れたオフィス区画です。ワンフロア貸しで間仕切りなし、OAフロア対応。スタートアップの拡張移転やバックオフィス集約に適します。'
     },
     {
@@ -220,7 +229,7 @@
       managementFee: 0,
       deposit: 6,
       keyMoney: 0,
-      areaTsubo: 310.0,
+      areaTsubo: 310,
       floor: '1F',
       floorsTotal: 3,
       builtYear: 2009,
@@ -228,6 +237,7 @@
       features: ['24時間利用可', '駐車場あり'],
       usage: ['倉庫', '軽作業'],
       availableFrom: '2026年11月',
+      updatedAt: '2026-06-12',
       description: '首都高速湾岸線 新木場ICから約1.5km。荷捌きスペースと大型車の接車バースを確保。一部低温区画あり、床荷重1.5t/m²、有効天井高5.5m。24時間稼働可能です。'
     },
     {
@@ -253,6 +263,7 @@
       features: ['駅徒歩5分以内', 'エレベーターあり', '看板設置可'],
       usage: ['物販', 'サービス', 'スクール'],
       availableFrom: '即入居可',
+      updatedAt: '2026-06-07',
       description: '池袋東口の繁華街に位置する2階区画。1階に飲食テナントが入る視認性の高いビルで、サロン・スクール・クリニック等の集客型サービス業態に適します。'
     },
     {
@@ -270,7 +281,7 @@
       managementFee: 0,
       deposit: 12,
       keyMoney: 0,
-      areaTsubo: 96.0,
+      areaTsubo: 96,
       floor: '1F-4F',
       floorsTotal: 4,
       builtYear: 1996,
@@ -304,6 +315,7 @@
       features: ['1階路面', 'スケルトン', '飲食可', '駅徒歩5分以内'],
       usage: ['飲食店', '物販'],
       availableFrom: '即入居可',
+      updatedAt: '2026-05-28',
       description: '中目黒駅から徒歩2分、感度の高い個店が集まるエリアの小規模路面区画です。10〜16坪の業態に適したサイズ感で、テイクアウト主体のカフェやベーカリーの出店に向いています。'
     },
     {
@@ -328,6 +340,7 @@
       features: ['駅徒歩5分以内', 'エレベーターあり', '看板設置可'],
       usage: ['サービス', 'スクール', 'クリニック'],
       availableFrom: '2026年9月',
+      updatedAt: '2026-05-23',
       description: '三軒茶屋駅から徒歩4分、住宅地と商店街の接点にある2階区画。地域密着型のサロン・教室・治療院に適したサイズと賃料水準です。'
     },
     {
@@ -353,6 +366,7 @@
       features: ['駅徒歩5分以内', 'エレベーターあり', '24時間利用可'],
       usage: ['事務所'],
       availableFrom: '即入居可',
+      updatedAt: '2026-05-18',
       description: '日本橋室町の再開発エリアに隣接するオフィスビル4階。約26坪ずつの分割貸しにも対応可能です。金融・法務系のテナントが多く入居しています。'
     },
     {
@@ -370,7 +384,7 @@
       managementFee: 90000,
       deposit: 10,
       keyMoney: 0,
-      areaTsubo: 68.0,
+      areaTsubo: 68,
       floor: '1F・B1F',
       floorsTotal: 6,
       builtYear: 1994,
@@ -378,6 +392,7 @@
       features: ['1階路面', '居抜き', '飲食可', '深夜営業可', '駅徒歩5分以内'],
       usage: ['飲食店'],
       availableFrom: '相談',
+      updatedAt: '2026-05-13',
       description: '錦糸町駅南口の繁華街に位置する1階＋地下1階の大型飲食区画です。前テナントは大箱居酒屋で、厨房・客席什器の一部を引き継げます。宴会需要の見込める立地。'
     },
     {
@@ -394,7 +409,7 @@
       managementFee: 0,
       deposit: 6,
       keyMoney: 0,
-      areaTsubo: 182.0,
+      areaTsubo: 182,
       floor: '—',
       floorsTotal: 0,
       builtYear: null,
@@ -402,6 +417,7 @@
       features: ['駐車場あり', '24時間利用可'],
       usage: ['店舗', '駐車場', '事業用建物'],
       availableFrom: '2026年12月',
+      updatedAt: '2026-05-08',
       description: '幹線道路に接道する約180坪の事業用地です。建築条件なしの定期借地でのご提案が可能。ロードサイド店舗・コインパーキング・事業所建設などの用途を想定しています。'
     },
     {
@@ -444,7 +460,7 @@
       managementFee: 0,
       deposit: 6,
       keyMoney: 0,
-      areaTsubo: 120.0,
+      areaTsubo: 120,
       floor: '1F・2F',
       floorsTotal: 2,
       builtYear: 2001,
@@ -452,6 +468,7 @@
       features: ['駐車場あり', '24時間利用可'],
       usage: ['倉庫', '事務所', '軽作業'],
       availableFrom: '即入居可',
+      updatedAt: '2026-04-28',
       description: '1階倉庫＋2階事務所の一体利用が可能な物件です。都心配送の拠点として利便性が高く、シャッター高3.5m、2t車の接車が可能。駐車スペース3台分付き。'
     },
     {
@@ -477,6 +494,7 @@
       features: ['1階路面', 'スケルトン', '駅徒歩5分以内', '看板設置可'],
       usage: ['物販', 'カフェ', 'ギャラリー'],
       availableFrom: '即入居可',
+      updatedAt: '2026-04-23',
       description: '神保町の古書店街に面した11坪の1階区画です。小型のカフェ・ギャラリー・セレクトショップに適したサイズ感で、周辺は文化的な回遊性の高いエリアです。'
     },
     {
@@ -494,7 +512,7 @@
       managementFee: 30000,
       deposit: 10,
       keyMoney: 0,
-      areaTsubo: 24.0,
+      areaTsubo: 24,
       floor: '3F',
       floorsTotal: 8,
       builtYear: 1990,
@@ -502,6 +520,7 @@
       features: ['居抜き', '飲食可', '深夜営業可', '駅徒歩5分以内', 'エレベーターあり'],
       usage: ['飲食店'],
       availableFrom: '即入居可',
+      updatedAt: '2026-04-18',
       description: '新橋の飲食ビル3階、和食業態の居抜き区画です。厨房・カウンター・個室をそのまま利用でき、開業までの期間を大幅に短縮できます。ビル全体が飲食テナントで構成されています。'
     },
     {
@@ -519,7 +538,7 @@
       managementFee: 0,
       deposit: 12,
       keyMoney: 0,
-      areaTsubo: 240.0,
+      areaTsubo: 240,
       floor: '14F',
       floorsTotal: 24,
       builtYear: 2013,
@@ -527,6 +546,7 @@
       features: ['駅徒歩5分以内', 'エレベーターあり', '24時間利用可', '空調更新済'],
       usage: ['事務所'],
       availableFrom: '2027年1月',
+      updatedAt: '2026-04-13',
       description: '豊洲エリアの大規模オフィスビル、基準階240坪のワンフロア区画です。無柱空間・OAフロア150mm・個別空調。BCP対応の非常用発電機を備えます。本社機能の集約に適した規模です。'
     },
     {
@@ -552,6 +572,7 @@
       features: ['居抜き', '飲食可', '駅徒歩5分以内'],
       usage: ['飲食店', 'カフェ'],
       availableFrom: '即入居可',
+      updatedAt: '2026-04-08',
       description: '下北沢駅から徒歩3分、カフェ居抜きの2階区画です。厨房設備・カウンター・客席什器付き。若年層の回遊が多く、個性のある業態と親和性の高いエリアです。'
     },
     {
@@ -568,7 +589,7 @@
       managementFee: 0,
       deposit: 10,
       keyMoney: 0,
-      areaTsubo: 88.0,
+      areaTsubo: 88,
       floor: '1F-5F',
       floorsTotal: 5,
       builtYear: 2005,
@@ -576,6 +597,7 @@
       features: ['1階路面', 'エレベーターあり', '看板設置可'],
       usage: ['事務所', '店舗', '複合'],
       availableFrom: '相談',
+      updatedAt: '2026-04-03',
       description: '東京スカイツリー至近の5層一棟ビル。現況で2フロアにテナントが入居しており、収益を確保しながらの取得・一棟借りが可能です。1階は路面店舗として稼働中。'
     },
     {
@@ -593,7 +615,7 @@
       managementFee: 38000,
       deposit: 10,
       keyMoney: 0,
-      areaTsubo: 32.0,
+      areaTsubo: 32,
       floor: '3F',
       floorsTotal: 7,
       builtYear: 1995,
@@ -601,6 +623,7 @@
       features: ['駅徒歩5分以内', 'エレベーターあり', '看板設置可'],
       usage: ['スクール', '事務所', 'サービス'],
       availableFrom: '2026年9月',
+      updatedAt: '2026-03-29',
       description: '学生の多い高田馬場エリア、駅徒歩5分の3階区画です。教室利用を想定した間取りで、スクール・予備校・研修施設に適します。'
     },
     {
@@ -630,6 +653,7 @@
       description: '築地エリアの1階路面区画です。給排水・グリストラップ完備で生鮮を扱う業態にも対応。観光需要と近隣オフィス需要の両方を取り込める立地です。'
     }
   ];
+  /* === PROPERTIES:END === */
 
   /* 面積換算と坪単価は自動計算するため、物件データ側では持ちません。
 

@@ -1,0 +1,218 @@
+/* =====================================================
+   スプレッドシート（CSV）と物件データの対応づけ・入力チェック
+   -----------------------------------------------------
+   スプレッドシート上は日本語で扱い、サイト側の値へ変換します。
+   （物件種別「店舗」→ shop、募集状況「募集中」→ available など）
+   ===================================================== */
+'use strict';
+
+const path = require('path');
+
+/* data/properties.js からマスタ（種別・こだわり条件・エリア）を読み込む */
+function loadMasters() {
+  const file = path.join(__dirname, '..', '..', 'data', 'properties.js');
+  const src = require('fs').readFileSync(file, 'utf8');
+  const sandbox = { window: {} };
+  /* IIFE を実行して window.PORTAL_DATA を取り出す */
+  new Function('window', src)(sandbox.window);
+  const data = sandbox.window.PORTAL_DATA;
+  if (!data) throw new Error('data/properties.js から PORTAL_DATA を取得できませんでした');
+  return data;
+}
+
+const MASTERS = loadMasters();
+
+const TYPE_LABEL_TO_VALUE = {};
+const TYPE_VALUE_TO_LABEL = {};
+MASTERS.types.forEach(function (t) {
+  TYPE_LABEL_TO_VALUE[t.label] = t.value;
+  TYPE_VALUE_TO_LABEL[t.value] = t.label;
+});
+
+const STATUS_LABEL_TO_VALUE = { '募集中': 'available', '商談中': 'negotiating', '成約済': 'closed' };
+const STATUS_VALUE_TO_LABEL = { available: '募集中', negotiating: '商談中', closed: '成約済' };
+
+/* CSVの列。順番がそのままスプレッドシートの列順になります */
+const COLUMNS = [
+  { key: 'id', header: '物件番号' },
+  { key: 'title', header: '物件名' },
+  { key: 'type', header: '物件種別' },
+  { key: 'status', header: '募集状況' },
+  { key: 'ward', header: 'エリア' },
+  { key: 'address', header: '所在地' },
+  { key: 'access', header: '交通' },
+  { key: 'rent', header: '月額賃料(円)' },
+  { key: 'managementFee', header: '共益費(円)' },
+  { key: 'deposit', header: '敷金(ヶ月)' },
+  { key: 'keyMoney', header: '礼金(ヶ月)' },
+  { key: 'areaTsubo', header: '面積(坪)' },
+  { key: 'floor', header: '階数' },
+  { key: 'floorsTotal', header: '建物階数' },
+  { key: 'builtYear', header: '築年' },
+  { key: 'structure', header: '構造' },
+  { key: 'features', header: 'こだわり条件' },
+  { key: 'usage', header: '用途' },
+  { key: 'availableFrom', header: '入居可能時期' },
+  { key: 'updatedAt', header: '情報更新日' },
+  { key: 'description', header: '物件説明' }
+];
+
+/* 交通は「路線|駅|徒歩分」を「;」区切りで並べる */
+function encodeAccess(access) {
+  return (access || []).map(function (a) {
+    return [a.line, a.station, a.walk].join('|');
+  }).join(';');
+}
+
+function decodeAccess(text, errors, row) {
+  if (!String(text || '').trim()) return [];
+  return String(text).split(';').map(function (chunk, i) {
+    const parts = chunk.split('|').map(function (s) { return s.trim(); });
+    if (parts.length !== 3) {
+      errors.push(row + '交通' + (i + 1) + '件目「' + chunk.trim() + '」の形式が不正です（路線|駅|徒歩分）');
+      return null;
+    }
+    const walk = Number(parts[2]);
+    if (!parts[0] || !parts[1] || !Number.isFinite(walk) || walk < 0) {
+      errors.push(row + '交通' + (i + 1) + '件目「' + chunk.trim() + '」を読み取れません（徒歩分は数値）');
+      return null;
+    }
+    return { line: parts[0], station: parts[1], walk: walk };
+  }).filter(Boolean);
+}
+
+function encodeList(list) { return (list || []).join(';'); }
+
+function decodeList(text) {
+  return String(text || '').split(';')
+    .map(function (s) { return s.trim(); })
+    .filter(Boolean);
+}
+
+/* 物件オブジェクト → CSVの1行 */
+function toRow(p) {
+  return COLUMNS.map(function (col) {
+    switch (col.key) {
+      case 'type': return TYPE_VALUE_TO_LABEL[p.type] || p.type;
+      case 'status': return STATUS_VALUE_TO_LABEL[p.status] || p.status;
+      case 'access': return encodeAccess(p.access);
+      case 'features': return encodeList(p.features);
+      case 'usage': return encodeList(p.usage);
+      case 'builtYear': return p.builtYear == null ? '' : p.builtYear;
+      default: return p[col.key] == null ? '' : p[col.key];
+    }
+  });
+}
+
+function num(value, label, rowLabel, errors, opts) {
+  opts = opts || {};
+  const raw = String(value == null ? '' : value).trim().replace(/[,，\s]/g, '');
+  if (raw === '') {
+    if (opts.required) errors.push(rowLabel + label + 'は必須です');
+    return opts.required ? NaN : (opts.blank === undefined ? 0 : opts.blank);
+  }
+  const n = Number(raw);
+  if (!Number.isFinite(n)) { errors.push(rowLabel + label + '「' + value + '」は数値ではありません'); return NaN; }
+  if (n < 0) { errors.push(rowLabel + label + 'は0以上で入力してください'); return NaN; }
+  return n;
+}
+
+/* CSVの1行 → 物件オブジェクト。errors / warnings に問題を積む */
+function fromRow(cells, index, errors, warnings) {
+  const get = function (key) {
+    const i = COLUMNS.findIndex(function (c) { return c.key === key; });
+    return String(cells[i] == null ? '' : cells[i]).trim();
+  };
+
+  const id = get('id');
+  const rowLabel = '[' + (index + 2) + '行目' + (id ? ' ' + id : '') + '] ';
+
+  const p = {};
+  p.id = id;
+  if (!p.id) errors.push(rowLabel + '物件番号は必須です');
+
+  p.title = get('title');
+  if (!p.title) errors.push(rowLabel + '物件名は必須です');
+
+  const typeLabel = get('type');
+  p.type = TYPE_LABEL_TO_VALUE[typeLabel];
+  if (!p.type) {
+    errors.push(rowLabel + '物件種別「' + typeLabel + '」は使用できません（' +
+      Object.keys(TYPE_LABEL_TO_VALUE).join('／') + '）');
+  }
+
+  const statusLabel = get('status') || '募集中';
+  p.status = STATUS_LABEL_TO_VALUE[statusLabel];
+  if (!p.status) {
+    errors.push(rowLabel + '募集状況「' + statusLabel + '」は使用できません（募集中／商談中／成約済）');
+  }
+
+  p.ward = get('ward');
+  if (!p.ward) errors.push(rowLabel + 'エリアは必須です');
+  else if (MASTERS.areas.indexOf(p.ward) === -1) {
+    errors.push(rowLabel + 'エリア「' + p.ward + '」はマスタにありません（' +
+      'data/properties.js の AREAS に追加してください）');
+  }
+
+  p.address = get('address');
+  p.access = decodeAccess(get('access'), errors, rowLabel);
+
+  p.rent = num(get('rent'), '月額賃料', rowLabel, errors, { required: true });
+  p.managementFee = num(get('managementFee'), '共益費', rowLabel, errors);
+  p.deposit = num(get('deposit'), '敷金', rowLabel, errors);
+  p.keyMoney = num(get('keyMoney'), '礼金', rowLabel, errors);
+  p.areaTsubo = num(get('areaTsubo'), '面積', rowLabel, errors, { required: true });
+  p.floor = get('floor') || '—';
+  p.floorsTotal = num(get('floorsTotal'), '建物階数', rowLabel, errors);
+
+  const builtYear = get('builtYear');
+  p.builtYear = builtYear === '' ? null : num(builtYear, '築年', rowLabel, errors);
+
+  p.structure = get('structure');
+
+  p.features = decodeList(get('features'));
+  p.features.forEach(function (f) {
+    if (MASTERS.features.indexOf(f) === -1) {
+      errors.push(rowLabel + 'こだわり条件「' + f + '」はマスタにありません（' +
+        'data/properties.js の FEATURES に追加してください）');
+    }
+  });
+
+  p.usage = decodeList(get('usage'));
+  p.availableFrom = get('availableFrom') || '相談';
+
+  p.updatedAt = get('updatedAt');
+  if (!p.updatedAt) {
+    errors.push(rowLabel + '情報更新日は必須です（YYYY-MM-DD）');
+  } else if (!/^\d{4}-\d{2}-\d{2}$/.test(p.updatedAt) || isNaN(new Date(p.updatedAt + 'T00:00:00'))) {
+    errors.push(rowLabel + '情報更新日「' + p.updatedAt + '」の形式が不正です（YYYY-MM-DD）');
+  }
+
+  p.description = get('description');
+  if (!p.description) warnings.push(rowLabel + '物件説明が空です');
+
+  /* 桁間違いの検知（エラーではなく警告） */
+  if (Number.isFinite(p.rent) && p.rent > 0 && p.rent < 10000) {
+    warnings.push(rowLabel + '月額賃料が' + p.rent + '円です。万円単位で入力していませんか');
+  }
+  if (Number.isFinite(p.rent) && p.rent > 50000000) {
+    warnings.push(rowLabel + '月額賃料が' + p.rent.toLocaleString('ja-JP') + '円です。桁が多すぎませんか');
+  }
+  if (Number.isFinite(p.areaTsubo) && p.areaTsubo > 1000) {
+    warnings.push(rowLabel + '面積が' + p.areaTsubo + '坪です。m²で入力していませんか');
+  }
+  if (p.builtYear != null && Number.isFinite(p.builtYear) && (p.builtYear < 1900 || p.builtYear > 2100)) {
+    warnings.push(rowLabel + '築年「' + p.builtYear + '」を確認してください');
+  }
+  if (!p.access.length) warnings.push(rowLabel + '交通が空です');
+
+  return p;
+}
+
+module.exports = {
+  MASTERS: MASTERS,
+  COLUMNS: COLUMNS,
+  HEADERS: COLUMNS.map(function (c) { return c.header; }),
+  toRow: toRow,
+  fromRow: fromRow
+};
