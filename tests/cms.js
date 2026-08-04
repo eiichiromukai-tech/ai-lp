@@ -205,7 +205,20 @@ function convert(rec) {
     const missing = [...new Set(ids)].filter(id => doc.indexOf('`' + id + '`') === -1);
     check('全フィールドIDが手順書に載っている', missing.length === 0, missing.join(', '));
 
+    /* 読み込ませるスキーマ定義が、コードの期待と一致しているか */
+    const gen = JSON.parse(fs.readFileSync(path.join(ROOT, 'docs/microcms-schema.json'), 'utf8'));
+    const have = gen.apiFields.map(f => f.fieldId);
+    const lacking = [...new Set(ids)].filter(id =>
+      have.indexOf(id) === -1 &&
+      [].concat(...gen.customFields.map(c => c.fields.map(f => f.fieldId))).indexOf(id) === -1);
+    check('スキーマ定義に全フィールドがある', lacking.length === 0, lacking.join(', '));
+    check('フィールドIDが重複していない', new Set(have).size === have.length);
+
     const masters = require(path.join(ROOT, 'tools/lib/schema.js')).MASTERS;
+    const wardField = gen.apiFields.find(f => f.fieldId === 'ward');
+    check('スキーマ定義のエリアがマスタと一致する',
+      wardField.selectItems.map(i => i.value).join() === masters.areas.join(),
+      wardField.selectItems.length + ' / ' + masters.areas.length);
     check('エリアの選択肢が手順書と一致する',
       masters.areas.every(a => new RegExp('^' + a + '$', 'm').test(doc)),
       masters.areas.filter(a => !new RegExp('^' + a + '$', 'm').test(doc)).join(','));
