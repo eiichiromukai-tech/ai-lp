@@ -83,6 +83,21 @@
       { key: 'description', header: '物件説明' }
     ];
 
+    /* 物件番号を microCMS のコンテンツIDに直す。
+       microCMS は英小文字・数字・ハイフン・アンダースコアしか受け付けないため、
+       物件番号が大文字でも小文字にして使う。
+       （サイト上の物件番号・URLは propertyId の値をそのまま使うので、
+       ここで小文字にしても表示や物件URLには影響しない）
+
+       登録（tools/import-cms.js）と、下書きに戻す処理（tools/unpublish-cms.js）が
+       同じIDを指す必要があるので、定義はここ1か所だけに置く。 */
+    function toContentId(value) {
+      return String(value || '').trim().toLowerCase()
+        .replace(/[^a-z0-9_-]/g, '-')
+        .replace(/-+/g, '-')
+        .replace(/^-|-$/g, '');
+    }
+
     /* 図面や募集資料に書かれている交通の文章を、路線・駅・徒歩分に分解する。
          JR山手線・埼京線「大崎」駅徒歩4分／都営浅草線「五反田」駅徒歩6分
        のような書き方を想定していて、「・」で並んだ路線はそれぞれ1件になる。
@@ -405,7 +420,8 @@
       build: build,
       normalizeDate: normalizeDate,
       parseAccessText: parseAccessText,
-      encodeAccess: encodeAccess
+      encodeAccess: encodeAccess,
+      toContentId: toContentId
     };
   }
 

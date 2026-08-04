@@ -283,8 +283,15 @@ function convert(rec) {
     /* microCMSは英小文字・数字・ハイフン・アンダースコアしか受け付けない。
        大文字のまま送ると全件が400で弾かれる */
     const impSrc = fs.readFileSync(path.join(ROOT, 'tools/import-cms.js'), 'utf8');
-    const fnSrc = /function toContentId[\s\S]*?\n}/.exec(impSrc)[0];
-    const toContentId = new Function('return ' + fnSrc.replace('function toContentId', 'function'))();
+    /* 変換は js/schema-core.js の1か所だけに置く。
+       登録と「下書きに戻す」で違うIDを指すと直せなくなるため。 */
+    const toContentId = schema.toContentId;
+    const unpubSrc = fs.readFileSync(path.join(ROOT, 'tools/unpublish-cms.js'), 'utf8');
+    check('登録ツールが共通の変換を使っている', /schema\.toContentId/.test(impSrc));
+    check('下書きに戻すツールも共通の変換を使っている', /schema\.toContentId/.test(unpubSrc));
+    check('変換の複製がない',
+      impSrc.indexOf('function toContentId') === -1 &&
+      unpubSrc.indexOf('function toContentId') === -1);
     check('大文字を小文字に直す',
       toContentId('OSAKI-CORE-11-ABC') === 'osaki-core-11-abc', toContentId('OSAKI-CORE-11-ABC'));
     check('使えない文字をハイフンにする',

@@ -61,17 +61,9 @@ if (!KEY && !DRY_RUN) {
    図面の下書き画面（import.html）と同じ結果になるようにするためです。 */
 const parseAccess = schema.parseAccessText;
 
-/* コンテンツIDに使える文字だけにする。
-   microCMS は英小文字・数字・ハイフン・アンダースコアのみを受け付けるため、
-   物件番号が大文字でも小文字に直して使う。
-   （サイト上の物件番号・URLは propertyId の値をそのまま使うので、
-   ここで小文字にしても表示や物件URLには影響しない） */
-function toContentId(value) {
-  return String(value || '').trim().toLowerCase()
-    .replace(/[^a-z0-9_-]/g, '-')
-    .replace(/-+/g, '-')
-    .replace(/^-|-$/g, '');
-}
+/* コンテンツIDへの変換は js/schema-core.js にまとめてあります。
+   下書きに戻す処理（tools/unpublish-cms.js）と同じIDを指す必要があるためです。 */
+const toContentId = schema.toContentId;
 
 function splitList(value) {
   return String(value || '').split(/[;；]/).map(function (s) { return s.trim(); }).filter(Boolean);

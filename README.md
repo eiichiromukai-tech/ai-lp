@@ -72,9 +72,10 @@ tools/               … 取り込み・変換スクリプト
 tools/cms-config.json … microCMSのサービス名とAPI名（ここだけ書き換える）
 tools/fetch-cms.js   … microCMS → サイト（取り込み）
 tools/import-cms.js  … CSVからmicroCMSへ一括登録
+tools/unpublish-cms.js … 公開してしまった物件をまとめて下書きに戻す
 MANUAL.md            … 物件を更新する人向けの運用マニュアル
 docs/microcms-setup.md … microCMSの導入手順（初回のみ）
-.github/workflows/   … 自動反映（15分おき＋手動実行）
+.github/workflows/   … 自動反映（15分おき）・一括登録・まとめて下書きに戻す
 js/portal.js        … 共通ロジック（整形・検索・お気に入り・画像生成・ヘッダー）
 js/home.js          … トップページ
 js/search.js        … 検索ページ
