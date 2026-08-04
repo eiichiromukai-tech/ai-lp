@@ -4,4 +4,4 @@ Allow: /
 # お気に入りは端末ごとの内容なので登録しません
 Disallow: /favorites.html
 
-Sitemap: https://remax-compass.example.com/sitemap.xml
+Sitemap: https://property.lomets-inc.com/sitemap.xml

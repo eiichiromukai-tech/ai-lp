@@ -1,67 +1,67 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://remax-compass.example.com/</loc>
+    <loc>https://property.lomets-inc.com/</loc>
     <lastmod>2026-08-04</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://remax-compass.example.com/properties.html</loc>
+    <loc>https://property.lomets-inc.com/properties.html</loc>
     <lastmod>2026-08-04</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://remax-compass.example.com/properties.html?deal=sale</loc>
+    <loc>https://property.lomets-inc.com/properties.html?deal=sale</loc>
     <lastmod>2026-08-04</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://remax-compass.example.com/contact.html</loc>
+    <loc>https://property.lomets-inc.com/contact.html</loc>
     <lastmod>2026-08-04</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://remax-compass.example.com/owner.html</loc>
+    <loc>https://property.lomets-inc.com/owner.html</loc>
     <lastmod>2026-08-04</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://remax-compass.example.com/privacy.html</loc>
+    <loc>https://property.lomets-inc.com/privacy.html</loc>
     <lastmod>2026-08-04</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>
   <url>
-    <loc>https://remax-compass.example.com/properties.html?pref=tokyo</loc>
+    <loc>https://property.lomets-inc.com/properties.html?pref=tokyo</loc>
     <lastmod>2026-08-04</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://remax-compass.example.com/properties.html?pref=kanagawa</loc>
+    <loc>https://property.lomets-inc.com/properties.html?pref=kanagawa</loc>
     <lastmod>2026-08-04</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://remax-compass.example.com/properties.html?pref=saitama</loc>
+    <loc>https://property.lomets-inc.com/properties.html?pref=saitama</loc>
     <lastmod>2026-08-04</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://remax-compass.example.com/properties.html?pref=chiba</loc>
+    <loc>https://property.lomets-inc.com/properties.html?pref=chiba</loc>
     <lastmod>2026-08-04</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://remax-compass.example.com/property.html?id=CMP-9001</loc>
+    <loc>https://property.lomets-inc.com/property.html?id=CMP-9001</loc>
     <lastmod>2026-08-04</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
