@@ -252,11 +252,20 @@ function section(title) { console.log('\n' + title); }
     await go('/privacy.html'); await settle(400);
     check('プライバシーポリシーがある', (await page.locator('h1').textContent()).indexOf('プライバシー') !== -1);
     check('問い合わせ窓口が載っている',
-      (await page.locator('body').textContent()).indexOf('eiichiro.mukai@remax-agt.net') !== -1);
+      (await page.locator('body').textContent()).indexOf('03-6261-5098') !== -1);
     await go('/owner.html'); await settle(400);
     check('オーナー向けページがある', (await page.locator('h1').count()) === 1);
     await go('/contact.html'); await settle(500);
     check('お問い合わせページに同意欄がある', await page.locator('#c-consent').count() === 1);
+    /* 問い合わせ導線はフォームに一本化しているため、画面上にメールアドレスを出さない */
+    let mailPages = [];
+    for (const path of ['/index.html', '/contact.html', '/owner.html', '/privacy.html',
+      '/properties.html', '/property.html?id=CMP-1001', '/favorites.html']) {
+      await go(path); await settle(500);
+      if (/[\w.+-]+@[\w-]+\.[\w.]+/.test(await page.locator('body').textContent())) mailPages.push(path);
+    }
+    check('画面上にメールアドレスの記載がない', mailPages.length === 0, mailPages.join(','));
+    await go('/contact.html'); await settle(500);
     check('お問い合わせページに住所欄がある', await page.locator('#c-address').count() === 1);
     check('リード文に手数料の説明がある',
       (await page.locator('.page-lead').textContent()).indexOf('仲介手数料') !== -1);

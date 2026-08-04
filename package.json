@@ -2,7 +2,7 @@
   "name": "remax-compass-portal",
   "version": "1.0.0",
   "private": true,
-  "description": "RE/MAX COMPASS 物件ポータル（サイト本体はビルド不要・依存なし。ここの依存は運用ツールとテスト用です）",
+  "description": "REMAX COMPASS 物件ポータル（サイト本体はビルド不要・依存なし。ここの依存は運用ツールとテスト用です）",
   "scripts": {
     "sync": "node tools/fetch-sheet.js",
     "build": "node tools/csv-to-properties.js",

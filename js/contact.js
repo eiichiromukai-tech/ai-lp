@@ -103,7 +103,7 @@
         fields: function () {
           var favs = P.getFavorites().map(P.findById).filter(Boolean);
           return {
-            _subject: '【RE/MAX COMPASS 物件ポータル】物件リクエスト（' + value('c-name') + '様）',
+            _subject: '【REMAX COMPASS 物件ポータル】物件リクエスト（' + value('c-name') + '様）',
             _template: 'table',
             _captcha: 'false',
             '送信元': 'お問い合わせページ',

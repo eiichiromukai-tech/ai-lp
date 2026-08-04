@@ -21,9 +21,9 @@
     siteUrl: 'https://remax-compass.example.com',
 
     /* サイト名・会社情報（構造化データとOGPに使います） */
-    siteName: 'RE/MAX COMPASS 物件ポータル',
+    siteName: 'REMAX COMPASS 物件ポータル',
     companyName: '株式会社ロメッツ',
-    brandName: 'RE/MAX COMPASS',
+    brandName: 'REMAX COMPASS',
     tel: '03-6261-5098',
     address: {
       postalCode: '101-0061',

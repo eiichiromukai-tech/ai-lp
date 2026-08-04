@@ -1,5 +1,5 @@
 /* =====================================================
-   RE/MAX COMPASS 物件ポータル — 共通ロジック
+   REMAX COMPASS 物件ポータル — 共通ロジック
    - ヘッダー / モバイルメニュー
    - 物件データの整形・検索・絞り込み
    - お気に入り・閲覧履歴（localStorage）
@@ -360,10 +360,13 @@
       /* 送信に失敗しても入力内容を捨てず、メールで送れるようにする */
       btn.disabled = false;
       btn.textContent = label;
+      /* 問い合わせ導線はフォームに一本化しているため、失敗時はお電話をご案内する。
+         入力内容を捨てないよう、メールで送る導線も控えめに残しておく。 */
       status.innerHTML = '送信できませんでした。お手数ですが' +
-        '<a href="' + escapeHtml(inquiryMailto(o.subject, fields)) + '">メールでのご連絡</a>' +
-        '（' + escapeHtml(inquiryEmail()) + '）' +
-        'または<a href="tel:0362615098">お電話</a>にてご連絡ください。';
+        '<a href="tel:' + escapeHtml(String(SITE.tel || '').replace(/-/g, '')) + '">お電話（' +
+        escapeHtml(SITE.tel || '') + '）</a>にてご連絡ください。' +
+        '<a class="status-sub" href="' + escapeHtml(inquiryMailto(o.subject, fields)) +
+        '">入力内容をメールで送る</a>';
       status.className = 'form-status is-error';
       track('inquiry_error', { form: o.name });
     });

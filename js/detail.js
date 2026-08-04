@@ -11,7 +11,7 @@
 
     if (!p) {
       root.innerHTML = notFound();
-      document.title = '物件が見つかりません｜RE/MAX COMPASS 物件ポータル';
+      document.title = '物件が見つかりません｜REMAX COMPASS 物件ポータル';
       return;
     }
 
@@ -19,7 +19,7 @@
       (P.isSale(p) ? '' : '／月') + '・' + p.areaTsubo.toFixed(1) + '坪。' + p.description.slice(0, 70);
 
     P.setPageMeta({
-      title: p.title + '｜RE/MAX COMPASS 物件ポータル',
+      title: p.title + '｜REMAX COMPASS 物件ポータル',
       description: desc,
       path: 'property.html?id=' + encodeURIComponent(p.id),
       image: P.hasPhotos(p) ? p.images[0].src : 'images/COMPASS_BLACK_Primary.png'
@@ -357,7 +357,7 @@
         subject: '【物件のお問い合わせ】' + p.id + ' ' + p.title,
         fields: function () {
           return {
-            _subject: '【RE/MAX COMPASS 物件ポータル】' + p.id + ' ' + p.title,
+            _subject: '【REMAX COMPASS 物件ポータル】' + p.id + ' ' + p.title,
             _template: 'table',
             _captcha: 'false',
             '送信元': '物件ページ',

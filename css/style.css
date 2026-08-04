@@ -1,10 +1,10 @@
 /* =====================================================
-   RE/MAX COMPASS 物件ポータル
-   Design tokens — RE/MAX Brand Identity Manual (2026 edition)
+   REMAX COMPASS 物件ポータル
+   Design tokens — REMAX Brand Identity Manual (2026 edition)
    Layout language — 余白・ヘアライン・左寄せ見出しの編集的レイアウト
    ===================================================== */
 :root {
-  /* RE/MAX official palette — do not alter these values */
+  /* REMAX official palette — do not alter these values */
   --red: #FF1200;
   --blue: #0043FF;
   --cream: #F7F5EE;
@@ -710,6 +710,7 @@ input[aria-invalid="true"], textarea[aria-invalid="true"] { border-color: var(--
 .policy-small { font-size: 0.78rem; color: var(--text-muted); }
 .policy-date { font-size: 0.8rem; color: var(--text-muted); margin-top: var(--space-4); }
 
+.status-sub { display: block; margin-top: 6px; font-size: 0.78rem; font-weight: 400; text-decoration: underline; }
 .form-status { margin: var(--space-3) 0 0; font-size: 0.84rem; font-weight: 700; }
 .form-status.is-error { color: var(--bridge-red); }
 .form-status.is-success { color: var(--bridge-blue); }
