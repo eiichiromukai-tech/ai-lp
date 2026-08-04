@@ -13,6 +13,8 @@
 #   4. Actionsタブ →「物件をCSVから一括登録」→ Run workflow
 #      まず「確認だけ（dry-run）」で実行し、内容を見てから本番実行します
 #   5. 終わったら Secrets のキーを削除し、PUTの権限も外す
+#   6. data/import/ に置いたCSVを削除する
+#      （このリポジトリは公開されているため、置いたままだと誰でも読めます）
 #
 # 【重要】このワークフローは microCMS の内容を書き換えます。
 #   物件番号が同じものは上書きになります。まず dry-run でご確認ください。
@@ -25,7 +27,7 @@ on:
       csv:
         description: '登録するCSVのパス'
         required: true
-        default: 'data/import/2026-08_東急不動産.csv'
+        default: 'data/import/物件データ.csv'
       mode:
         description: '実行のしかた'
         required: true
@@ -89,3 +91,5 @@ jobs:
           echo "### 忘れずに" >> $GITHUB_STEP_SUMMARY
           echo "- Secrets の \`MICROCMS_WRITE_API_KEY\` を削除する" >> $GITHUB_STEP_SUMMARY
           echo "- microCMS の APIキーから \`PUT\` の権限を外す" >> $GITHUB_STEP_SUMMARY
+          echo "- \`${{ inputs.csv }}\` を削除する" >> $GITHUB_STEP_SUMMARY
+          echo "  （このリポジトリは公開されているため、置いたままだと誰でも読めます）" >> $GITHUB_STEP_SUMMARY
