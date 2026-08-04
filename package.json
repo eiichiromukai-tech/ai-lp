@@ -5,7 +5,6 @@
   "description": "REMAX COMPASS 物件ポータル（サイト本体はビルド不要・依存なし。ここの依存は運用ツールとテスト用です）",
   "scripts": {
     "sync": "node tools/fetch-cms.js",
-    "sync:sheet": "node tools/fetch-sheet.js",
     "build": "node tools/csv-to-properties.js",
     "check": "node tools/csv-to-properties.js --check",
     "export-csv": "node tools/properties-to-csv.js",
