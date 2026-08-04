@@ -160,6 +160,8 @@ function section(title) { console.log('\n' + title); }
       (await page.locator('.spec-table').textContent()).indexOf('（税別）') !== -1);
     check('契約の流れに手数料の説明がある',
       (await page.locator('.fee-note').textContent()).indexOf('宅地建物取引業法に定める報酬額') !== -1);
+    check('賃貸の手数料額を明示している',
+      (await page.locator('.spec-table').textContent()).indexOf('月額賃料の1ヶ月分（税別）') !== -1);
     check('写真がない物件はイメージである旨を明示',
       (await page.locator('.gallery-note').textContent()).indexOf('イメージイラスト') !== -1);
     check('フッターに手数料と免許の共通表示がある',
@@ -178,6 +180,18 @@ function section(title) { console.log('\n' + title); }
     await go('/property.html?id=CMP-1025'); await settle(800);
     check('写真がある物件は当該物件の写真である旨を明示',
       (await page.locator('.gallery-note').textContent()).indexOf('当該物件を撮影') !== -1);
+
+    /* 手数料に「上限」と書くと値引き交渉の余地があると受け取られるため使わない */
+    const feePages = ['/property.html?id=CMP-1001', '/property.html?id=CMP-2013',
+      '/contact.html', '/owner.html', '/privacy.html', '/index.html'];
+    let capWording = [];
+    for (const path of feePages) {
+      await go(path); await settle(600);
+      const body = await page.locator('body').textContent();
+      /* 「上限なし」は絞り込みの選択肢なので除外する */
+      if (/(上限とする|が上限|報酬額の範囲内)/.test(body)) capWording.push(path);
+    }
+    check('手数料に「上限」の表記がない', capWording.length === 0, capWording.join(','));
 
     const banned = /完全|絶対|万全|日本一|抜群|当社だけ|一流|特選|厳選|最高級|至便|買得|掘出|格安|投売|破格|激安|完璧/;
     await go('/properties.html'); await settle(700);
