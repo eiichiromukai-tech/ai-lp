@@ -19,6 +19,7 @@ const { execFileSync } = require('child_process');
 const csv = require('./lib/csv');
 const schema = require('./lib/schema');
 const sheet = require('./lib/sheet');
+const drive = require('./lib/drive');
 
 const CSV_PATH = path.join(__dirname, '..', 'data', 'properties.csv');
 const CHECK_ONLY = process.argv.includes('--check');
@@ -133,15 +134,37 @@ if (CHECK_ONLY) {
 
 if (before === next) {
   console.log('スプレッドシートに変更はありませんでした（' + properties.length + '件）。');
-  process.exit(0);
+} else {
+  fs.writeFileSync(CSV_PATH, next);
+  console.log('data/properties.csv を更新しました（' + properties.length + '件）。');
 }
 
-fs.writeFileSync(CSV_PATH, next);
-console.log('data/properties.csv を更新しました（' + properties.length + '件）。');
+/* ---------- 写真の同期 ----------
+   設定があるときだけGoogleドライブから取り込む。未設定の環境では
+   images/properties/ に置かれたファイルをそのまま使う。 */
+(async function () {
+  if (drive.isConfigured()) {
+    console.log('');
+    console.log('Googleドライブから写真を取り込んでいます…');
+    try {
+      const r = await drive.sync(function (m) { console.log(m); });
+      console.log('写真の同期: 追加' + r.added + '／更新' + r.updated +
+        '／削除' + r.removed + '／変更なし' + r.kept);
+    } catch (e) {
+      /* 写真が取り込めなくても物件情報の反映は続ける */
+      console.warn('警告: Googleドライブから写真を取り込めませんでした。');
+      console.warn('  ' + String(e.message || e));
+      console.warn('  写真は前回取り込んだ内容のままになります。');
+    }
+  }
 
-/* ---------- サイトへ反映 ---------- */
-execFileSync(process.execPath, [path.join(__dirname, 'csv-to-properties.js')], { stdio: 'inherit' });
+  /* ---------- サイトへ反映 ----------
+     シートに変更がなくても必ず実行する。写真を追加・削除しただけのときも
+     ここで取り込まれるようにするため（ここで止めると、置いた写真が
+     いつまでもサイトに出ない）。 */
+  execFileSync(process.execPath, [path.join(__dirname, 'csv-to-properties.js')], { stdio: 'inherit' });
 
-console.log('');
-console.log('反映が終わりました。変更をサイトに公開するには次を実行してください:');
-console.log('  git add -A && git commit -m "物件情報を更新" && git push');
+  console.log('');
+  console.log('反映が終わりました。変更をサイトに公開するには次を実行してください:');
+  console.log('  git add -A && git commit -m "物件情報を更新" && git push');
+})();

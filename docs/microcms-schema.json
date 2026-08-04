@@ -1,0 +1,880 @@
+{
+  "apiFields": [
+    {
+      "fieldId": "propertyId",
+      "name": "物件番号",
+      "kind": "text",
+      "description": null,
+      "required": true,
+      "textSizeLimitValidation": null,
+      "patternMatchValidation": null,
+      "isUnique": false,
+      "initialValue": null
+    },
+    {
+      "fieldId": "title",
+      "name": "物件名",
+      "kind": "text",
+      "description": null,
+      "required": true,
+      "textSizeLimitValidation": null,
+      "patternMatchValidation": null,
+      "isUnique": false,
+      "initialValue": null
+    },
+    {
+      "fieldId": "deal",
+      "name": "取引種別",
+      "kind": "select",
+      "description": null,
+      "required": true,
+      "selectItems": [
+        {
+          "id": "0phtzj7",
+          "value": "賃貸"
+        },
+        {
+          "id": "0phl68j",
+          "value": "売買"
+        }
+      ],
+      "multipleSelect": false
+    },
+    {
+      "fieldId": "type",
+      "name": "物件種別",
+      "kind": "select",
+      "description": null,
+      "required": true,
+      "selectItems": [
+        {
+          "id": "1kxnc80",
+          "value": "店舗"
+        },
+        {
+          "id": "0eb3yap",
+          "value": "オフィス"
+        },
+        {
+          "id": "03ro82w",
+          "value": "倉庫・工場"
+        },
+        {
+          "id": "0i8ispj",
+          "value": "一棟ビル"
+        },
+        {
+          "id": "0ibeb62",
+          "value": "事業用地"
+        }
+      ],
+      "multipleSelect": false
+    },
+    {
+      "fieldId": "status",
+      "name": "募集状況",
+      "kind": "select",
+      "description": null,
+      "required": false,
+      "selectItems": [
+        {
+          "id": "04fzvzy",
+          "value": "募集中"
+        },
+        {
+          "id": "04gaikk",
+          "value": "商談中"
+        },
+        {
+          "id": "04i3sb0",
+          "value": "成約済"
+        }
+      ],
+      "multipleSelect": false
+    },
+    {
+      "fieldId": "ward",
+      "name": "エリア（市区）",
+      "kind": "select",
+      "description": null,
+      "required": true,
+      "selectItems": [
+        {
+          "id": "1bllsug",
+          "value": "千代田区"
+        },
+        {
+          "id": "08e1diz",
+          "value": "中央区"
+        },
+        {
+          "id": "0ilsjvt",
+          "value": "港区"
+        },
+        {
+          "id": "08hhsel",
+          "value": "新宿区"
+        },
+        {
+          "id": "08hepxz",
+          "value": "文京区"
+        },
+        {
+          "id": "08ey6l7",
+          "value": "台東区"
+        },
+        {
+          "id": "08fpeic",
+          "value": "墨田区"
+        },
+        {
+          "id": "08ij0qy",
+          "value": "江東区"
+        },
+        {
+          "id": "08f0uww",
+          "value": "品川区"
+        },
+        {
+          "id": "08kc460",
+          "value": "目黒区"
+        },
+        {
+          "id": "08fs0oj",
+          "value": "大田区"
+        },
+        {
+          "id": "1b3tmrf",
+          "value": "世田谷区"
+        },
+        {
+          "id": "08iy3ao",
+          "value": "渋谷区"
+        },
+        {
+          "id": "08eb09n",
+          "value": "中野区"
+        },
+        {
+          "id": "08hnwf3",
+          "value": "杉並区"
+        },
+        {
+          "id": "08n5jgw",
+          "value": "豊島区"
+        },
+        {
+          "id": "0ilnxz5",
+          "value": "北区"
+        },
+        {
+          "id": "08luehd",
+          "value": "荒川区"
+        },
+        {
+          "id": "08htssw",
+          "value": "板橋区"
+        },
+        {
+          "id": "08lc9vo",
+          "value": "練馬区"
+        },
+        {
+          "id": "08ni1tw",
+          "value": "足立区"
+        },
+        {
+          "id": "08m9x21",
+          "value": "葛飾区"
+        },
+        {
+          "id": "1euc7g4",
+          "value": "江戸川区"
+        },
+        {
+          "id": "1bihd2o",
+          "value": "八王子市"
+        },
+        {
+          "id": "08klhw2",
+          "value": "立川市"
+        },
+        {
+          "id": "1evalmp",
+          "value": "武蔵野市"
+        },
+        {
+          "id": "08ece7o",
+          "value": "三鷹市"
+        },
+        {
+          "id": "08otqep",
+          "value": "青梅市"
+        },
+        {
+          "id": "08ge7tf",
+          "value": "府中市"
+        },
+        {
+          "id": "08hkmnv",
+          "value": "昭島市"
+        },
+        {
+          "id": "08mxn4w",
+          "value": "調布市"
+        },
+        {
+          "id": "08jw426",
+          "value": "町田市"
+        },
+        {
+          "id": "1cz663x",
+          "value": "小金井市"
+        },
+        {
+          "id": "08g3j9c",
+          "value": "小平市"
+        },
+        {
+          "id": "08hs4uz",
+          "value": "日野市"
+        },
+        {
+          "id": "1e8p33j",
+          "value": "東村山市"
+        },
+        {
+          "id": "1c2v9in",
+          "value": "国分寺市"
+        },
+        {
+          "id": "08fhmc6",
+          "value": "国立市"
+        },
+        {
+          "id": "08kixzo",
+          "value": "福生市"
+        },
+        {
+          "id": "08ji3z4",
+          "value": "狛江市"
+        },
+        {
+          "id": "1e6l216",
+          "value": "東大和市"
+        },
+        {
+          "id": "08it999",
+          "value": "清瀬市"
+        },
+        {
+          "id": "1qsbbiu",
+          "value": "東久留米市"
+        },
+        {
+          "id": "0e3fmmt",
+          "value": "武蔵村山市"
+        },
+        {
+          "id": "08foyfp",
+          "value": "多摩市"
+        },
+        {
+          "id": "08khbc8",
+          "value": "稲城市"
+        },
+        {
+          "id": "08ld6j4",
+          "value": "羽村市"
+        },
+        {
+          "id": "1k201ee",
+          "value": "あきる野市"
+        },
+        {
+          "id": "1ija25i",
+          "value": "西東京市"
+        },
+        {
+          "id": "08i8g5u",
+          "value": "横浜市"
+        },
+        {
+          "id": "08gctar",
+          "value": "川崎市"
+        },
+        {
+          "id": "1g7kju2",
+          "value": "相模原市"
+        },
+        {
+          "id": "08maiyu",
+          "value": "藤沢市"
+        },
+        {
+          "id": "08ewf7a",
+          "value": "厚木市"
+        },
+        {
+          "id": "1f3mful",
+          "value": "海老名市"
+        },
+        {
+          "id": "08fmixr",
+          "value": "大和市"
+        },
+        {
+          "id": "08gf3q5",
+          "value": "平塚市"
+        },
+        {
+          "id": "1hhyk3n",
+          "value": "茅ヶ崎市"
+        },
+        {
+          "id": "08o5o6f",
+          "value": "鎌倉市"
+        },
+        {
+          "id": "1esf866",
+          "value": "横須賀市"
+        },
+        {
+          "id": "1cv02f6",
+          "value": "小田原市"
+        },
+        {
+          "id": "1kbsx9y",
+          "value": "さいたま市"
+        },
+        {
+          "id": "08gb95q",
+          "value": "川口市"
+        },
+        {
+          "id": "08gl26v",
+          "value": "川越市"
+        },
+        {
+          "id": "08h2leq",
+          "value": "所沢市"
+        },
+        {
+          "id": "08nk88n",
+          "value": "越谷市"
+        },
+        {
+          "id": "08lsd4d",
+          "value": "草加市"
+        },
+        {
+          "id": "1e2uit4",
+          "value": "春日部市"
+        },
+        {
+          "id": "08e18gg",
+          "value": "上尾市"
+        },
+        {
+          "id": "08h3vv0",
+          "value": "戸田市"
+        },
+        {
+          "id": "08hicbx",
+          "value": "新座市"
+        },
+        {
+          "id": "08jgl2v",
+          "value": "熊谷市"
+        },
+        {
+          "id": "08ezl26",
+          "value": "千葉市"
+        },
+        {
+          "id": "08lqscy",
+          "value": "船橋市"
+        },
+        {
+          "id": "0ilriz5",
+          "value": "柏市"
+        },
+        {
+          "id": "08hsgqy",
+          "value": "松戸市"
+        },
+        {
+          "id": "08gdpop",
+          "value": "市川市"
+        },
+        {
+          "id": "08imgzl",
+          "value": "浦安市"
+        },
+        {
+          "id": "1hajrqv",
+          "value": "習志野市"
+        },
+        {
+          "id": "08ilv3o",
+          "value": "流山市"
+        },
+        {
+          "id": "1bdp14l",
+          "value": "八千代市"
+        },
+        {
+          "id": "1e7fedj",
+          "value": "木更津市"
+        },
+        {
+          "id": "08h3278",
+          "value": "成田市"
+        }
+      ],
+      "multipleSelect": false
+    },
+    {
+      "fieldId": "address",
+      "name": "所在地",
+      "kind": "text",
+      "description": null,
+      "required": false,
+      "textSizeLimitValidation": null,
+      "patternMatchValidation": null,
+      "isUnique": false,
+      "initialValue": null
+    },
+    {
+      "fieldId": "access",
+      "name": "交通",
+      "kind": "repeater",
+      "description": null,
+      "required": false,
+      "customFieldCreatedAtList": [
+        "2026-08-04T00:00:00.000Z"
+      ]
+    },
+    {
+      "fieldId": "rent",
+      "name": "月額賃料（円）",
+      "kind": "number",
+      "description": null,
+      "required": false,
+      "numberSizeLimitValidation": null,
+      "initialValue": null
+    },
+    {
+      "fieldId": "managementFee",
+      "name": "共益費（円）",
+      "kind": "number",
+      "description": null,
+      "required": false,
+      "numberSizeLimitValidation": null,
+      "initialValue": null
+    },
+    {
+      "fieldId": "deposit",
+      "name": "敷金（ヶ月）",
+      "kind": "number",
+      "description": null,
+      "required": false,
+      "numberSizeLimitValidation": null,
+      "initialValue": null
+    },
+    {
+      "fieldId": "keyMoney",
+      "name": "礼金（ヶ月）",
+      "kind": "number",
+      "description": null,
+      "required": false,
+      "numberSizeLimitValidation": null,
+      "initialValue": null
+    },
+    {
+      "fieldId": "contractTerm",
+      "name": "契約期間",
+      "kind": "text",
+      "description": null,
+      "required": false,
+      "textSizeLimitValidation": null,
+      "patternMatchValidation": null,
+      "isUnique": false,
+      "initialValue": null
+    },
+    {
+      "fieldId": "price",
+      "name": "販売価格（円）",
+      "kind": "number",
+      "description": null,
+      "required": false,
+      "numberSizeLimitValidation": null,
+      "initialValue": null
+    },
+    {
+      "fieldId": "yieldRate",
+      "name": "表面利回り（％）",
+      "kind": "number",
+      "description": null,
+      "required": false,
+      "numberSizeLimitValidation": null,
+      "initialValue": null
+    },
+    {
+      "fieldId": "tenure",
+      "name": "権利形態",
+      "kind": "text",
+      "description": null,
+      "required": false,
+      "textSizeLimitValidation": null,
+      "patternMatchValidation": null,
+      "isUnique": false,
+      "initialValue": null
+    },
+    {
+      "fieldId": "zoning",
+      "name": "用途地域",
+      "kind": "text",
+      "description": null,
+      "required": false,
+      "textSizeLimitValidation": null,
+      "patternMatchValidation": null,
+      "isUnique": false,
+      "initialValue": null
+    },
+    {
+      "fieldId": "buildingCoverage",
+      "name": "建ぺい率（％）",
+      "kind": "number",
+      "description": null,
+      "required": false,
+      "numberSizeLimitValidation": null,
+      "initialValue": null
+    },
+    {
+      "fieldId": "floorAreaRatio",
+      "name": "容積率（％）",
+      "kind": "number",
+      "description": null,
+      "required": false,
+      "numberSizeLimitValidation": null,
+      "initialValue": null
+    },
+    {
+      "fieldId": "privateRoad",
+      "name": "私道負担",
+      "kind": "text",
+      "description": null,
+      "required": false,
+      "textSizeLimitValidation": null,
+      "patternMatchValidation": null,
+      "isUnique": false,
+      "initialValue": null
+    },
+    {
+      "fieldId": "buildingPermit",
+      "name": "建築確認番号",
+      "kind": "text",
+      "description": null,
+      "required": false,
+      "textSizeLimitValidation": null,
+      "patternMatchValidation": null,
+      "isUnique": false,
+      "initialValue": null
+    },
+    {
+      "fieldId": "areaTsubo",
+      "name": "面積（坪）",
+      "kind": "number",
+      "description": null,
+      "required": true,
+      "numberSizeLimitValidation": null,
+      "initialValue": null
+    },
+    {
+      "fieldId": "floor",
+      "name": "階数",
+      "kind": "text",
+      "description": null,
+      "required": false,
+      "textSizeLimitValidation": null,
+      "patternMatchValidation": null,
+      "isUnique": false,
+      "initialValue": null
+    },
+    {
+      "fieldId": "floorsTotal",
+      "name": "建物階数",
+      "kind": "number",
+      "description": null,
+      "required": false,
+      "numberSizeLimitValidation": null,
+      "initialValue": null
+    },
+    {
+      "fieldId": "built",
+      "name": "築年月",
+      "kind": "text",
+      "description": null,
+      "required": false,
+      "textSizeLimitValidation": null,
+      "patternMatchValidation": null,
+      "isUnique": false,
+      "initialValue": null
+    },
+    {
+      "fieldId": "structure",
+      "name": "構造",
+      "kind": "text",
+      "description": null,
+      "required": false,
+      "textSizeLimitValidation": null,
+      "patternMatchValidation": null,
+      "isUnique": false,
+      "initialValue": null
+    },
+    {
+      "fieldId": "features",
+      "name": "こだわり条件",
+      "kind": "select",
+      "description": null,
+      "required": false,
+      "selectItems": [
+        {
+          "id": "1ovkuct",
+          "value": "1階路面"
+        },
+        {
+          "id": "0kntlyx",
+          "value": "居抜き"
+        },
+        {
+          "id": "03t9z9d",
+          "value": "スケルトン"
+        },
+        {
+          "id": "0kwyz6t",
+          "value": "飲食可"
+        },
+        {
+          "id": "0zc83w0",
+          "value": "深夜営業可"
+        },
+        {
+          "id": "1s1i7gg",
+          "value": "24時間利用可"
+        },
+        {
+          "id": "00jz3t1",
+          "value": "駐車場あり"
+        },
+        {
+          "id": "18x8es0",
+          "value": "駅徒歩5分以内"
+        },
+        {
+          "id": "0zko0eh",
+          "value": "エレベーターあり"
+        },
+        {
+          "id": "0jnfzmy",
+          "value": "空調更新済"
+        },
+        {
+          "id": "01xcr4t",
+          "value": "看板設置可"
+        },
+        {
+          "id": "1cdtyc3",
+          "value": "セットアップ"
+        }
+      ],
+      "multipleSelect": true
+    },
+    {
+      "fieldId": "usage",
+      "name": "用途",
+      "kind": "select",
+      "description": null,
+      "required": false,
+      "selectItems": [
+        {
+          "id": "0dfitgx",
+          "value": "飲食店"
+        },
+        {
+          "id": "0czr0n8",
+          "value": "カフェ"
+        },
+        {
+          "id": "1skqm5h",
+          "value": "バー"
+        },
+        {
+          "id": "1sl29y1",
+          "value": "物販"
+        },
+        {
+          "id": "1bmwrl2",
+          "value": "サービス"
+        },
+        {
+          "id": "1k0ci83",
+          "value": "クリニック"
+        },
+        {
+          "id": "1bmxrge",
+          "value": "スクール"
+        },
+        {
+          "id": "0zboefw",
+          "value": "ショールーム"
+        },
+        {
+          "id": "1jzovyl",
+          "value": "ギャラリー"
+        },
+        {
+          "id": "0d4altl",
+          "value": "事務所"
+        },
+        {
+          "id": "1skyuhl",
+          "value": "店舗"
+        },
+        {
+          "id": "1skw6d7",
+          "value": "倉庫"
+        },
+        {
+          "id": "1skyhyg",
+          "value": "工場"
+        },
+        {
+          "id": "0ddpvcl",
+          "value": "軽作業"
+        },
+        {
+          "id": "1sky8v8",
+          "value": "宿泊"
+        },
+        {
+          "id": "0dfln35",
+          "value": "駐車場"
+        },
+        {
+          "id": "123xyd8",
+          "value": "事業用建物"
+        },
+        {
+          "id": "1sl5t96",
+          "value": "複合"
+        }
+      ],
+      "multipleSelect": true
+    },
+    {
+      "fieldId": "availableFrom",
+      "name": "入居可能時期・引渡し時期",
+      "kind": "text",
+      "description": null,
+      "required": false,
+      "textSizeLimitValidation": null,
+      "patternMatchValidation": null,
+      "isUnique": false,
+      "initialValue": null
+    },
+    {
+      "fieldId": "description",
+      "name": "物件説明",
+      "kind": "textArea",
+      "description": null,
+      "required": false,
+      "textSizeLimitValidation": null,
+      "initialValue": null
+    },
+    {
+      "fieldId": "photos",
+      "name": "写真",
+      "kind": "repeater",
+      "description": null,
+      "required": false,
+      "customFieldCreatedAtList": [
+        "2026-08-04T00:00:01.000Z"
+      ]
+    },
+    {
+      "fieldId": "infoUpdatedAt",
+      "name": "情報更新日（通常は空でOK）",
+      "kind": "date",
+      "description": null,
+      "required": false,
+      "initialValue": null
+    }
+  ],
+  "customFields": [
+    {
+      "createdAt": "2026-08-04T00:00:00.000Z",
+      "fieldId": "accessItem",
+      "name": "交通",
+      "fields": [
+        {
+          "fieldId": "line",
+          "name": "路線",
+          "kind": "text",
+          "description": null,
+          "required": false,
+          "textSizeLimitValidation": null,
+          "patternMatchValidation": null,
+          "isUnique": false,
+          "initialValue": null
+        },
+        {
+          "fieldId": "station",
+          "name": "駅",
+          "kind": "text",
+          "description": null,
+          "required": false,
+          "textSizeLimitValidation": null,
+          "patternMatchValidation": null,
+          "isUnique": false,
+          "initialValue": null
+        },
+        {
+          "fieldId": "walk",
+          "name": "徒歩（分）",
+          "kind": "number",
+          "description": null,
+          "required": false,
+          "numberSizeLimitValidation": null,
+          "initialValue": null
+        }
+      ]
+    },
+    {
+      "createdAt": "2026-08-04T00:00:01.000Z",
+      "fieldId": "photoItem",
+      "name": "写真",
+      "fields": [
+        {
+          "fieldId": "image",
+          "name": "写真",
+          "kind": "media",
+          "description": null,
+          "required": false
+        },
+        {
+          "fieldId": "caption",
+          "name": "キャプション",
+          "kind": "text",
+          "description": null,
+          "required": false,
+          "textSizeLimitValidation": null,
+          "patternMatchValidation": null,
+          "isUnique": false,
+          "initialValue": null
+        }
+      ]
+    }
+  ]
+}

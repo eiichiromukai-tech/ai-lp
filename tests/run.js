@@ -54,7 +54,13 @@ function section(title) { console.log('\n' + title); }
     consoleErrors.push('CONSOLE: ' + m.text() + (from ? ' @ ' + from : ''));
   });
   page.on('requestfailed', function (r) {
-    if (!EXTERNAL.test(r.url())) consoleErrors.push('REQFAIL: ' + r.url());
+    var reason = (r.failure() || {}).errorText || '';
+    /* 次のページへ移ったときに、まだ読み込み中だった画像などが打ち切られる。
+       テストが素早く遷移するせいで起きるもので、サイトの不具合ではない。
+       ファイルが無い場合は 404 が返るため requestfailed ではなく
+       コンソールの「Failed to load resource」で検出される。 */
+    if (reason.indexOf('ERR_ABORTED') !== -1) return;
+    if (!EXTERNAL.test(r.url())) consoleErrors.push('REQFAIL: ' + r.url() + '（' + reason + '）');
   });
 
   const go = function (path) { return page.goto(BASE + path, { waitUntil: 'domcontentloaded' }); };
@@ -310,6 +316,21 @@ function section(title) { console.log('\n' + title); }
     await browser.close();
     server.close();
   }
+
+  /* 外部サービスからの取り込み（APIをモックして実行する） */
+  function runSub(title, file, label) {
+    section(title);
+    try {
+      require('child_process').execFileSync(process.execPath,
+        [require('path').join(__dirname, file)], { stdio: 'pipe' });
+      check(label, true);
+    } catch (e) {
+      check(label, false,
+        String(e.stdout || '').split('\n').filter(function (l) { return l.indexOf('✗') !== -1; }).join(' / '));
+    }
+  }
+  runSub('microCMS取り込み', 'cms.js', '物件と写真の取り込み（検証・ページ送り・エラー処理）');
+  runSub('Googleドライブ同期', 'drive.js', '写真の同期（追加・更新・削除・エラー処理）');
 
   console.log('\n' + '='.repeat(50));
   if (failures.length) {

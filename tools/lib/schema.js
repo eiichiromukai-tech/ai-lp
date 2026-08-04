@@ -193,9 +193,15 @@ function fromRow(cells, index, errors, warnings) {
 
   const id = get('id');
   const rowLabel = '[' + (index + 2) + '行目' + (id ? ' ' + id : '') + '] ';
+  return build(get, rowLabel, errors, warnings);
+}
 
+/* 値の取り出しかたを差し替えられるようにしてある。
+   CSVでもCMSでも、検証と変換のルールはここ1か所だけ。
+   get(key) は COLUMNS の key を受け取り、文字列を返す関数。 */
+function build(get, rowLabel, errors, warnings) {
   const p = {};
-  p.id = id;
+  p.id = get('id');
   if (!p.id) errors.push(rowLabel + '物件番号は必須です');
 
   p.title = get('title');
@@ -379,5 +385,6 @@ module.exports = {
   COLUMNS: COLUMNS,
   HEADERS: COLUMNS.map(function (c) { return c.header; }),
   toRow: toRow,
-  fromRow: fromRow
+  fromRow: fromRow,
+  build: build
 };

@@ -1,2 +1,5 @@
 node_modules/
 .DS_Store
+
+# Googleドライブ同期の照合用（コミット不要）
+*.drive-md5
