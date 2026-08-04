@@ -175,6 +175,9 @@
       usage: ['飲食店', '物販'],
       availableFrom: '即入居可',
       updatedAt: '2026-08-04',
+      images: [
+        { src: 'images/properties/CMP-9001-01_テスト.jpg', caption: 'テスト' }
+      ],
       description: '動作確認用のテスト物件です。'
     }
   ];
