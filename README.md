@@ -8,6 +8,11 @@
 >
 > 物件の追加・修正、写真の入れかた、エラーが出たときの対処を、
 > 専門知識なしで読める形にまとめてあります。**このREADMEは管理担当者向けです。**
+>
+> ## 🛠 microCMS の導入がまだの方は [docs/microcms-setup.md](docs/microcms-setup.md) へ
+>
+> 物件情報の入力は **microCMS の管理画面** に移行しました。
+> 導入が済むまでは、下の「スプレッドシート運用（移行前の予備）」の手順で運用できます。
 
 > **重要**
 > - 掲載している **物件情報はすべてデモ用のサンプルデータ** です。実在の募集物件ではありません。
@@ -24,7 +29,7 @@
 
 ```bash
 npm install          # 運用ツールとテストの準備（初回のみ）
-npm run sync         # スプレッドシートを取り込んでサイトに反映
+npm run sync         # microCMSを取り込んでサイトに反映
 npm run build        # data/properties.csv からサイトのデータを生成
 npm run check        # 書き込まずに検証だけ
 npm run serve        # http://localhost:8080 でローカル確認
@@ -63,12 +68,14 @@ robots.txt          … 自動生成（触らないでください）
 tests/run.js        … 実ブラウザでの自動テスト
 css/style.css       … スタイル一式（デザイントークン + 全ページ分）
 data/properties.js  … 物件データ（サンプル53件＝賃貸37・売買16）・取引種別/物件種別/都県・エリア/こだわり条件のマスタ
-data/properties.csv … スプレッドシート運用用のCSV（上記の生成元）
-tools/              … スプレッドシート取り込み・CSV ⇄ properties.js の変換スクリプト
-tools/sheet-url.txt … 物件データのスプレッドシートURL（ここだけ書き換える）
-tools/sheet-notice.md … スプレッドシートに貼る注意事項の文面
-MANUAL.md           … 物件を更新する人向けの運用マニュアル
-.github/workflows/  … スプレッドシートの自動反映（毎朝8時）
+data/properties.csv … 取り込んだ内容の控え（上記の生成元。人が編集する場所ではありません）
+tools/               … 取り込み・変換スクリプト
+tools/cms-config.json … microCMSのサービス名とAPI名（ここだけ書き換える）
+tools/fetch-cms.js   … microCMS → サイト（現在の取り込み口）
+tools/fetch-sheet.js … スプレッドシート → サイト（移行前の予備）
+MANUAL.md            … 物件を更新する人向けの運用マニュアル
+docs/microcms-setup.md … microCMSの導入手順（初回のみ）
+.github/workflows/   … 自動反映（microCMSの公開時＋毎朝8時）
 js/portal.js        … 共通ロジック（整形・検索・お気に入り・画像生成・ヘッダー）
 js/home.js          … トップページ
 js/search.js        … 検索ページ
@@ -282,7 +289,37 @@ var MAP_CONFIG = {
 - **コントラスト対応**: 赤地に白文字は基準（4.5:1）未達のため、赤ボタンは黒文字（5.3:1）、ホバー時は濃赤地に白文字へ切り替え
 - **アクセシビリティ**: スキップリンク、`aria-live` による検索結果件数の通知、フォーカスリング、`prefers-reduced-motion` 対応、フォームのリアルタイムバリデーションとエラーの `aria-invalid` 連動
 
-## 物件データの追加・編集（スプレッドシート運用）
+## 物件データの追加・編集（microCMS）
+
+**日常のメンテナンスは microCMS の管理画面で行います。** JavaScriptもCSVファイルも直接編集する必要はありません。
+
+- 導入手順（初回のみ）: **[docs/microcms-setup.md](docs/microcms-setup.md)**
+- 日々の操作: **[MANUAL.md](MANUAL.md)**
+
+```bash
+node tools/fetch-cms.js           # microCMSを取得して反映まで行う
+node tools/fetch-cms.js --check   # 取得して検証するだけ（何も書き換えない）
+```
+
+管理画面で「公開」を押すと Webhook で `sync-cms.yml` が動き、1〜2分でサイトに反映されます。
+念のため毎朝8時にも確認が走ります。
+
+**入力に問題があれば、CSVもサイトのデータも一切書き換えません。** どの物件の何が悪いかを
+日本語で表示して止まるので、管理画面を直して再実行してください。
+
+### 検証ルールはCSVと共通です
+
+`tools/lib/schema.js` の `build()` が唯一の検証・変換の場所で、
+スプレッドシート経由（`fromRow`）でもmicroCMS経由（`cms.getterFor`）でも同じものが動きます。
+**入力元を増やしても、宅建業法・表示規約まわりのルールが二重管理になりません。**
+
+---
+
+## スプレッドシート運用（移行前の予備）
+
+> **microCMS の導入が済んだら、この節と関連ファイルは削除してください。**
+> 削除するものの一覧は [docs/microcms-setup.md](docs/microcms-setup.md) の⑥にあります。
+> 自動実行はすでに止めてあり、Actionsタブからの手動実行だけが残っています。
 
 **日常のメンテナンスはGoogleスプレッドシートで行います。** JavaScriptもCSVファイルも直接編集する必要はありません。
 
@@ -356,24 +393,17 @@ node tools/fetch-sheet.js --check   # 取得して検証するだけ（何も書
 
 ### 手を動かさずに反映する（自動同期）
 
-`.github/workflows/sync-sheet.yml` を用意してあります。有効にすると **毎朝8時（日本時間）にスプレッドシートを見に行き、変更があれば自動でサイトに反映**します。コマンドを実行する人すら不要になります。
+`.github/workflows/sync-sheet.yml` を用意してあります。**現在は自動実行を止めてあり**、
+Actionsタブの「【予備】スプレッドシートを反映」→ Run workflow で手動実行だけができます。
 
-急ぎで反映したいときは、Actionsタブの「Run workflow」からいつでも手動実行できます。頻度を変えたい場合はワークフロー内の `cron` を書き換えてください。
+microCMS と同時に自動実行すると、`data/properties.csv` を奪い合って内容が
+行き来してしまうためです（両方の workflow は `concurrency: sync-content` で
+同時実行も防いであります）。
 
-準備は3つだけです。
+スプレッドシート運用に戻す必要が生じた場合は、`sync-cms.yml` の `schedule` と
+`repository_dispatch` を外し、`sync-sheet.yml` に `schedule` を戻してください。
 
-1. `tools/sheet-url.txt` にURLを書く（上の初回セットアップと同じ）
-2. スプレッドシートの共有を「リンクを知っている全員」→「閲覧者」にする
-3. GitHubの **Settings → Actions → General → Workflow permissions** を
-   「**Read and write permissions**」にする
-
-これで、スプレッドシートを直すだけでサイトが更新されます。
 入力ミスがあった場合は**サイトを変更せず**、Actionsタブに失敗として残り、どの行の何が悪いかがログに日本語で出ます。
-
-自動反映を止めたいときは、ワークフロー内の `schedule:` の3行をコメントアウトしてください（Actionsタブからの手動実行だけ残ります）。
-
-> **写真は自動同期とは別の経路です。** GitHubの `images/properties/` に
-> アップロードした時点で反映されます（→「物件写真」の項）。
 
 ### スプレッドシート以外から取り込む
 
@@ -576,12 +606,14 @@ npm run serve
 
 ### 7. 運用体制
 
-- [ ] スプレッドシートの編集者を決めた
+- [ ] ★ **microCMS を導入した**（→ [docs/microcms-setup.md](docs/microcms-setup.md)）
 - [ ] ★ **[運用マニュアル（MANUAL.md）](MANUAL.md) を、物件を更新する全員に共有した**
-- [ ] ★ **スプレッドシートに注意事項のタブを追加した**（`tools/sheet-notice.md` の文面）
-      → シートの内容は実質的に公開されます。編集する人全員に伝わる形にしてください
-- [ ] 未公開物件は別シートで管理する運用にした（公開が決まったものだけ転記）
-- [ ] 自動同期（`.github/workflows/sync-sheet.yml`）を有効にするか決めた
+- [ ] microCMS のメンバーを招待した
+- [ ] Webhook を設定した（「公開」で即反映になります）
+- [ ] **わざと間違えた入力で、サイトが変わらないことを確認した**
+      → これを一度試しておくと、以後は安心して運用できます
+- [ ] 移行が落ち着いたら、スプレッドシート関連のファイルを削除した
+      （→ [docs/microcms-setup.md](docs/microcms-setup.md) の⑥）
 - [ ] `npm test` が通ることを確認した（更新のたびにGitHub Actionsでも自動実行されます）
 
 ## 自動テスト
@@ -592,7 +624,7 @@ npx playwright install --with-deps chromium   # 初回のみ
 npm test
 ```
 
-実際のブラウザ（Chromium）で全ページを開き、**79項目**を確認します。
+実際のブラウザ（Chromium）で全ページを開き、**80項目**を確認します。
 
 - トップの表示・賃貸/売買の切り替え・エリアの階層
 - canonical・OGP・構造化データ
@@ -604,6 +636,8 @@ npm test
 - お気に入り・閲覧履歴・固定ページ・sitemap/robots
 - モバイルで横スクロールが出ないこと
 - **サイト由来のコンソールエラーがないこと**
+- **microCMS取り込み**（検証ルールの共通化・ページ送り・写真の追加/差し替え/削除・
+  枚数上限・エラーの伝えかた・**手順書とフィールドIDのずれ**。APIはモックします）
 - Googleドライブ同期（写真の追加・更新・削除・エラー処理。APIはモックします）
 
 `push` とプルリクエストのたびに GitHub Actions でも同じテストが動きます

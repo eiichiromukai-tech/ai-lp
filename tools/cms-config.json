@@ -1,0 +1,7 @@
+{
+  "_説明": "microCMS の設定です。APIキーはここに書かず、GitHubのSecretsに入れてください。",
+  "_serviceDomainとは": "管理画面のURL https://＜ここ＞.microcms.io/ の＜ここ＞の部分です。URLをそのまま貼っても動きます。",
+  "_endpointとは": "APIを作るときに決めた「エンドポイント」の値です。既定は properties です。",
+  "serviceDomain": "",
+  "endpoint": "properties"
+}

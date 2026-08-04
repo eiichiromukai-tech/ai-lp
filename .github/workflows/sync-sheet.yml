@@ -1,8 +1,16 @@
 # =====================================================
-# Googleスプレッドシートの内容を自動でサイトへ反映します。
+# 【移行前の予備】Googleスプレッドシートの内容をサイトへ反映します。
 #
-#   ・毎朝8時（日本時間）に、スプレッドシートに変更がないか確認します
-#   ・写真が images/properties/ に追加・削除されたときは、その場で反映します
+#   物件情報の入力は microCMS に移行しました。日々の反映は
+#   sync-cms.yml が行います。こちらは自動実行しません。
+#
+#   microCMS が使えない事情が起きたときに、Actionsタブから手動で
+#   実行すればスプレッドシート運用に戻せる、という位置づけです。
+#   移行が完了して不要と判断できたら、このファイルは削除してください。
+#
+#   ※ 両方を自動実行すると、data/properties.csv を奪い合って
+#     内容が行き来してしまうため、schedule と push は外してあります。
+#
 #   ・変更があれば data/properties.csv と data/properties.js を更新して
 #     コミットします
 #   ・入力に問題があれば何も変更せず、このワークフローが失敗として残ります
@@ -14,28 +22,15 @@
 #   3. GitHub の Settings → Actions → General →
 #      Workflow permissions を「Read and write permissions」にする
 #
-# 頻度を変えたいときは cron の値を書き換えてください。
-#   毎朝8時（日本時間）  0 23 * * *   ← 現在の設定
-#   平日の朝8時だけ      0 23 * * 0-4
-#   1時間おき            0 * * * *
-# 自動反映を止めたいときは schedule: の3行を # でコメントアウトしてください
-# （手動実行だけ残ります）。
 # =====================================================
-name: スプレッドシートを反映
+name: 【予備】スプレッドシートを反映
 
 on:
-  schedule:
-    # UTC基準のため、日本時間の朝8時は前日の23時にあたる
-    - cron: '0 23 * * *'
-  push:
-    # GitHubの画面から写真をアップロード／削除したら、待たずに反映する。
-    # （この工程自身のコミットは GITHUB_TOKEN で行われるため、繰り返しにはなりません）
-    branches: [main]
-    paths: ['images/properties/**']
-  workflow_dispatch: # 急ぎのときはActionsタブから手動で実行できます
+  workflow_dispatch: # 手動実行のみ
 
 concurrency:
-  group: sync-sheet
+  # sync-cms.yml と同じ名前にして、同時に走らないようにする
+  group: sync-content
   cancel-in-progress: false
 
 jobs:

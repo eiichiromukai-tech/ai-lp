@@ -1,0 +1,75 @@
+# =====================================================
+# microCMS の内容を自動でサイトへ反映します。
+#
+#   ・管理画面で「公開」を押すと、1〜2分でサイトに反映されます
+#     （microCMS の Webhook から呼ばれます）
+#   ・毎朝8時（日本時間）にも念のため確認します
+#   ・入力に問題があれば何も変更せず、このワークフローが失敗として残ります
+#     （Actions のログにどの物件の何が悪いか日本語で出ます）
+#
+# 使うための準備:
+#   1. tools/cms-config.json に serviceDomain を書く
+#   2. Settings → Secrets and variables → Actions に
+#      MICROCMS_API_KEY（GET権限のあるAPIキー）を登録する
+#   3. Settings → Actions → General → Workflow permissions を
+#      「Read and write permissions」にする
+#   4. microCMS の Webhook 設定を行う
+#   手順の全体は docs/microcms-setup.md に書いてあります。
+# =====================================================
+name: 物件情報を反映（microCMS）
+
+on:
+  repository_dispatch:
+    # microCMS の Webhook から呼ばれます
+    types: [cms-update]
+  schedule:
+    # UTC基準のため、日本時間の朝8時は前日の23時にあたる
+    - cron: '0 23 * * *'
+  workflow_dispatch: # Actionsタブから手動でも実行できます
+
+concurrency:
+  group: sync-content
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '22'
+
+      - name: microCMS から取り込んで反映
+        env:
+          MICROCMS_API_KEY: ${{ secrets.MICROCMS_API_KEY }}
+        run: node tools/fetch-cms.js
+
+      - name: 変更があればコミットする
+        run: |
+          # 物件を追加すると sitemap.xml も変わり、大きい写真は自動縮小されるため、
+          # 生成・更新されうるものをまとめて対象にする
+          TARGETS="data/ sitemap.xml robots.txt images/properties/"
+          if git diff --quiet -- $TARGETS; then
+            echo "変更はありませんでした。"
+            exit 0
+          fi
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add $TARGETS
+          git commit -m "物件情報を更新（microCMSから自動反映）"
+          git push
+          echo "反映した内容:"
+          git show --stat --oneline HEAD
+
+      - name: 取り残した変更がないか確認する
+        run: |
+          # 生成物のコミット漏れがあると、次のテストで「最新ではない」と落ちるため
+          if ! git diff --quiet; then
+            echo "::error::コミットされていない変更が残っています。"
+            git status --short
+            exit 1
+          fi
