@@ -18,7 +18,7 @@
      ===================================================== */
   var SITE_CONFIG = {
     /* 公開URL。sitemap.xml・canonical・OGPの生成に使います。末尾のスラッシュなし */
-    siteUrl: 'https://remax-compass.example.com',
+    siteUrl: 'https://property.lomets-inc.com',
 
     /* サイト名・会社情報（構造化データとOGPに使います） */
     siteName: 'REMAX COMPASS 物件ポータル',
