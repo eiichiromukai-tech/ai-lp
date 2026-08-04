@@ -97,9 +97,19 @@ if (errors.length) {
 }
 
 /* ---------- 出力 ---------- */
+/* JavaScriptの文字列リテラルとして安全な形にする。
+   物件説明は複数行になることがあり、改行をそのまま書くと構文エラーになる。
+   U+2028 / U+2029 も JavaScript では改行として扱われるため落とせない。 */
 function q(value) {
-  return "'" + String(value).replace(/\\/g, '\\\\').replace(/'/g, "\\'") + "'";
+  return "'" + String(value)
+    .replace(/\\/g, '\\\\')
+    .replace(/'/g, "\\'")
+    .replace(/\r/g, '\\r')
+    .replace(/\n/g, '\\n')
+    .replace(/\u2028/g, '\\u2028')
+    .replace(/\u2029/g, '\\u2029') + "'";
 }
+
 
 function renderProperty(p) {
   const lines = [];

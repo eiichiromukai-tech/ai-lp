@@ -262,6 +262,23 @@ function convert(rec) {
       !/Webhook|スプレッドシート|GitHubにアップロード/.test(man),
       (man.match(/Webhook|スプレッドシート|GitHubにアップロード/g) || []).join(','));
 
+    console.log('\n生成する data/properties.js の安全性');
+    /* 物件説明は複数行になる。改行をそのまま書き出すと構文エラーで
+       サイトのデータが生成できなくなり、反映が丸ごと止まる。 */
+    const genSrc = fs.readFileSync(path.join(ROOT, 'tools/csv-to-properties.js'), 'utf8');
+    const qSrc = /function q\(value\)[\s\S]*?\n}/.exec(genSrc)[0];
+    const q = new Function('return ' + qSrc.replace('function q', 'function'))();
+    [['改行', '1行目\n2行目'],
+     ['復帰改行', 'a\r\nb'],
+     ['引用符', "it's"],
+     ['バックスラッシュ', 'a\\b'],
+     ['U+2028', 'a b'],
+     ['U+2029', 'a b']].forEach(function (pair) {
+      let ok = false;
+      try { ok = new Function('return ' + q(pair[1]))() === pair[1]; } catch (e) { ok = false; }
+      check(pair[0] + 'を含む説明を書き出せる', ok, q(pair[1]).slice(0, 30));
+    });
+
     console.log('\n一括登録のコンテンツID');
     /* microCMSは英小文字・数字・ハイフン・アンダースコアしか受け付けない。
        大文字のまま送ると全件が400で弾かれる */
