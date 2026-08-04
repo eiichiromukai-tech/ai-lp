@@ -163,6 +163,22 @@ function num(value, label, rowLabel, errors, opts) {
   return n;
 }
 
+/* 「2026-07-30」「2026/7/30」「2026年7月30日」を YYYY-MM-DD に揃える。
+   読み取れない場合は空文字を返す。 */
+function normalizeDate(value) {
+  const raw = String(value == null ? '' : value).trim().replace(/\s+/g, '');
+  if (!raw) return '';
+  const m = /^(\d{4})[-/.年](\d{1,2})[-/.月](\d{1,2})日?$/.exec(raw);
+  if (!m) return '';
+  const y = Number(m[1]), mo = Number(m[2]), d = Number(m[3]);
+  if (mo < 1 || mo > 12 || d < 1 || d > 31) return '';
+  const iso = y + '-' + String(mo).padStart(2, '0') + '-' + String(d).padStart(2, '0');
+  /* 2026-02-31 のような存在しない日付を弾く */
+  const parsed = new Date(iso + 'T00:00:00');
+  if (isNaN(parsed) || parsed.getDate() !== d) return '';
+  return iso;
+}
+
 function headerOf(key) {
   const col = COLUMNS.find(function (c) { return c.key === key; });
   return col ? col.header : key;
@@ -319,11 +335,15 @@ function fromRow(cells, index, errors, warnings) {
   p.usage = decodeList(get('usage'));
   p.availableFrom = get('availableFrom') || '相談';
 
-  p.updatedAt = get('updatedAt');
-  if (!p.updatedAt) {
-    errors.push(rowLabel + '情報更新日は必須です（YYYY-MM-DD）');
-  } else if (!/^\d{4}-\d{2}-\d{2}$/.test(p.updatedAt) || isNaN(new Date(p.updatedAt + 'T00:00:00'))) {
-    errors.push(rowLabel + '情報更新日「' + p.updatedAt + '」の形式が不正です（YYYY-MM-DD）');
+  /* 情報更新日。スプレッドシートが日付として扱うと 2026/7/30 のような書式で
+     書き出されるため、区切り文字の違いは吸収して YYYY-MM-DD に揃える。 */
+  const rawUpdatedAt = get('updatedAt');
+  p.updatedAt = normalizeDate(rawUpdatedAt);
+  if (!rawUpdatedAt) {
+    errors.push(rowLabel + '情報更新日は必須です（2026-07-30 のように入力してください）');
+  } else if (!p.updatedAt) {
+    errors.push(rowLabel + '情報更新日「' + rawUpdatedAt +
+      '」を読み取れません（2026-07-30 のように年-月-日で入力してください）');
   }
 
   p.description = get('description');
