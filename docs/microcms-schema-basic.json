@@ -446,16 +446,6 @@
       "initialValue": null
     },
     {
-      "fieldId": "access",
-      "name": "交通",
-      "kind": "repeater",
-      "description": null,
-      "required": false,
-      "customFieldCreatedAtList": [
-        "2026-08-04T00:00:00.000Z"
-      ]
-    },
-    {
       "fieldId": "rent",
       "name": "月額賃料（円）",
       "kind": "number",
@@ -794,16 +784,6 @@
       "initialValue": null
     },
     {
-      "fieldId": "photos",
-      "name": "写真",
-      "kind": "repeater",
-      "description": null,
-      "required": false,
-      "customFieldCreatedAtList": [
-        "2026-08-04T00:00:01.000Z"
-      ]
-    },
-    {
       "fieldId": "infoUpdatedAt",
       "name": "情報更新日（通常は空でOK）",
       "kind": "date",
@@ -812,69 +792,5 @@
       "initialValue": null
     }
   ],
-  "customFields": [
-    {
-      "createdAt": "2026-08-04T00:00:00.000Z",
-      "fieldId": "accessItem",
-      "name": "交通",
-      "fields": [
-        {
-          "fieldId": "line",
-          "name": "路線",
-          "kind": "text",
-          "description": null,
-          "required": false,
-          "textSizeLimitValidation": null,
-          "patternMatchValidation": null,
-          "isUnique": false,
-          "initialValue": null
-        },
-        {
-          "fieldId": "station",
-          "name": "駅",
-          "kind": "text",
-          "description": null,
-          "required": false,
-          "textSizeLimitValidation": null,
-          "patternMatchValidation": null,
-          "isUnique": false,
-          "initialValue": null
-        },
-        {
-          "fieldId": "walk",
-          "name": "徒歩（分）",
-          "kind": "number",
-          "description": null,
-          "required": false,
-          "numberSizeLimitValidation": null,
-          "initialValue": null
-        }
-      ]
-    },
-    {
-      "createdAt": "2026-08-04T00:00:01.000Z",
-      "fieldId": "photoItem",
-      "name": "写真",
-      "fields": [
-        {
-          "fieldId": "image",
-          "name": "写真",
-          "kind": "media",
-          "description": null,
-          "required": false
-        },
-        {
-          "fieldId": "caption",
-          "name": "キャプション",
-          "kind": "text",
-          "description": null,
-          "required": false,
-          "textSizeLimitValidation": null,
-          "patternMatchValidation": null,
-          "isUnique": false,
-          "initialValue": null
-        }
-      ]
-    }
-  ]
+  "customFields": []
 }
