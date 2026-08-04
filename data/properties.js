@@ -10,6 +10,47 @@
 (function (global) {
   'use strict';
 
+  /* =====================================================
+     サイト全体の設定
+     -----------------------------------------------------
+     公開前に見直すのはこのブロックだけです。
+     詳しくは README の「公開前チェックリスト」を参照してください。
+     ===================================================== */
+  var SITE_CONFIG = {
+    /* 公開URL。sitemap.xml・canonical・OGPの生成に使います。末尾のスラッシュなし */
+    siteUrl: 'https://remax-compass.example.com',
+
+    /* サイト名・会社情報（構造化データとOGPに使います） */
+    siteName: 'RE/MAX COMPASS 物件ポータル',
+    companyName: '株式会社ロメッツ',
+    brandName: 'RE/MAX COMPASS',
+    tel: '03-6261-5098',
+    address: {
+      postalCode: '101-0061',
+      region: '東京都',
+      locality: '千代田区',
+      street: '神田三崎町三丁目4番9号 横山ビル3F'
+    },
+    license: '東京都知事(1)第110605号',
+
+    /* お問い合わせフォームの送信先 */
+    form: {
+      /* 送信先メールアドレス（送信できなかったときのメール作成にも使います） */
+      email: 'eiichiro.mukai@remax-agt.net',
+      /* 送信に使うエンドポイント。空にするとメールソフトが開く方式になります。
+         既定は FormSubmit（アカウント登録不要・初回のみ確認メールの承認が必要）。
+         Formspree を使う場合は 'https://formspree.io/f/xxxxxxxx' に差し替えてください。 */
+      endpoint: 'https://formsubmit.co/ajax/eiichiro.mukai@remax-agt.net'
+    },
+
+    /* Google アナリティクス（GA4）の測定ID。空のあいだは一切読み込みません。
+       例: 'G-XXXXXXXXXX' */
+    analyticsId: '',
+
+    /* デモ用サンプルデータの注意書きを出すかどうか。実データに入れ替えたら false に */
+    demoNotice: true
+  };
+
   /* ---------- 地図の設定 ----------
      所在地が「番地・号」まで入っている物件だけ、詳細ページに地図を出します
      （丁目までしか入っていない物件は、場所を特定できないので出しません）。
@@ -1462,6 +1503,7 @@
   });
 
   global.PORTAL_DATA = {
+    site: SITE_CONFIG,
     map: MAP_CONFIG,
     properties: PROPERTIES,
     deals: DEAL_TYPES,

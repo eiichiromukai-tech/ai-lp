@@ -8,6 +8,18 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Zen+Kaku+Gothic+New:wght@400;500;700;900&display=swap" rel="stylesheet">
+<link rel="canonical" href="">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="RE/MAX COMPASS 物件ポータル">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:title" content="物件検索｜RE/MAX COMPASS 物件ポータル">
+<meta property="og:description" content="">
+<meta property="og:url" content="">
+<meta property="og:image" content="images/COMPASS_BLACK_Primary.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="物件検索｜RE/MAX COMPASS 物件ポータル">
+<meta name="twitter:description" content="">
+<meta name="twitter:image" content="images/COMPASS_BLACK_Primary.png">
 <link rel="icon" href="images/Balloon_Mark_RGB.png" type="image/png">
 <link rel="stylesheet" href="css/style.css">
 </head>
@@ -89,6 +101,18 @@
           <fieldset class="filter-group">
             <legend class="filter-label">エリア（市区）</legend>
             <div class="check-groups" id="f-areas"></div>
+          </fieldset>
+
+          <fieldset class="filter-group">
+            <legend class="filter-label">沿線・駅</legend>
+            <div class="line-picker">
+              <label class="sr-only" for="f-line">沿線</label>
+              <select id="f-line">
+                <option value="">沿線を選ぶ</option>
+              </select>
+              <div class="check-list check-list-2col" id="f-stations"></div>
+              <p class="filter-hint" id="f-station-hint">沿線を選ぶと駅を絞り込めます。</p>
+            </div>
           </fieldset>
 
           <fieldset class="filter-group" id="f-rent-group">
@@ -254,6 +278,7 @@
           <li><a href="favorites.html">お気に入り</a></li>
           <li><a href="owner.html">物件オーナー様へ</a></li>
           <li><a href="contact.html">お問い合わせ</a></li>
+          <li><a href="privacy.html">プライバシーポリシー</a></li>
         </ul>
       </div>
     </nav>

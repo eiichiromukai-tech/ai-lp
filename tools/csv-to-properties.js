@@ -17,6 +17,7 @@ const path = require('path');
 const csv = require('./lib/csv');
 const schema = require('./lib/schema');
 const images = require('./lib/images');
+const seo = require('./lib/seo');
 
 const CSV_PATH = path.join(__dirname, '..', 'data', 'properties.csv');
 const JS_PATH = path.join(__dirname, '..', 'data', 'properties.js');
@@ -64,9 +65,15 @@ properties.forEach(function (p, i) {
   }
 });
 
-/* ---------- 物件写真の取り込み ---------- */
-const photos = images.collect(properties.map(function (p) { return p.id; }), warnings);
-properties.forEach(function (p) { p.images = photos[p.id] || []; });
+/* ---------- 物件写真の取り込み（必要なら自動で縮小する） ---------- */
+images.collectAsync(properties.map(function (p) { return p.id; }), warnings)
+  .then(function (photos) {
+    properties.forEach(function (p) { p.images = photos[p.id] || []; });
+    finish();
+  })
+  .catch(function (e) { fail('画像の取り込みに失敗しました: ' + e.message); });
+
+function finish() {
 
 warnings.forEach(function (w) { console.warn('警告: ' + w); });
 
@@ -187,4 +194,13 @@ console.log('data/properties.js を更新しました: ' + properties.length + '
   '／成約済 ' + (statusCount.closed || 0) + '）');
 console.log('物件写真: ' + photoCount + '枚（' + withPhotos.length + '件の物件に掲載）。' +
   '写真のない物件は種別ごとのイメージ画像を表示します。');
+
+/* ---------- sitemap.xml / robots.txt ---------- */
+const sandbox2 = { window: {} };
+new Function('window', fs.readFileSync(JS_PATH, 'utf8'))(sandbox2.window);
+const data = sandbox2.window.PORTAL_DATA;
+const urlCount = seo.write(data.site.siteUrl, data.properties, data.prefectures);
+console.log('sitemap.xml / robots.txt を更新しました（' + urlCount + 'URL）。');
+
 if (warnings.length) console.log('警告 ' + warnings.length + '件は内容をご確認ください。');
+}

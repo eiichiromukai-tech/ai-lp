@@ -39,6 +39,28 @@
   function prefOf(p) { return p.pref || AREA_PREF[p.ward] || ''; }
   function prefLabel(value) { return PREF_LABEL[value] || ''; }
 
+  /* ---------- 沿線・駅 ----------
+     物件データの access から自動的に一覧を作る（マスタ管理は不要）。 */
+  function lineStationIndex(list) {
+    var lines = {};
+    (list || []).forEach(function (p) {
+      (p.access || []).forEach(function (a) {
+        (lines[a.line] = lines[a.line] || {})[a.station] = true;
+      });
+    });
+    return Object.keys(lines).sort().map(function (line) {
+      return { line: line, stations: Object.keys(lines[line]).sort() };
+    });
+  }
+
+  function linesOf(p) {
+    return (p.access || []).map(function (a) { return a.line; });
+  }
+
+  function stationsOf(p) {
+    return (p.access || []).map(function (a) { return a.station; });
+  }
+
   /* 市区の一覧を都県ごとにまとめる。keep(市区名, 都県) が false を返すものは除外し、
      残りが1つもない小見出し／都県は落とす。
      戻り値: [{ value, label, sections: [{label, areas}], areas }] */
@@ -242,6 +264,180 @@
     return 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
   }
 
+  /* ---------- サイト設定 ---------- */
+  var SITE = DATA.site || {};
+
+  function siteUrl(pathAndQuery) {
+    var base = String(SITE.siteUrl || '').replace(/\/+$/, '');
+    return base + '/' + String(pathAndQuery || '').replace(/^\/+/, '');
+  }
+
+  /* ---------- アクセス解析 ----------
+     測定IDが空のあいだは何も読み込まず、track() も黙って何もしません。 */
+  function initAnalytics() {
+    var id = SITE.analyticsId;
+    if (!id || window.__gaLoaded) return;
+    window.__gaLoaded = true;
+    window.dataLayer = window.dataLayer || [];
+    window.gtag = function () { window.dataLayer.push(arguments); };
+    window.gtag('js', new Date());
+    window.gtag('config', id, { anonymize_ip: true });
+    var s = document.createElement('script');
+    s.async = true;
+    s.src = 'https://www.googletagmanager.com/gtag/js?id=' + encodeURIComponent(id);
+    document.head.appendChild(s);
+  }
+
+  function track(name, params) {
+    if (typeof window.gtag === 'function') window.gtag('event', name, params || {});
+  }
+
+  /* ---------- お問い合わせの送信 ----------
+     送信先は data/properties.js の SITE_CONFIG.form で設定します。
+     endpoint が空、または送信に失敗したときはメールソフトを開く方式に切り替えます。 */
+  function inquiryEmail() { return (SITE.form || {}).email || ''; }
+
+  function sendInquiry(fields) {
+    var endpoint = (SITE.form || {}).endpoint || '';
+    if (!endpoint) return Promise.reject(new Error('endpoint-not-configured'));
+    return fetch(endpoint, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify(fields)
+    }).then(function (res) {
+      if (!res.ok) throw new Error('http ' + res.status);
+      return res;
+    });
+  }
+
+  /* 送信できなかったときに、同じ内容でメールを作れるようにする */
+  function inquiryMailto(subject, fields) {
+    var body = Object.keys(fields)
+      .filter(function (k) { return k.charAt(0) !== '_' && fields[k]; })
+      .map(function (k) { return k + '：' + fields[k]; })
+      .join('\n');
+    return 'mailto:' + inquiryEmail() +
+      '?subject=' + encodeURIComponent(subject) +
+      '&body=' + encodeURIComponent(body);
+  }
+
+  /* 同意チェックの検証。未チェックならメッセージを出して false を返す */
+  function validateConsent(id) {
+    var el = document.getElementById(id);
+    if (!el) return true;
+    var err = document.querySelector('[data-error-for="' + id + '"]');
+    var ok = el.checked;
+    if (err) err.textContent = ok ? '' : 'プライバシーポリシーへの同意が必要です';
+    el.setAttribute('aria-invalid', ok ? 'false' : 'true');
+    return ok;
+  }
+
+  /* お問い合わせの送信処理。2つのフォームで共通に使う。
+     opts = { name, submit, status, subject, label, fields } */
+  function runInquirySubmit(o) {
+    var btn = o.submit;
+    var status = o.status;
+    var label = o.label || btn.textContent;
+    var fields = o.fields();
+
+    btn.disabled = true;
+    btn.textContent = '送信中…';
+    status.textContent = '送信しています…';
+    status.className = 'form-status';
+
+    return sendInquiry(fields).then(function () {
+      btn.textContent = '送信しました';
+      status.textContent = 'お問い合わせを受け付けました。担当より1営業日以内にご連絡します。';
+      status.className = 'form-status is-success';
+      track('inquiry_submit', { form: o.name, property_id: fields['物件番号'] || '' });
+    }).catch(function () {
+      /* 送信に失敗しても入力内容を捨てず、メールで送れるようにする */
+      btn.disabled = false;
+      btn.textContent = label;
+      status.innerHTML = '送信できませんでした。お手数ですが' +
+        '<a href="' + escapeHtml(inquiryMailto(o.subject, fields)) + '">メールでのご連絡</a>' +
+        '（' + escapeHtml(inquiryEmail()) + '）' +
+        'または<a href="tel:0362615098">お電話</a>にてご連絡ください。';
+      status.className = 'form-status is-error';
+      track('inquiry_error', { form: o.name });
+    });
+  }
+
+  /* 個人情報の取り扱いへの同意欄。両方のフォームで同じものを使う */
+  function consentHtml(id) {
+    return '<div class="form-row form-row-full consent-row">' +
+      '<label class="consent-label" for="' + id + '">' +
+        '<input type="checkbox" id="' + id + '" name="consent" required>' +
+        '<span><a href="privacy.html" target="_blank" rel="noopener">プライバシーポリシー</a>' +
+        'に同意します<span class="required">必須</span></span>' +
+      '</label>' +
+      '<p class="field-error" data-error-for="' + id + '"></p>' +
+    '</div>';
+  }
+
+  /* ---------- canonical / OGP ----------
+     ページごとのURLは公開URL（SITE_CONFIG.siteUrl）を基準に組み立てる。
+     詳細ページは物件が決まったあとに setPageMeta() で上書きします。 */
+  function currentPath() {
+    var file = location.pathname.split('/').pop() || 'index.html';
+    return file + (location.search || '');
+  }
+
+  function setMeta(selector, attr, value) {
+    var el = document.head.querySelector(selector);
+    if (el) el.setAttribute(attr, value);
+  }
+
+  function applyMeta() {
+    if (!SITE.siteUrl) return;
+    var url = siteUrl(currentPath());
+    setMeta('link[rel="canonical"]', 'href', url);
+    setMeta('meta[property="og:url"]', 'content', url);
+    var desc = document.head.querySelector('meta[name="description"]');
+    if (desc) {
+      setMeta('meta[property="og:description"]', 'content', desc.getAttribute('content') || '');
+      setMeta('meta[name="twitter:description"]', 'content', desc.getAttribute('content') || '');
+    }
+    setMeta('meta[property="og:title"]', 'content', document.title);
+    setMeta('meta[name="twitter:title"]', 'content', document.title);
+    var img = document.head.querySelector('meta[property="og:image"]');
+    if (img && !/^https?:/.test(img.getAttribute('content') || '')) {
+      setMeta('meta[property="og:image"]', 'content', siteUrl(img.getAttribute('content')));
+      setMeta('meta[name="twitter:image"]', 'content', siteUrl(img.getAttribute('content')));
+    }
+  }
+
+  /* 詳細ページ用。タイトル・説明・OGP・canonical をまとめて差し替える */
+  function setPageMeta(opts) {
+    document.title = opts.title;
+    setMeta('meta[name="description"]', 'content', opts.description);
+    setMeta('meta[property="og:title"]', 'content', opts.title);
+    setMeta('meta[name="twitter:title"]', 'content', opts.title);
+    setMeta('meta[property="og:description"]', 'content', opts.description);
+    setMeta('meta[name="twitter:description"]', 'content', opts.description);
+    if (opts.path && SITE.siteUrl) {
+      setMeta('link[rel="canonical"]', 'href', siteUrl(opts.path));
+      setMeta('meta[property="og:url"]', 'content', siteUrl(opts.path));
+    }
+    if (opts.image) {
+      var abs = /^(https?:|data:)/.test(opts.image) ? opts.image : siteUrl(opts.image);
+      setMeta('meta[property="og:image"]', 'content', abs);
+      setMeta('meta[name="twitter:image"]', 'content', abs);
+    }
+  }
+
+  /* 構造化データ（JSON-LD）を差し込む */
+  function setJsonLd(id, data) {
+    var el = document.getElementById(id);
+    if (!el) {
+      el = document.createElement('script');
+      el.type = 'application/ld+json';
+      el.id = id;
+      document.head.appendChild(el);
+    }
+    el.textContent = JSON.stringify(data);
+  }
+
   /* ---------- 物件写真 ---------- */
   /* 写真は images/properties/ に置かれたファイルを tools/csv-to-properties.js が
      取り込みます。1枚もない物件は種別ごとのイメージ画像で代替します。 */
@@ -296,6 +492,14 @@
       if (c.priceMax != null && (!isSale(p) || p.price > c.priceMax)) return false;
       if (c.types && c.types.length && c.types.indexOf(p.type) === -1) return false;
       if (c.prefs && c.prefs.length && c.prefs.indexOf(prefOf(p)) === -1) return false;
+      if (c.lines && c.lines.length) {
+        var pl = linesOf(p);
+        if (!c.lines.some(function (l) { return pl.indexOf(l) !== -1; })) return false;
+      }
+      if (c.stations && c.stations.length) {
+        var ps = stationsOf(p);
+        if (!c.stations.some(function (st) { return ps.indexOf(st) !== -1; })) return false;
+      }
       if (c.areas && c.areas.length && c.areas.indexOf(p.ward) === -1) return false;
       if (c.status && c.status.length && c.status.indexOf(displayStatus(p)) === -1) return false;
       if (c.rentMin != null && (isSale(p) || p.rent < c.rentMin)) return false;
@@ -455,7 +659,9 @@
       var btn = e.target.closest('[data-fav-id]');
       if (!btn) return;
       e.preventDefault();
-      var active = toggleFavorite(btn.getAttribute('data-fav-id'));
+      var favId = btn.getAttribute('data-fav-id');
+      var active = toggleFavorite(favId);
+      track(active ? 'add_favorite' : 'remove_favorite', { property_id: favId });
       btn.classList.toggle('is-active', active);
       btn.setAttribute('aria-pressed', String(active));
       document.dispatchEvent(new CustomEvent('favorites:changed'));
@@ -544,6 +750,8 @@
       priceMax: num('priceMax'),
       types: multi('type'),
       prefs: multi('pref').filter(function (v) { return !!PREF_LABEL[v]; }),
+      lines: multi('line'),
+      stations: multi('station'),
       areas: multi('area'),
       features: multi('feature'),
       status: multi('status'),
@@ -561,7 +769,8 @@
     var params = new URLSearchParams();
     if (c.deal === 'sale') params.set('deal', 'sale');
     if (c.keyword) params.set('q', c.keyword);
-    ['types:type', 'prefs:pref', 'areas:area', 'features:feature', 'status:status'].forEach(function (pair) {
+    ['types:type', 'prefs:pref', 'areas:area', 'lines:line', 'stations:station',
+     'features:feature', 'status:status'].forEach(function (pair) {
       var parts = pair.split(':');
       var arr = c[parts[0]];
       if (arr && arr.length) params.set(parts[1], arr.join(','));
@@ -584,6 +793,9 @@
     isSale: isSale,
     PREF_LABEL: PREF_LABEL,
     prefOf: prefOf,
+    lineStationIndex: lineStationIndex,
+    linesOf: linesOf,
+    stationsOf: stationsOf,
     prefLabel: prefLabel,
     areaGroups: areaGroups,
     dealBadge: dealBadge,
@@ -603,6 +815,17 @@
     formatDate: formatDate,
     nearestAccess: nearestAccess,
     minWalk: minWalk,
+    site: SITE,
+    siteUrl: siteUrl,
+    setPageMeta: setPageMeta,
+    setJsonLd: setJsonLd,
+    track: track,
+    sendInquiry: sendInquiry,
+    inquiryMailto: inquiryMailto,
+    inquiryEmail: inquiryEmail,
+    consentHtml: consentHtml,
+    validateConsent: validateConsent,
+    runInquirySubmit: runInquirySubmit,
     placeholderImage: placeholderImage,
     hasPhotos: hasPhotos,
     galleryImages: galleryImages,
@@ -632,7 +855,16 @@
     onReady: onReady
   };
 
+  /* サンプルデータの注意書きは SITE_CONFIG.demoNotice で出し分ける */
+  function applyDemoNotice() {
+    if (SITE.demoNotice !== false) return;
+    document.querySelectorAll('.demo-notice, .footer-note').forEach(function (el) { el.remove(); });
+  }
+
   document.addEventListener('DOMContentLoaded', function () {
+    initAnalytics();
+    applyMeta();
+    applyDemoNotice();
     initHeader();
     bindFavoriteButtons(document);
     updateFavoriteBadge();

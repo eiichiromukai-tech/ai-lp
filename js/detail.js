@@ -15,18 +15,95 @@
       return;
     }
 
-    document.title = p.title + '｜RE/MAX COMPASS 物件ポータル';
-    var meta = document.querySelector('meta[name="description"]');
-    if (meta) {
-      meta.setAttribute('content', p.title + '（' + p.ward + '）｜' + P.formatAmount(p) +
-        (P.isSale(p) ? '' : '／月') + '・' + p.areaTsubo.toFixed(1) + '坪。' + p.description.slice(0, 70));
-    }
+    var desc = p.title + '（' + p.ward + '）｜' + P.formatAmount(p) +
+      (P.isSale(p) ? '' : '／月') + '・' + p.areaTsubo.toFixed(1) + '坪。' + p.description.slice(0, 70);
+
+    P.setPageMeta({
+      title: p.title + '｜RE/MAX COMPASS 物件ポータル',
+      description: desc,
+      path: 'property.html?id=' + encodeURIComponent(p.id),
+      image: P.hasPhotos(p) ? p.images[0].src : 'images/COMPASS_BLACK_Primary.png'
+    });
+    setStructuredData(p);
 
     root.innerHTML = detailHtml(p);
     P.pushHistory(p.id);
+    P.track('view_property', {
+      property_id: p.id,
+      deal: P.dealOf(p),
+      type: p.type,
+      ward: p.ward,
+      price: p.amount
+    });
     bindForm(p);
     bindGallery(p);
   });
+
+  /* 検索結果に価格・面積を出すための構造化データ */
+  function setStructuredData(p) {
+    var url = P.siteUrl('property.html?id=' + encodeURIComponent(p.id));
+    var sale = P.isSale(p);
+    var listing = {
+      '@context': 'https://schema.org',
+      '@type': 'RealEstateListing',
+      name: p.title,
+      description: p.description,
+      url: url,
+      datePosted: p.updatedAt,
+      identifier: p.id,
+      image: P.galleryImages(p)
+        .filter(function (img) { return !img.placeholder; })
+        .map(function (img) { return P.siteUrl(img.src); }),
+      address: {
+        '@type': 'PostalAddress',
+        addressCountry: 'JP',
+        addressRegion: P.prefLabel(P.prefOf(p)),
+        addressLocality: p.ward,
+        streetAddress: p.address
+      },
+      floorSize: { '@type': 'QuantitativeValue', value: p.areaSqm, unitCode: 'MTK' },
+      provider: {
+        '@type': 'RealEstateAgent',
+        name: P.site.brandName,
+        legalName: P.site.companyName,
+        telephone: P.site.tel,
+        url: P.siteUrl('')
+      }
+    };
+    if (p.builtYear) listing.yearBuilt = p.builtYear;
+    if (p.amount) {
+      listing.offers = {
+        '@type': 'Offer',
+        price: p.amount,
+        priceCurrency: 'JPY',
+        availability: P.isClosed(p)
+          ? 'https://schema.org/SoldOut'
+          : 'https://schema.org/InStock',
+        businessFunction: sale
+          ? 'http://purl.org/goodrelations/v1#Sell'
+          : 'http://purl.org/goodrelations/v1#LeaseOut'
+      };
+      if (!sale) listing.offers.unitCode = 'MON';
+    }
+    P.setJsonLd('ld-listing', listing);
+
+    var crumbs = [
+      ['ホーム', P.siteUrl('')],
+      ['物件検索', P.siteUrl('properties.html')],
+      [P.DEAL_CONFIG[P.dealOf(p)].label, P.siteUrl('properties.html?deal=' + P.dealOf(p))],
+      [P.prefLabel(P.prefOf(p)), P.siteUrl('properties.html?pref=' + P.prefOf(p))],
+      [p.ward, P.siteUrl('properties.html?area=' + encodeURIComponent(p.ward))],
+      [P.TYPE_LABEL[p.type], P.siteUrl('properties.html?type=' + p.type)],
+      [p.title, url]
+    ];
+    P.setJsonLd('ld-breadcrumb', {
+      '@context': 'https://schema.org',
+      '@type': 'BreadcrumbList',
+      itemListElement: crumbs.map(function (c, i) {
+        return { '@type': 'ListItem', position: i + 1, name: c[0], item: c[1] };
+      })
+    });
+  }
 
   function notFound() {
     return '<div class="container empty-state empty-state-page">' +
@@ -196,6 +273,7 @@
         '</select></div>' +
       '<div class="form-row form-row-full"><label for="i-message">ご質問・ご要望<span class="optional">任意</span></label>' +
         '<textarea id="i-message" name="message" rows="5" placeholder="想定業態、希望入居時期、ご予算などをご記入ください"></textarea></div>' +
+      P.consentHtml('i-consent') +
       '<div class="form-row form-row-full">' +
         '<ul class="trust-signals"><li>1営業日以内にご返信します</li><li>しつこい営業電話はいたしません</li><li>個人情報は相談対応以外に利用しません</li></ul>' +
         '<button type="submit" class="btn btn-primary btn-lg" id="inquiry-submit">この内容で問い合わせる</button>' +
@@ -204,8 +282,8 @@
     '</form>';
   }
 
-  /* ---------- フォーム（フロントのみ・送信先未実装） ---------- */
-  function bindForm() {
+  /* ---------- 物件個別のお問い合わせフォーム ---------- */
+  function bindForm(p) {
     var form = document.getElementById('inquiry-form');
     if (!form) return;
     var status = document.getElementById('inquiry-status');
@@ -223,28 +301,59 @@
         err.textContent = msg;
         el.setAttribute('aria-invalid', msg ? 'true' : 'false');
       });
+      if (!P.validateConsent('i-consent')) ok = false;
       return ok;
     };
 
     form.addEventListener('input', function (e) {
       if (e.target.id === 'i-name' || e.target.id === 'i-email') validate();
     });
+    form.addEventListener('change', function (e) {
+      if (e.target.id === 'i-consent') P.validateConsent('i-consent');
+    });
+
+    var value = function (id) {
+      var el = document.getElementById(id);
+      return el ? el.value.trim() : '';
+    };
 
     form.addEventListener('submit', function (e) {
       e.preventDefault();
       if (!validate()) {
         status.textContent = '未入力の項目があります。ご確認ください。';
         status.className = 'form-status is-error';
+        var first = form.querySelector('[aria-invalid="true"]');
+        if (first) first.focus();
         return;
       }
-      submit.disabled = true;
-      submit.textContent = '送信中…';
-      /* 送信先は未実装です。実運用ではここでフォームAPIへPOSTしてください。 */
-      setTimeout(function () {
-        submit.textContent = '送信しました';
-        status.textContent = 'お問い合わせを受け付けました（デモ環境のため実際には送信されていません）。担当より1営業日以内にご連絡します。';
-        status.className = 'form-status is-success';
-      }, 700);
+
+      P.runInquirySubmit({
+        name: 'detail',
+        submit: submit,
+        status: status,
+        label: 'この内容で問い合わせる',
+        subject: '【物件のお問い合わせ】' + p.id + ' ' + p.title,
+        fields: function () {
+          return {
+            _subject: '【RE/MAX COMPASS 物件ポータル】' + p.id + ' ' + p.title,
+            _template: 'table',
+            _captcha: 'false',
+            '送信元': '物件ページ',
+            '物件番号': p.id,
+            '物件名': p.title,
+            '物件URL': P.siteUrl('property.html?id=' + encodeURIComponent(p.id)),
+            '取引種別': P.DEAL_CONFIG[P.dealOf(p)].label,
+            '金額': P.formatAmount(p) + (P.isSale(p) ? '' : '／月'),
+            'お名前': value('i-name'),
+            '会社名・屋号': value('i-company'),
+            'メールアドレス': value('i-email'),
+            '電話番号': value('i-tel'),
+            'ご希望': value('i-purpose'),
+            'ご質問・ご要望': value('i-message'),
+            '同意': 'プライバシーポリシーに同意済み'
+          };
+        }
+      });
     });
   }
 

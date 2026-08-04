@@ -7,6 +7,8 @@
   var PER_PAGE = 9;
 
   var state = null;
+  /* 沿線の選択は絞り込み条件ではなく、駅一覧を切り替えるためのUI状態 */
+  var currentLine = '';
   var bound = false;
 
   /* 並び替えの選択肢は取引種別で入れ替える */
@@ -103,6 +105,8 @@
       };
     }), 'areas');
 
+    buildLinePicker();
+
     fill('f-status', Object.keys(P.STATUS_LABEL).map(function (s) {
       return { value: s, label: P.STATUS_LABEL[s], count: countStatus(s) };
     }), 'status');
@@ -122,6 +126,59 @@
 
   function countBy(key, value) {
     return inDeal(P.activeProperties()).filter(function (p) { return p[key] === value; }).length;
+  }
+
+  /* 沿線を選ぶとその沿線の駅だけを出す。駅の件数は取引種別に追従する */
+  function buildLinePicker() {
+    var sel = document.getElementById('f-line');
+    if (!sel) return;
+    var index = P.lineStationIndex(inDeal(P.activeProperties()));
+
+    /* 選択中の駅が属する沿線を初期表示にする */
+    if (!currentLine && (state.stations || []).length) {
+      var hit = index.filter(function (g) {
+        return g.stations.some(function (st) { return state.stations.indexOf(st) !== -1; });
+      })[0];
+      if (hit) currentLine = hit.line;
+    }
+    if (currentLine && !index.some(function (g) { return g.line === currentLine; })) currentLine = '';
+
+    sel.innerHTML = '<option value="">沿線を選ぶ</option>' + index.map(function (g) {
+      var n = countLine(g.line);
+      return '<option value="' + P.escapeHtml(g.line) + '"' +
+        (g.line === currentLine ? ' selected' : '') + '>' +
+        P.escapeHtml(g.line) + '（' + n + '件）</option>';
+    }).join('');
+
+    renderStations(index);
+  }
+
+  function renderStations(index) {
+    var hint = document.getElementById('f-station-hint');
+    var group = (index || P.lineStationIndex(inDeal(P.activeProperties())))
+      .filter(function (g) { return g.line === currentLine; })[0];
+
+    if (!group) {
+      fill('f-stations', [], 'stations');
+      if (hint) hint.hidden = false;
+      return;
+    }
+    if (hint) hint.hidden = true;
+    fill('f-stations', group.stations.map(function (st) {
+      return { value: st, label: st + '駅', count: countStation(st) };
+    }), 'stations');
+  }
+
+  function countLine(line) {
+    return inDeal(P.activeProperties()).filter(function (p) {
+      return P.linesOf(p).indexOf(line) !== -1;
+    }).length;
+  }
+
+  function countStation(st) {
+    return inDeal(P.activeProperties()).filter(function (p) {
+      return P.stationsOf(p).indexOf(st) !== -1;
+    }).length;
   }
 
   function dropAreasOutsidePrefs() {
@@ -215,7 +272,7 @@
     state.walk = num('f-walk');
     state.sort = getValue('sort-select') || 'new';
 
-    ['types', 'prefs', 'areas', 'status', 'features'].forEach(function (g) {
+    ['types', 'prefs', 'areas', 'stations', 'status', 'features'].forEach(function (g) {
       state[g] = Array.prototype.slice
         .call(document.querySelectorAll('[data-group="' + g + '"]:checked'))
         .map(function (i) { return i.value; });
@@ -243,8 +300,11 @@
         readFormIntoState();
         state.page = 1;
         if (dealChanged) {
-          /* 取引種別を切り替えたら金額条件は持ち越さない */
+          /* 取引種別を切り替えたら金額条件と沿線・駅は持ち越さない */
           state.rentMin = state.rentMax = state.priceMin = state.priceMax = null;
+          state.stations = [];
+          currentLine = '';
+          buildCheckLists();
           syncFormFromState();
           syncDealUI();
         }
@@ -257,6 +317,23 @@
         render();
       });
       form.addEventListener('input', debounce(function () { readFormIntoState(); state.page = 1; render(); }, 250));
+    }
+
+    var lineSel = document.getElementById('f-line');
+    if (lineSel) {
+      lineSel.addEventListener('change', function () {
+        currentLine = lineSel.value;
+        /* 沿線を変えたら、その沿線にない駅の選択は外す */
+        var group = P.lineStationIndex(inDeal(P.activeProperties()))
+          .filter(function (g) { return g.line === currentLine; })[0];
+        state.stations = (state.stations || []).filter(function (st) {
+          return group && group.stations.indexOf(st) !== -1;
+        });
+        state.page = 1;
+        renderStations();
+        syncFormFromState();
+        render();
+      });
     }
 
     var sort = document.getElementById('sort-select');
@@ -316,11 +393,13 @@
   function resetAll() {
     state = {
       deal: state.deal,               /* 取引種別は保持する */
-      keyword: '', types: [], prefs: [], areas: [], features: [], status: [],
+      keyword: '', types: [], prefs: [], areas: [], lines: [], stations: [],
+      features: [], status: [],
       rentMin: null, rentMax: null, priceMin: null, priceMax: null,
       tsuboMin: null, tsuboMax: null, walk: null,
       sort: 'new', page: 1
     };
+    currentLine = '';
     syncFormFromState();
     syncDealUI();
     buildCheckLists();
@@ -337,6 +416,7 @@
     }
     state.page = 1;
     if (group === 'prefs') buildCheckLists();   /* エリアの一覧が広がる */
+    if (group === 'stations') renderStations();
     syncFormFromState();
     render();
   }
@@ -369,7 +449,21 @@
     renderChips();
     renderPagination(pages);
     updateUrl();
+    trackSearch(sorted.length);
   }
+
+  /* どんな条件で何件見つかったかを記録する（入力のたびに送らないよう間引く） */
+  var trackSearch = debounce(function (count) {
+    P.track('search', {
+      deal: state.deal,
+      results: count,
+      keyword: state.keyword || '',
+      types: (state.types || []).join(','),
+      prefs: (state.prefs || []).join(','),
+      areas: (state.areas || []).join(','),
+      stations: (state.stations || []).join(',')
+    });
+  }, 1200);
 
   function renderChips() {
     var chips = [];
@@ -381,6 +475,7 @@
     if (state.keyword) push('keyword', state.keyword, '「' + state.keyword + '」');
     (state.types || []).forEach(function (t) { push('types', t, P.TYPE_LABEL[t] || t); });
     (state.prefs || []).forEach(function (v) { push('prefs', v, P.prefLabel(v)); });
+    (state.stations || []).forEach(function (st) { push('stations', st, st + '駅'); });
     (state.areas || []).forEach(function (a) { push('areas', a, a); });
     (state.status || []).forEach(function (s) { push('status', s, P.STATUS_LABEL[s] || s); });
     (state.features || []).forEach(function (f) { push('features', f, f); });

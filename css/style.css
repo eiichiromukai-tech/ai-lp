@@ -443,6 +443,10 @@ input::placeholder, textarea::placeholder { color: #9a9a9a; }
 
 /* 都県ごとに見出しを付けたチェックリスト（エリア絞り込み） */
 .check-groups { display: grid; gap: var(--space-3); }
+
+/* 沿線・駅 */
+.line-picker { display: grid; gap: var(--space-2); }
+.filter-hint { margin: 0; font-size: 0.74rem; color: var(--text-muted); }
 .check-group-label {
   font-size: 0.72rem; font-weight: 800; letter-spacing: 0.06em;
   color: var(--text-muted); margin: 0 0 4px; padding-bottom: 3px;
@@ -679,6 +683,23 @@ input[aria-invalid="true"], textarea[aria-invalid="true"] { border-color: var(--
 .trust-signals { display: flex; flex-wrap: wrap; gap: var(--space-3); margin-bottom: var(--space-3); }
 .trust-signals li { font-size: 0.78rem; color: var(--text-muted); display: flex; align-items: center; gap: 6px; }
 .trust-signals li::before { content: "✓"; color: var(--red); font-weight: 800; }
+
+/* 同意チェック */
+.consent-row { margin-top: calc(var(--space-2) * -1); }
+.consent-label {
+  display: flex; align-items: flex-start; gap: 10px; cursor: pointer;
+  font-size: 0.86rem; line-height: 1.7;
+}
+.consent-label input { width: 18px; height: 18px; margin: 4px 0 0; flex-shrink: 0; }
+.consent-label a { text-decoration: underline; font-weight: 700; }
+.consent-label a:hover { color: var(--red); }
+.consent-label .required { margin-left: 8px; }
+
+/* プライバシーポリシー */
+.policy-list { display: grid; gap: 8px; margin: 0 0 var(--space-3); }
+.policy-list li { padding-left: 1.1em; position: relative; }
+.policy-list li::before { content: "・"; position: absolute; left: 0; color: var(--red); }
+.policy-date { font-size: 0.8rem; color: var(--text-muted); margin-top: var(--space-4); }
 
 .form-status { margin: var(--space-3) 0 0; font-size: 0.84rem; font-weight: 700; }
 .form-status.is-error { color: var(--bridge-red); }

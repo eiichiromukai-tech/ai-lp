@@ -20,8 +20,13 @@ const DIR_REL = 'images/properties';
 const DIR = path.join(__dirname, '..', '..', DIR_REL);
 
 const MAX_PER_PROPERTY = 10;
-/* この容量を超えると表示が重くなるため警告する（長辺1600px・JPEG品質80程度が目安） */
+/* 表示が重くならないよう、これを超える写真は自動で縮小する */
+const MAX_EDGE = 1600;
 const WARN_BYTES = 1.5 * 1024 * 1024;
+
+/* sharp が入っていれば自動リサイズする。無くても動く（警告だけ出す） */
+let sharp = null;
+try { sharp = require('sharp'); } catch (e) { /* 任意の依存 */ }
 
 const IMAGE_EXT_RE = /\.(jpe?g|png|webp|avif|gif)$/i;
 /* <物件番号>-<番号>[_キャプション].<拡張子> */
@@ -33,11 +38,40 @@ function humanSize(bytes) {
     : Math.round(bytes / 1024) + 'KB';
 }
 
+/* 大きすぎる写真を長辺 MAX_EDGE まで縮小して上書きする。
+   スマホで撮った写真をそのまま置いても重くならないようにするため。 */
+function shrink(file, warnings) {
+  const before = fs.statSync(file).size;
+  if (!sharp) {
+    if (before > WARN_BYTES) {
+      warnings.push('画像「' + path.basename(file) + '」は' + humanSize(before) +
+        'あります。`npm install` を実行すると自動で縮小できます');
+    }
+    return false;
+  }
+  let meta;
+  try { meta = sharp(file).metadata(); } catch (e) { return false; }
+  return Promise.resolve(meta).then(function (m) {
+    if (!m || (Math.max(m.width || 0, m.height || 0) <= MAX_EDGE && before <= WARN_BYTES)) return false;
+    return sharp(file)
+      .rotate()                                   /* 撮影時の向きを反映してからExifを落とす */
+      .resize({ width: MAX_EDGE, height: MAX_EDGE, fit: 'inside', withoutEnlargement: true })
+      .toBuffer()
+      .then(function (buf) {
+        if (buf.length >= before) return false;   /* 小さくならないなら触らない */
+        fs.writeFileSync(file, buf);
+        console.log('  画像を縮小しました: ' + path.basename(file) +
+          '（' + humanSize(before) + ' → ' + humanSize(buf.length) + '）');
+        return true;
+      });
+  }).catch(function () { return false; });
+}
+
 /* 物件番号 → [{ src, caption }] を返す。
    knownIds を渡すと、対応する物件がないファイルを警告します。 */
 function collect(knownIds, warnings) {
   const byId = {};
-  if (!fs.existsSync(DIR)) return byId;
+  if (!fs.existsSync(DIR)) return { byId: byId, pending: [] };
 
   /* 画像以外（README など）は黙って無視する */
   const files = fs.readdirSync(DIR).filter(function (name) {
@@ -45,6 +79,7 @@ function collect(knownIds, warnings) {
   }).sort();
 
   const found = [];
+  const pending = [];
   files.forEach(function (name) {
     const m = FILE_RE.exec(name);
     if (!m) {
@@ -52,11 +87,7 @@ function collect(knownIds, warnings) {
         '（<物件番号>-01.jpg のように付けてください）');
       return;
     }
-    const size = fs.statSync(path.join(DIR, name)).size;
-    if (size > WARN_BYTES) {
-      warnings.push('画像「' + name + '」は' + humanSize(size) +
-        'あります。表示が重くなるため、長辺1600px程度に縮小することをおすすめします');
-    }
+    pending.push(shrink(path.join(DIR, name), warnings));
     found.push({
       id: m[1],
       order: Number(m[2]),
@@ -87,11 +118,20 @@ function collect(knownIds, warnings) {
     }
   });
 
-  return byId;
+  return { byId: byId, pending: pending };
+}
+
+/* 縮小の完了を待ってから結果を返す */
+function collectAsync(knownIds, warnings) {
+  const out = collect(knownIds, warnings);
+  return Promise.all(out.pending).then(function () { return out.byId; });
 }
 
 module.exports = {
   DIR_REL: DIR_REL,
   MAX_PER_PROPERTY: MAX_PER_PROPERTY,
-  collect: collect
+  MAX_EDGE: MAX_EDGE,
+  hasResizer: function () { return !!sharp; },
+  collect: collect,
+  collectAsync: collectAsync
 };

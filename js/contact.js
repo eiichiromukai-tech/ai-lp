@@ -68,12 +68,21 @@
         if (err) err.textContent = msg;
         el.setAttribute('aria-invalid', msg ? 'true' : 'false');
       });
+      if (!P.validateConsent('c-consent')) ok = false;
       return ok;
     };
 
     form.addEventListener('input', function (e) {
       if (REQUIRED.some(function (f) { return f.id === e.target.id; })) validate();
     });
+    form.addEventListener('change', function (e) {
+      if (e.target.id === 'c-consent') P.validateConsent('c-consent');
+    });
+
+    var value = function (id) {
+      var el = document.getElementById(id);
+      return el ? el.value.trim() : '';
+    };
 
     form.addEventListener('submit', function (e) {
       e.preventDefault();
@@ -84,14 +93,34 @@
         if (firstError) firstError.focus();
         return;
       }
-      submit.disabled = true;
-      submit.textContent = '送信中…';
-      /* 送信先は未実装です。実運用ではここでフォームAPIへPOSTしてください。 */
-      setTimeout(function () {
-        submit.textContent = '送信しました';
-        status.textContent = 'お問い合わせを受け付けました（デモ環境のため実際には送信されていません）。担当より1営業日以内にご連絡します。';
-        status.className = 'form-status is-success';
-      }, 700);
+
+      P.runInquirySubmit({
+        name: 'contact',
+        submit: submit,
+        status: status,
+        label: 'この内容で送信する',
+        subject: '【物件リクエスト】' + value('c-name') + '様',
+        fields: function () {
+          var favs = P.getFavorites().map(P.findById).filter(Boolean);
+          return {
+            _subject: '【RE/MAX COMPASS 物件ポータル】物件リクエスト（' + value('c-name') + '様）',
+            _template: 'table',
+            _captcha: 'false',
+            '送信元': 'お問い合わせページ',
+            'お名前': value('c-name'),
+            '会社名・屋号': value('c-company'),
+            'メールアドレス': value('c-email'),
+            '電話番号': value('c-tel'),
+            'ご希望の物件種別': value('c-type'),
+            'ご希望エリア': value('c-area'),
+            'ご予算（月額賃料）': value('c-budget'),
+            'ご希望面積': value('c-tsubo'),
+            'ご相談内容': value('c-message'),
+            'お気に入り物件': favs.map(function (p) { return p.id + ' ' + p.title; }).join(' / '),
+            '同意': 'プライバシーポリシーに同意済み'
+          };
+        }
+      });
     });
   }
 })();

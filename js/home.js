@@ -15,6 +15,7 @@
   }
 
   P.onReady('home', function () {
+    setStructuredData();
     deal = 'rent';
     renderAll();
     renderHistory();
@@ -26,6 +27,46 @@
     }
     updateCount();
   });
+
+  /* 会社情報とサイト内検索の構造化データ */
+  function setStructuredData() {
+    var site = P.site || {};
+    var addr = site.address || {};
+    P.setJsonLd('ld-org', {
+      '@context': 'https://schema.org',
+      '@type': 'RealEstateAgent',
+      name: site.brandName,
+      legalName: site.companyName,
+      url: P.siteUrl(''),
+      logo: P.siteUrl('images/COMPASS_BLACK_Primary.png'),
+      telephone: site.tel,
+      address: {
+        '@type': 'PostalAddress',
+        addressCountry: 'JP',
+        postalCode: addr.postalCode,
+        addressRegion: addr.region,
+        addressLocality: addr.locality,
+        streetAddress: addr.street
+      },
+      areaServed: (P.data.prefectures || []).map(function (pref) {
+        return { '@type': 'AdministrativeArea', name: pref.label };
+      })
+    });
+    P.setJsonLd('ld-website', {
+      '@context': 'https://schema.org',
+      '@type': 'WebSite',
+      name: site.siteName,
+      url: P.siteUrl(''),
+      potentialAction: {
+        '@type': 'SearchAction',
+        target: {
+          '@type': 'EntryPoint',
+          urlTemplate: P.siteUrl('properties.html?q={search_term_string}')
+        },
+        'query-input': 'required name=search_term_string'
+      }
+    });
+  }
 
   function renderAll() {
     renderTypeGrid();
