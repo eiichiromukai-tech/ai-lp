@@ -14,7 +14,11 @@ const path = require('path');
 const crypto = require('crypto');
 
 const ROOT = path.join(__dirname, '..');
-const DIR = path.join(ROOT, 'images/properties');
+
+/* 実際に掲載している写真には触れず、一時フォルダで確認する。
+   掲載枚数が変わってもテストが影響を受けないようにするため。 */
+const DIR = fs.mkdtempSync(path.join(require('os').tmpdir(), 'drive-test-'));
+process.env.IMAGES_DIR = DIR;
 
 /* --- サービスアカウント鍵をその場で生成（実際の鍵は使わない） --- */
 const { privateKey } = crypto.generateKeyPairSync('rsa', {
@@ -71,8 +75,10 @@ global.fetch = async function (url, opts) {
 const drive = require(path.join(ROOT, 'tools/lib/drive.js'));
 
 const listImages = () => fs.readdirSync(DIR).filter(n => /\.(png|jpe?g)$/i.test(n)).sort();
-const backup = {};
-listImages().forEach(n => { backup[n] = fs.readFileSync(path.join(DIR, n)); });
+
+/* 掲載を終えた写真が消えることを確かめるため、あらかじめ2枚置いておく */
+fs.writeFileSync(path.join(DIR, 'CMP-0001-01_古い写真.png'), png('X'));
+fs.writeFileSync(path.join(DIR, 'CMP-0001-02_古い写真.png'), png('Y'));
 
 let failures = 0;
 function check(name, cond, detail) {
@@ -95,7 +101,7 @@ function check(name, cond, detail) {
     let r = await drive.sync();
     check('3枚が追加される', r.added === 3, JSON.stringify(r));
     check('ローカルに3枚だけ残る', listImages().length === 3, listImages().join(','));
-    check('既存の19枚は削除される', r.removed === 19, String(r.removed));
+    check('ドライブにない既存の写真は削除される', r.removed === 2, String(r.removed));
 
     console.log('\n2回目の同期（変更なし）');
     r = await drive.sync();
@@ -133,8 +139,7 @@ function check(name, cond, detail) {
     fs.readdirSync(DIR).forEach(n => {
       if (/\.(png|jpe?g|drive-md5)$/i.test(n)) fs.unlinkSync(path.join(DIR, n));
     });
-    Object.keys(backup).forEach(n => fs.writeFileSync(path.join(DIR, n), backup[n]));
-    console.log('\n(元の' + Object.keys(backup).length + '枚に復元しました)');
+    fs.rmSync(DIR, { recursive: true, force: true });
   }
 
   console.log('\n' + '='.repeat(40));

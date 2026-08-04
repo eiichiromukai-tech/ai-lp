@@ -13,7 +13,10 @@ const fs = require('fs');
 const path = require('path');
 
 const ROOT = path.join(__dirname, '..');
-const DIR = path.join(ROOT, 'images/properties');
+
+/* 実際に掲載している写真には触れず、一時フォルダで確認する。 */
+const DIR = fs.mkdtempSync(path.join(require('os').tmpdir(), 'cms-test-'));
+process.env.IMAGES_DIR = DIR;
 
 process.env.MICROCMS_SERVICE_DOMAIN = 'https://test-portal.microcms.io/apis/properties';
 process.env.MICROCMS_API_KEY = 'test-key';
@@ -88,8 +91,7 @@ const cmsPhotos = require(path.join(ROOT, 'tools/lib/cms-photos.js'));
 const schema = require(path.join(ROOT, 'tools/lib/schema.js'));
 
 const listImages = () => fs.readdirSync(DIR).filter(n => /\.(png|jpe?g)$/i.test(n)).sort();
-const backup = {};
-fs.readdirSync(DIR).forEach(n => { backup[n] = fs.readFileSync(path.join(DIR, n)); });
+
 
 let failures = 0;
 function check(name, cond, detail) {
@@ -238,9 +240,7 @@ function convert(rec) {
     check('API名の誤りを分かる形で伝える', /API名/.test(msg), msg);
     listStatus = 200;
   } finally {
-    /* テスト用の写真を消して、元の写真を戻す */
-    fs.readdirSync(DIR).forEach(n => { if (!backup[n]) fs.unlinkSync(path.join(DIR, n)); });
-    Object.keys(backup).forEach(n => fs.writeFileSync(path.join(DIR, n), backup[n]));
+    fs.rmSync(DIR, { recursive: true, force: true });
     global.fetch = realFetch;
   }
 
