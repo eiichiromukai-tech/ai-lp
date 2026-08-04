@@ -471,6 +471,7 @@ function section(title) { console.log('\n' + title); }
   }
   runSub('microCMS取り込み', 'cms.js', '物件と写真の取り込み（検証・ページ送り・エラー処理）');
   runSub('まとめて下書きに戻す', 'unpublish.js', '宛先・送る内容・失敗したときの伝えかた');
+  runSub('掲載を全部止めたとき', 'empty.js', '公開中が0件でも反映できる');
 
   console.log('\n' + '='.repeat(50));
   if (failures.length) {

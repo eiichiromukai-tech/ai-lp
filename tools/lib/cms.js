@@ -57,7 +57,10 @@ async function fetchAll(log) {
   if (!conf.serviceDomain) throw new Error('tools/cms-config.json に serviceDomain がありません');
   if (!key) throw new Error('環境変数 MICROCMS_API_KEY が設定されていません');
 
-  const base = 'https://' + conf.serviceDomain + '.microcms.io/api/v1/' + conf.endpoint;
+  /* MICROCMS_API_BASE はテスト用の差し替え口で、通常は使いません
+     （tools/import-cms.js と同じ仕組みです） */
+  const base = (process.env.MICROCMS_API_BASE ||
+    'https://' + conf.serviceDomain + '.microcms.io/api/v1') + '/' + conf.endpoint;
   const items = [];
   let offset = 0;
   let total = null;

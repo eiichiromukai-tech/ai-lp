@@ -47,7 +47,9 @@ function fail(message) {
 if (!fs.existsSync(CSV_PATH)) fail(CSV_PATH + ' が見つかりません');
 
 const rows = csv.parse(fs.readFileSync(CSV_PATH, 'utf8'));
-if (rows.length < 2) fail('CSVに物件データの行がありません');
+/* 見出し行すら無いのは、ファイルの取り違えなどの異常。
+   見出しだけで物件が0件なのは、掲載をすべて止めた状態なので通す。 */
+if (!rows.length) fail('CSVが空です');
 
 const header = rows[0].map(function (h) { return h.trim(); });
 const expected = schema.HEADERS;
