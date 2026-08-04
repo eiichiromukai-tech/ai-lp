@@ -262,6 +262,22 @@ function convert(rec) {
       !/Webhook|スプレッドシート|GitHubにアップロード/.test(man),
       (man.match(/Webhook|スプレッドシート|GitHubにアップロード/g) || []).join(','));
 
+    console.log('\n一括登録のコンテンツID');
+    /* microCMSは英小文字・数字・ハイフン・アンダースコアしか受け付けない。
+       大文字のまま送ると全件が400で弾かれる */
+    const impSrc = fs.readFileSync(path.join(ROOT, 'tools/import-cms.js'), 'utf8');
+    const fnSrc = /function toContentId[\s\S]*?\n}/.exec(impSrc)[0];
+    const toContentId = new Function('return ' + fnSrc.replace('function toContentId', 'function'))();
+    check('大文字を小文字に直す',
+      toContentId('OSAKI-CORE-11-ABC') === 'osaki-core-11-abc', toContentId('OSAKI-CORE-11-ABC'));
+    check('使えない文字をハイフンにする',
+      toContentId('A B/C') === 'a-b-c', toContentId('A B/C'));
+    check('前後のハイフンを落とす',
+      toContentId('--x--') === 'x', toContentId('--x--'));
+    check('microCMSが受け付ける形式になる',
+      /^[a-z0-9_-]+$/.test(toContentId('YOKOHAMA-CONNECT-SQ-15-17F')),
+      toContentId('YOKOHAMA-CONNECT-SQ-15-17F'));
+
     console.log('\nエラーの伝えかた');
     listStatus = 401;
     let msg = '';
