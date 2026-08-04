@@ -54,7 +54,13 @@ function section(title) { console.log('\n' + title); }
     consoleErrors.push('CONSOLE: ' + m.text() + (from ? ' @ ' + from : ''));
   });
   page.on('requestfailed', function (r) {
-    if (!EXTERNAL.test(r.url())) consoleErrors.push('REQFAIL: ' + r.url());
+    var reason = (r.failure() || {}).errorText || '';
+    /* 次のページへ移ったときに、まだ読み込み中だった画像などが打ち切られる。
+       テストが素早く遷移するせいで起きるもので、サイトの不具合ではない。
+       ファイルが無い場合は 404 が返るため requestfailed ではなく
+       コンソールの「Failed to load resource」で検出される。 */
+    if (reason.indexOf('ERR_ABORTED') !== -1) return;
+    if (!EXTERNAL.test(r.url())) consoleErrors.push('REQFAIL: ' + r.url() + '（' + reason + '）');
   });
 
   const go = function (path) { return page.goto(BASE + path, { waitUntil: 'domcontentloaded' }); };
