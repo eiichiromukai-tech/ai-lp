@@ -60,7 +60,7 @@ property.html       … 物件詳細（?id=CMP-1001 形式）
 favorites.html      … お気に入り一覧
 contact.html        … お問い合わせ・物件リクエスト＋会社概要
 owner.html          … 物件オーナー様向け（リーシング・掲載までの流れ）
-
+import.html         … 【社内用】図面(PDF)から物件の下書きを作る（noindex）
 privacy.html        … プライバシーポリシー
 sitemap.xml         … 自動生成（触らないでください）
 robots.txt          … 自動生成（触らないでください）
@@ -81,6 +81,9 @@ js/search.js        … 検索ページ
 js/detail.js        … 詳細ページ
 js/favorites.js     … お気に入りページ
 js/contact.js       … お問い合わせフォーム
+js/schema-core.js   … 項目の定義・検証・変換（Nodeとブラウザの両方で読む唯一の定義）
+js/import-page.js   … 図面からの下書きページ
+vendor/pdfjs/       … PDFの文字取り出し（pdf.js。import.htmlでのみ読み込む）
 images/             … ロゴ・ブランド素材
 images/properties/  … 物件写真（microCMSから自動で取り込まれる。手で置かないでください）
 ```

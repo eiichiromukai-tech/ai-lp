@@ -206,7 +206,8 @@ function section(title) { console.log('\n' + title); }
     /* REMAXフランチャイズの必須表記。全ページに入っていないと規約違反になる */
     const FC = 'Each Office Independently Owned and Operated.';
     const fcPages = ['/index.html', '/properties.html', '/property.html?id=CMP-1025',
-      '/contact.html', '/favorites.html', '/owner.html', '/privacy.html', '/404.html'];
+      '/contact.html', '/favorites.html', '/owner.html', '/privacy.html', '/404.html',
+      '/import.html'];
     const fcMissing = [];
     for (const path of fcPages) {
       await go(path); await settle(250);
@@ -343,6 +344,109 @@ function section(title) { console.log('\n' + title); }
     await m.waitForTimeout(500);
     await m.click('#filter-open'); await m.waitForTimeout(400);
     check('絞り込みドロワーが開く', await m.locator('#filter-panel.is-open').count() === 1);
+
+    /* ---------- 図面からの下書き（import.html） ---------- */
+    section('図面からの下書き');
+    await go('/import.html'); await settle(600);
+
+    /* 選択肢は data/properties.js のマスタから組み立てられる */
+    const impMasters = await page.evaluate(function () {
+      const M = window.PORTAL_DATA;
+      return {
+        deals: M.deals.length, types: M.types.length,
+        areas: M.areas.length, features: M.features.length,
+        prefs: Object.keys(M.areas.reduce(function (a, w) { a[M.areaPref[w]] = 1; return a; }, {})).length
+      };
+    });
+    check('取引種別の選択肢がマスタと同じ',
+      await page.locator('#f-deal option').count() === impMasters.deals);
+    check('物件種別の選択肢がマスタと同じ',
+      await page.locator('#f-type option').count() === impMasters.types + 1);
+    check('エリアの選択肢がマスタと同じ',
+      await page.locator('#f-ward option').count() === impMasters.areas + 1);
+    check('エリアが都県ごとに分かれる',
+      await page.locator('#f-ward optgroup').count() === impMasters.prefs);
+    check('こだわり条件がマスタと同じ',
+      await page.locator('#f-features input').count() === impMasters.features);
+
+    /* 用途はサイト側にマスタがなく、microCMSの項目定義にしかない。
+       決められた言葉以外を入れると登録時に弾かれるので、選択式にしている。 */
+    const impSchema = require('../docs/microcms-schema.json');
+    const impUsage = (impSchema.apiFields || impSchema.fields)
+      .filter(function (f) { return f.fieldId === 'usage'; })[0];
+    check('用途がmicroCMSの選択肢から作られる',
+      await page.locator('#f-usage-checks input').count() === impUsage.selectItems.length,
+      String(await page.locator('#f-usage-checks input').count()));
+    check('用途の手入力欄は隠れる', await page.locator('#f-usage').isHidden());
+
+    /* 開いた直後は指摘を出さない */
+    check('開いた直後は指摘が出ない',
+      (await page.textContent('#validation')).indexOf('上から入力してください') !== -1);
+    check('最初は追加できない', await page.isDisabled('#add-row'));
+
+    /* 検証はサイト本体と同じルールで動く */
+    await page.fill('#f-id', 'CMP-9001'); await settle(150);
+    const impBlank = await page.textContent('#validation');
+    check('足りない項目が指摘される',
+      impBlank.indexOf('物件名') !== -1 && impBlank.indexOf('面積') !== -1, impBlank);
+
+    await page.fill('#f-title', 'テスト品川ビル 5F');
+    await page.selectOption('#f-type', { index: 1 });
+    await page.selectOption('#f-ward', '品川区');
+    await page.fill('#f-areaTsubo', '42.5');
+    await page.fill('#f-built', '2015-04');
+    await page.fill('#f-contractTerm', '定期借家 5年');
+    await page.fill('#f-description', '五反田駅至近のオフィスです。');
+    await page.fill('#f-rent', 'abc'); await settle(150);
+    check('数字でない賃料が指摘される',
+      (await page.textContent('#validation')).indexOf('賃料') !== -1);
+    await page.fill('#f-rent', '850000');
+
+    /* 交通は図面どおりの文章で入れる（一括登録ツールと同じ読み取り方） */
+    await page.fill('#f-access', '五反田駅の近く'); await settle(150);
+    check('読み取れない交通が指摘される',
+      (await page.textContent('#validation')).indexOf('交通') !== -1);
+    await page.fill('#f-access', 'JR山手線・都営浅草線「五反田」駅徒歩4分'); await settle(200);
+    check('図面どおりの交通が通る',
+      (await page.textContent('#validation')).indexOf('問題はありません') !== -1,
+      await page.textContent('#validation'));
+    check('埋めれば追加できる', !(await page.isDisabled('#add-row')));
+
+    await page.click('#add-row'); await settle(200);
+    check('一覧に追加される', (await page.textContent('#rows-count')) === '1');
+    check('物件番号だけ空になる',
+      (await page.inputValue('#f-id')) === '' &&
+      (await page.inputValue('#f-title')) === 'テスト品川ビル 5F');
+
+    await page.fill('#f-id', 'CMP-9001'); await settle(150);
+    check('同じ物件番号の重複が分かる',
+      (await page.textContent('#validation')).indexOf('すでに') !== -1);
+
+    /* 2件目。追加すると物件番号・階数・面積は空になるので入れ直す */
+    await page.fill('#f-id', 'CMP-9002');
+    await page.fill('#f-floor', '6F');
+    await page.fill('#f-areaTsubo', '30'); await settle(200);
+    check('区画だけ入れ直せば続けて追加できる', !(await page.isDisabled('#add-row')),
+      await page.textContent('#validation'));
+
+    /* 書き出したCSVが、一括登録ツールの見出しと一致する */
+    await page.click('#add-row'); await settle(200);
+    check('2件目が追加される', (await page.textContent('#rows-count')) === '2');
+    const [impDownload] = await Promise.all([
+      page.waitForEvent('download'), page.click('#download')
+    ]);
+    const impCsv = require('fs').readFileSync(await impDownload.path(), 'utf8');
+    const impExpected = (impSchema.apiFields || impSchema.fields)
+      .map(function (f) { return f.fieldId; })
+      .filter(function (f) { return f !== 'photos'; }).join(',');
+    check('CSVの見出しがmicroCMSの項目と一致する',
+      impCsv.split('\n')[0] === impExpected, impCsv.split('\n')[0]);
+    check('CSVに2件ぶん入る', impCsv.trim().split('\n').length === 3);
+    check('CSVの交通が図面どおりの文章のまま',
+      impCsv.indexOf('JR山手線・都営浅草線「五反田」駅徒歩4分') !== -1);
+
+    await page.click('.imp-del'); await settle(200);
+    check('一覧から削除できる', (await page.textContent('#rows-count')) === '1');
 
     /* ---------- コンソールエラー ---------- */
     section('コンソールエラー');

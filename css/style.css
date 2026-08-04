@@ -857,3 +857,53 @@ input[aria-invalid="true"], textarea[aria-invalid="true"] { border-color: var(--
 
 /* お問い合わせフォームの補足文 */
 .form-note { margin: 6px 0 0; font-size: 0.78rem; color: var(--text-muted); }
+
+/* ---------- 物件の下書きをつくる画面（社内用） ---------- */
+.imp-lead { max-width: 72ch; line-height: 1.9; margin: 0 0 var(--space-3); }
+.imp-note { font-size: 0.82rem; color: var(--text-muted); margin: 0 0 var(--space-5); }
+.imp-layout { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr); gap: var(--space-5); align-items: start; }
+/* フォームが縦に長いので、取り出した文字は画面に貼り付けたままにする */
+.imp-source { position: sticky; top: calc(var(--header-h) + 16px); }
+.imp-drop { border: 2px dashed var(--line); border-radius: 8px; padding: var(--space-6) var(--space-4); text-align: center; background: var(--cream); transition: border-color .15s, background .15s; }
+.imp-drop.is-over { border-color: var(--red); background: #fff; }
+.imp-drop p { margin: 0; }
+.imp-drop-sub { margin-top: 6px; font-size: 0.86rem; color: var(--text-muted); }
+.imp-file { color: var(--red); text-decoration: underline; cursor: pointer; }
+.imp-pdf-status { min-height: 1.4em; margin: 8px 0; font-size: 0.82rem; color: var(--text-muted); }
+.imp-pdf-status.is-busy { color: var(--red); }
+.imp-pdf-text { width: 100%; font-size: 0.8rem; line-height: 1.7; padding: var(--space-3); border: 1px solid var(--line); border-radius: 6px; resize: vertical; max-height: calc(100vh - var(--header-h) - 220px); }
+.imp-form { display: flex; flex-direction: column; gap: var(--space-4); }
+.imp-group { border: 1px solid var(--line); border-radius: 8px; padding: var(--space-4); margin: 0; }
+.imp-group legend { font-weight: 700; font-size: 0.86rem; padding: 0 8px; }
+.imp-row { display: grid; grid-template-columns: 11em minmax(0, 1fr); gap: 10px; align-items: center; margin-bottom: 10px; }
+.imp-row:last-child { margin-bottom: 0; }
+.imp-row-wide { grid-template-columns: 1fr; }
+.imp-row label { font-size: 0.84rem; font-weight: 700; }
+.imp-row input, .imp-row select, .imp-row textarea { width: 100%; padding: 8px 10px; border: 1px solid var(--line); border-radius: 6px; font-size: 0.9rem; font-family: inherit; }
+.imp-row small { grid-column: 2; font-size: 0.76rem; color: var(--text-muted); }
+.imp-row-wide small { grid-column: 1; }
+.imp-checks { display: flex; flex-wrap: wrap; gap: 8px 14px; }
+.imp-check { font-size: 0.84rem; display: inline-flex; align-items: center; gap: 5px; }
+.imp-result { border-radius: 6px; padding: var(--space-3); font-size: 0.84rem; line-height: 1.8; }
+.imp-result ul { margin: 4px 0 0; padding-left: 1.3em; }
+.imp-label { margin: 0; font-weight: 700; }
+.imp-ok { background: #eef7ee; color: #1d5c1d; }
+.imp-warn { background: #fdf6e3; color: #7a5c00; }
+.imp-ng { background: #fdeeee; color: #8c1d1d; }
+.imp-rows { margin-top: var(--space-7); }
+.imp-rows-title { font-size: 1.05rem; margin: 0 0 var(--space-3); }
+.imp-table-wrap { overflow-x: auto; margin-bottom: var(--space-4); }
+.imp-table { width: 100%; border-collapse: collapse; font-size: 0.86rem; }
+.imp-table th, .imp-table td { border-bottom: 1px solid var(--line); padding: 8px 10px; text-align: left; white-space: nowrap; }
+.imp-table th { background: var(--cream); font-size: 0.8rem; }
+.imp-empty { color: var(--text-muted); text-align: center; }
+.imp-del { border: 1px solid var(--line); background: #fff; border-radius: 4px; padding: 3px 10px; font-size: 0.78rem; cursor: pointer; }
+.imp-del:hover { border-color: var(--red); color: var(--red); }
+
+@media (max-width: 900px) {
+  .imp-layout { grid-template-columns: 1fr; }
+  .imp-source { position: static; }
+  .imp-pdf-text { max-height: none; }
+  .imp-row { grid-template-columns: 1fr; }
+  .imp-row small, .imp-row-wide small { grid-column: 1; }
+}

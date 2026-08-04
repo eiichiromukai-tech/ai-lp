@@ -307,6 +307,34 @@ function convert(rec) {
     check('単一選択のセレクトを配列で送っている', notWrapped.length === 0,
       '配列にしていない: ' + notWrapped.join(', '));
 
+    /* 交通の読み取りは js/schema-core.js の1か所だけに置く。
+       一括登録ツールと図面の下書き画面（import.html）で
+       結果が食い違わないようにするため。 */
+    console.log('\n交通の読み取り');
+    check('一括登録ツールが共通の読み取りを使っている',
+      /schema\.parseAccessText/.test(impSrc));
+    /* 読み取りの正規表現が一括登録ツールに再び複製されたら気づけるようにする */
+    check('一括登録ツールに読み取りの複製がない', impSrc.indexOf('[「『]') === -1);
+
+    const pa = schema.parseAccessText;
+    check('路線が「・」で並んでいたら1件ずつに分ける',
+      JSON.stringify(pa('JR山手線・埼京線「大崎」駅徒歩4分')) ===
+      JSON.stringify([
+        { fieldId: 'accessItem', line: 'JR山手線', station: '大崎', walk: 4 },
+        { fieldId: 'accessItem', line: '埼京線', station: '大崎', walk: 4 }
+      ]), JSON.stringify(pa('JR山手線・埼京線「大崎」駅徒歩4分')));
+    check('「／」で複数の駅を並べられる',
+      pa('JR山手線「大崎」駅徒歩4分／都営浅草線「五反田」駅徒歩6分').length === 2);
+    check('「より」「から」が入っても読める',
+      pa('東京メトロ銀座線「新橋」駅より徒歩3分').length === 1);
+    check('二重かぎかっこでも読める',
+      pa('東急東横線『自由が丘』駅徒歩1分')[0].station === '自由が丘');
+    check('読み取れない文章は0件になる', pa('駅から近い').length === 0);
+    check('空欄は0件になる', pa('').length === 0 && pa(null).length === 0);
+    check('徒歩分は数値になる',
+      typeof pa('JR「東京」駅から徒歩 12 分')[0].walk === 'number' &&
+      pa('JR「東京」駅から徒歩 12 分')[0].walk === 12);
+
     console.log('\nエラーの伝えかた');
     listStatus = 401;
     let msg = '';

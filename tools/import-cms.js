@@ -57,22 +57,9 @@ if (!KEY && !DRY_RUN) {
   process.exit(1);
 }
 
-/* ---------- 交通の文章を、路線・駅・徒歩分に分解する ---------- */
-/* 「JR山手線・埼京線「大崎」駅徒歩4分」→ 路線ごとに1件ずつ */
-function parseAccess(text) {
-  const out = [];
-  String(text || '').split(/[／/]/).forEach(function (chunk) {
-    const m = /^(.+?)[「『](.+?)[」』]\s*駅?\s*(?:より|から)?\s*徒歩\s*(\d+)\s*分/.exec(chunk.trim());
-    if (!m) return;
-    const station = m[2].replace(/駅$/, '');
-    const walk = Number(m[3]);
-    m[1].split(/[・、,]/).map(function (s) { return s.trim(); }).filter(Boolean)
-      .forEach(function (line) {
-        out.push({ fieldId: 'accessItem', line: line, station: station, walk: walk });
-      });
-  });
-  return out;
-}
+/* 交通の文章を分解する処理は js/schema-core.js にまとめてあります。
+   図面の下書き画面（import.html）と同じ結果になるようにするためです。 */
+const parseAccess = schema.parseAccessText;
 
 /* コンテンツIDに使える文字だけにする。
    microCMS は英小文字・数字・ハイフン・アンダースコアのみを受け付けるため、
