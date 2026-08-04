@@ -133,13 +133,15 @@ if (CHECK_ONLY) {
 
 if (before === next) {
   console.log('スプレッドシートに変更はありませんでした（' + properties.length + '件）。');
-  process.exit(0);
+} else {
+  fs.writeFileSync(CSV_PATH, next);
+  console.log('data/properties.csv を更新しました（' + properties.length + '件）。');
 }
 
-fs.writeFileSync(CSV_PATH, next);
-console.log('data/properties.csv を更新しました（' + properties.length + '件）。');
-
-/* ---------- サイトへ反映 ---------- */
+/* ---------- サイトへ反映 ----------
+   シートに変更がなくても必ず実行する。写真を追加・削除しただけのときも
+   ここで取り込まれるようにするため（ここで止めると、置いた写真が
+   いつまでもサイトに出ない）。 */
 execFileSync(process.execPath, [path.join(__dirname, 'csv-to-properties.js')], { stdio: 'inherit' });
 
 console.log('');
