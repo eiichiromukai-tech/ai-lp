@@ -12,7 +12,7 @@
 1. microCMS のアカウントとサービスを作る
 2. **APIスキーマ（入力フォーム）を作る** ← ここが本番
 3. GitHub 側の設定をする（サービス名とAPIキー）
-4. Webhook を設定する（「公開」で即反映になります）
+4. 反映のタイミングを知る（追加の設定は不要です）
 5. 既存53件のデータを移す
 6. スプレッドシート運用を止める
 
@@ -300,36 +300,47 @@ node tools/make-cms-schema.js
 
 ---
 
-## ④ Webhook を設定する（「公開」で即反映になります）
+## ④ 反映のタイミングについて
 
-これを設定すると、管理画面で「公開」を押した1〜2分後にサイトへ反映されます。
-設定しなくても毎朝8時に反映されますが、設定を強くおすすめします。
+**追加の設定は不要です。** ③まで終わっていれば、次のように反映されます。
 
-### GitHub 側：呼び出し用のトークンを作る
-
-1. GitHub の **Settings（個人設定）→ Developer settings →
-   Personal access tokens → Fine-grained tokens → Generate new token**
-2. **Repository access**: このリポジトリだけを選ぶ
-3. **Permissions → Repository permissions → Contents** を **Read and write** にする
-4. 生成された文字列を控える（**この画面を閉じると二度と見られません**）
-
-### microCMS 側：Webhook を登録する
-
-**API設定 → Webhook → 追加 → カスタム通知**
-
-| 項目 | 値 |
+| | タイミング |
 |---|---|
-| URL | `https://api.github.com/repos/eiichiromukai-tech/ai-lp/dispatches` |
-| メソッド | POST |
-| ヘッダー | `Accept: application/vnd.github+json`<br>`Authorization: Bearer ＜上で作ったトークン＞`<br>`X-GitHub-Api-Version: 2022-11-28`<br>`User-Agent: microcms-webhook` |
-| ボディ | `{"event_type":"cms-update"}` |
+| 自動 | **15分おき**。「公開」を押してから最大15分でサイトに出ます |
+| 手動 | Actions タブ →「物件情報を反映（microCMS）」→ **Run workflow** で即時 |
 
-通知タイミングは「**コンテンツの公開・更新・削除**」を選んでください。
+急ぎの更新は手動実行で対応してください。1〜2分で反映されます。
 
-> **トークンはmicroCMSの管理画面にしか置きません。** リポジトリには入れないでください。
-> 有効期限を設定した場合は、期限切れで反映が止まるので、期限をカレンダーに入れておいてください。
+### 「公開」と同時に反映できないのはなぜか
 
----
+microCMS の Webhook（カスタム通知）は、**`X-` で始まるヘッダーしか送れません**。
+GitHub の API は `Authorization: Bearer ...` を要求するため、
+**microCMS から GitHub を直接呼び出すことはできません。**
+
+即時反映にしたい場合は、あいだに中継役（Cloudflare Workers など）を1つ挟めば
+実現できます。ただし次の点を承知したうえで判断してください。
+
+- 中継役のサービスを1つ増やすことになる（障害点が増える）
+- GitHubのトークンを中継役に置くことになり、**有効期限が切れると静かに止まる**
+- 得られるのは「最大15分 → 1〜2分」の短縮だけ
+
+**部品を増やさないほうが長く運用できる**と考え、標準では15分おきの確認にしています。
+必要になったときのため、ワークフロー側には受け口（`repository_dispatch`）だけ
+残してあります。
+
+### 頻度を変えたい場合
+
+`.github/workflows/sync-cms.yml` の `cron` を書き換えてください。
+
+```yaml
+- cron: '*/15 * * * *'   # 15分おき（現在の設定）
+- cron: '*/30 * * * *'   # 30分おき
+- cron: '0 * * * *'      # 1時間おき
+- cron: '0 23 * * *'     # 毎朝8時（日本時間）だけ
+```
+
+このリポジトリは公開設定のため、**GitHub Actions の実行時間は無料・無制限**です。
+頻度を上げても料金はかかりません。
 
 ## ⑤ 既存53件のデータを移す
 
@@ -394,5 +405,5 @@ node tools/fetch-cms.js           # 取り込んでサイトのデータまで�
 | `MICROCMS_API_KEY が設定されていません` | Secrets の名前が違うか、未登録です |
 | `microCMS の認証に失敗しました（HTTP 401）` | APIキーの値が違うか、GET権限がありません |
 | `microCMS のAPIが見つかりません（HTTP 404）` | `serviceDomain` か エンドポイント名（`properties`）が違います |
-| Webhookを設定したのに反映されない | トークンの権限（Contents: Read and write）と、リポジトリの指定を確認してください |
+| 「公開」したのにサイトに出ない | 最大15分かかります。急ぐときは Actions の Run workflow を押してください |
 | 特定の物件だけ反映されない | Actions のログを見てください。どの物件の何が問題かが日本語で出ます |
