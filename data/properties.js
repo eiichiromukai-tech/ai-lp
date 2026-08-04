@@ -210,7 +210,8 @@
     p.areaSqm = Math.round(p.areaTsubo * 3.30578 * 10) / 10;
     /* 賃貸は月額賃料、売買は販売価格を金額として扱う */
     p.amount = p.deal === 'sale' ? p.price : p.rent;
-    p.tsuboUnitPrice = p.areaTsubo ? Math.round(p.amount / p.areaTsubo) : 0;
+    /* 金額が「応相談」のときは坪単価も出さない（0円と表示すると誤解を招く） */
+    p.tsuboUnitPrice = (p.areaTsubo && p.amount) ? Math.round(p.amount / p.areaTsubo) : 0;
   });
 
   global.PORTAL_DATA = {

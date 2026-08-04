@@ -253,12 +253,13 @@ function build(get, rowLabel, errors, warnings) {
   p.access = decodeAccess(get('access'), errors, rowLabel);
 
   /* 金額は取引種別ごとに必須列が変わる。使わない側は0で埋める */
-  p.rent = isSale ? 0 : num(get('rent'), '月額賃料', rowLabel, errors, { required: true });
+  /* 空欄は「応相談」として扱う。事業用は賃料非公開の募集が珍しくないため。 */
+  p.rent = isSale ? 0 : num(get('rent'), '月額賃料', rowLabel, errors);
   p.managementFee = isSale ? 0 : num(get('managementFee'), '共益費', rowLabel, errors);
   p.deposit = isSale ? 0 : num(get('deposit'), '敷金', rowLabel, errors);
   p.keyMoney = isSale ? 0 : num(get('keyMoney'), '礼金', rowLabel, errors);
 
-  p.price = isSale ? num(get('price'), '販売価格', rowLabel, errors, { required: true }) : 0;
+  p.price = isSale ? num(get('price'), '販売価格', rowLabel, errors) : 0;
   p.yieldRate = isSale ? num(get('yieldRate'), '表面利回り', rowLabel, errors) : 0;
   p.tenure = isSale ? (get('tenure') || '所有権') : '';
 
