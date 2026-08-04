@@ -3,35 +3,50 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>RE/MAX COMPASS（株式会社ロメッツ）| 商業不動産・店舗仲介の専門家</title>
-<meta name="description" content="RE/MAX COMPASSは商業不動産・店舗仲介を専門とする不動産会社です。世界110ヶ国以上に広がるRE/MAXネットワークを活かし、出店をお考えの事業者様、テナント募集をお考えの物件オーナー様をサポートします。">
+<title>REMAX COMPASS 物件ポータル｜店舗・オフィス・倉庫の事業用不動産検索</title>
+<meta name="description" content="REMAX COMPASS（株式会社ロメッツ）の事業用不動産ポータル。店舗・オフィス・倉庫・一棟ビル・事業用地を、エリア・賃料・面積・こだわり条件から検索できます。">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Zen+Kaku+Gothic+New:wght@400;500;700;900&display=swap" rel="stylesheet">
+<link rel="canonical" href="">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="REMAX COMPASS 物件ポータル">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:title" content="REMAX COMPASS 物件ポータル｜店舗・オフィス・倉庫の事業用不動産検索">
+<meta property="og:description" content="">
+<meta property="og:url" content="">
+<meta property="og:image" content="images/COMPASS_BLACK_Primary.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="REMAX COMPASS 物件ポータル｜店舗・オフィス・倉庫の事業用不動産検索">
+<meta name="twitter:description" content="">
+<meta name="twitter:image" content="images/COMPASS_BLACK_Primary.png">
+<link rel="icon" href="images/Balloon_Mark_RGB.png" type="image/png">
 <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 
+<a href="#main" class="skip-link">本文へスキップ</a>
+
 <header class="site-header" id="header">
   <div class="container header-inner">
-    <a href="#top" class="logo"><img src="images/COMPASS_BLACK_Side.png" width="2700" height="600" alt="RE/MAX COMPASS" class="logo-img"></a>
-    <nav class="main-nav" id="main-nav">
+    <a href="index.html" class="logo"><img src="images/COMPASS_BLACK_Primary.png" width="1200" height="600" alt="REMAX COMPASS" class="logo-img"></a>
+    <nav class="main-nav" id="main-nav" aria-label="メインナビゲーション">
       <ul>
-        <li><a href="#strengths">選ばれる理由</a></li>
-        <li><a href="#network">ネットワーク</a></li>
-        <li><a href="#services">サービス内容</a></li>
-        <li><a href="#flow">ご相談の流れ</a></li>
-        <li><a href="#faq">よくある質問</a></li>
-        <li><a href="#company">会社概要</a></li>
-        <li><a href="#contact">お問い合わせ</a></li>
+        <li><a href="properties.html">賃貸で探す</a></li>
+        <li><a href="properties.html?deal=sale">売買で探す</a></li>
+        <li><a href="properties.html?type=shop">店舗</a></li>
+        <li><a href="properties.html?type=office">オフィス</a></li>
+        <li><a href="owner.html">オーナー様へ</a></li>
+        <li><a href="contact.html">お問い合わせ</a></li>
       </ul>
     </nav>
     <div class="header-cta">
+      <a href="favorites.html" class="header-fav">お気に入り<span class="fav-count" data-fav-count hidden>0</span></a>
       <a href="tel:0362615098" class="header-tel">
         <span class="tel-label">お電話でのご相談</span>
         <span class="tel-number">03-6261-5098</span>
       </a>
-      <a href="#contact" class="btn btn-primary">無料相談する</a>
+      <a href="contact.html" class="btn btn-primary">無料相談する</a>
     </div>
     <button class="nav-toggle" id="nav-toggle" aria-label="メニューを開く" aria-expanded="false">
       <span></span><span></span><span></span>
@@ -39,440 +54,156 @@
   </div>
 </header>
 
-<main id="top">
+<p class="demo-notice" role="note">本サイトに掲載している物件情報は、ポータル機能のデモンストレーション用に作成したサンプルデータです。実際の募集物件ではありません。</p>
 
-  <!-- HERO -->
-  <section class="hero">
-    <div class="container hero-grid">
-      <div class="hero-media">
-        <img src="images/6F1EB2AB-D829-455E-923C-3653A364B85C.jpeg" alt="RE/MAX COMPASS 正式加盟調印式の様子" width="967" height="725" loading="eager">
-      </div>
-      <div class="hero-panel">
-        <p class="hero-eyebrow">COMMERCIAL REAL ESTATE PARTNER</p>
-        <h1 class="hero-title">出店とテナント誘致を、<br>世界基準のネットワークで。</h1>
-        <p class="hero-sub">RE/MAX COMPASSは、店舗・オフィス・商業施設の仲介を専門とする不動産エージェントオフィスです。世界110ヶ国以上に広がるRE/MAXのネットワークと、デベロッパー・鉄道会社・アセットマネジメント会社で培った知見で、出店とテナント誘致をサポートします。</p>
-        <div class="hero-actions">
-          <a href="#contact" class="btn btn-primary">出店のご相談をする</a>
-          <a href="#contact" class="link-cta link-cta-light">物件オーナー様はこちら</a>
+<main id="main">
+
+  <!-- HERO + SEARCH -->
+  <section class="portal-hero">
+    <div class="container portal-hero-inner">
+      <p class="hero-eyebrow">COMMERCIAL PROPERTY SEARCH</p>
+      <h1 class="portal-hero-title">事業用不動産を、<br>世界基準のネットワークで探す。</h1>
+      <p class="portal-hero-sub">店舗・オフィス・倉庫・一棟ビル・事業用地。REMAX COMPASSが取り扱う事業用物件を、エリアと条件から検索できます。</p>
+
+      <form class="hero-search" id="hero-search" action="properties.html" method="get">
+        <div class="deal-segment deal-segment-hero" id="hs-deal">
+          <label><input type="radio" name="deal" value="rent" checked><span>賃貸で探す</span></label>
+          <label><input type="radio" name="deal" value="sale"><span>売買で探す</span></label>
         </div>
-        <ul class="hero-badges">
-          <li>RE/MAX正式加盟 2025年7月</li>
-          <li>世界110ヶ国以上に展開</li>
-          <li>世界のエージェント数14万人以上</li>
-        </ul>
-      </div>
-    </div>
-  </section>
-
-  <!-- PAIN POINTS -->
-  <section class="pain" id="pain">
-    <div class="container">
-      <p class="section-eyebrow">RE/MAX COMPASSがお応えします</p>
-      <h2 class="section-title">商業不動産の、こんなお悩みはありませんか</h2>
-
-      <div class="pain-grid">
-        <div class="pain-card">
-          <p class="pain-quote">「出店したい物件が見つかっても、条件交渉や契約が思うように進まない」</p>
-          <p class="pain-answer">商業不動産特有の契約実務に精通したメンバーが交渉から契約までサポートします。</p>
-        </div>
-        <div class="pain-card">
-          <p class="pain-quote">「空き区画のテナント募集がうまく進まず、収益機会を逃している」</p>
-          <p class="pain-answer">RE/MAXの世界ネットワークと独自の情報網で、幅広いテナント候補にアプローチします。</p>
-        </div>
-        <div class="pain-card">
-          <p class="pain-quote">「不動産会社に相談しても、店舗・商業施設特有の事情を理解してもらえない」</p>
-          <p class="pain-answer">デベロッパー・鉄道会社出身のメンバーが、商業施設特有の事情を踏まえてご提案します。</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- STRENGTHS -->
-  <section class="strengths" id="strengths">
-    <div class="container">
-      <p class="section-eyebrow">WHY RE/MAX COMPASS</p>
-      <h2 class="section-title">RE/MAX COMPASSが選ばれる理由</h2>
-      <p class="section-lead">商業不動産の専門知識と世界規模のネットワークで、出店とテナント誘致をワンストップでサポートします。</p>
-
-      <div class="strength-grid">
-        <div class="strength-card">
-          <div class="strength-icon" aria-hidden="true">
-            <svg viewBox="0 0 48 48"><path d="M24 4 44 20v24H4V20Z" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/><path d="M18 44V28h12v16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/></svg>
+        <div class="hero-search-row">
+          <div class="hs-field">
+            <label for="hs-type">物件種別</label>
+            <select id="hs-type" name="type">
+              <option value="">すべての種別</option>
+              <option value="shop">店舗</option>
+              <option value="office">オフィス</option>
+              <option value="warehouse">倉庫・工場</option>
+              <option value="building">一棟ビル</option>
+              <option value="land">事業用地</option>
+            </select>
           </div>
-          <h3>商業不動産特化の専門知識</h3>
-          <p>デベロッパー・鉄道会社・アセットマネジメント会社出身のメンバーが、商業施設のテナント誘致・店舗開発に精通しています。</p>
-          <p class="strength-fact"><!-- TODO: 実数値が確定次第、◯を差し替える -->テナント誘致・店舗開発のご支援実績 年間◯件</p>
-        </div>
-        <div class="strength-card">
-          <div class="strength-icon" aria-hidden="true">
-            <svg viewBox="0 0 48 48"><circle cx="24" cy="24" r="18" fill="none" stroke="currentColor" stroke-width="2.5"/><path d="M24 6v36M6 24h36M11 11l26 26M37 11 11 37" fill="none" stroke="currentColor" stroke-width="1.5" opacity="0.6"/></svg>
+          <div class="hs-field">
+            <label for="hs-area">エリア</label>
+            <select id="hs-area" name="area">
+              <option value="">すべてのエリア</option>
+            </select>
           </div>
-          <h3>世界最大級のネットワーク「RE/MAX」</h3>
-          <p>2025年7月にRE/MAXへ正式加盟。世界110ヶ国以上、14万人以上のエージェント、9,000以上の拠点とつながる情報網を活用できます。</p>
-          <p class="strength-fact">世界110ヶ国以上・エージェント14万人以上</p>
-        </div>
-        <div class="strength-card">
-          <div class="strength-icon" aria-hidden="true">
-            <svg viewBox="0 0 48 48"><rect x="6" y="10" width="36" height="28" rx="2" fill="none" stroke="currentColor" stroke-width="2.5"/><path d="M6 18h36M16 6v8M32 6v8" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg>
+          <div class="hs-field" id="hs-rent-field">
+            <label for="hs-rent">賃料上限</label>
+            <select id="hs-rent" name="rentMax">
+              <option value="">上限なし</option>
+              <option value="300000">30万円以下</option>
+              <option value="500000">50万円以下</option>
+              <option value="1000000">100万円以下</option>
+              <option value="2000000">200万円以下</option>
+              <option value="5000000">500万円以下</option>
+            </select>
           </div>
-          <h3>提案から契約後まで一気通貫</h3>
-          <p>物件探索・条件交渉・契約手続きから、開店やテナント入居後のご相談まで一貫してサポートします。</p>
-          <p class="strength-fact"><!-- TODO: 実数値が確定次第、◯を差し替える -->初回のご返信は平均◯時間以内</p>
-        </div>
-        <div class="strength-card">
-          <div class="strength-icon" aria-hidden="true">
-            <svg viewBox="0 0 48 48"><path d="M24 42s-16-9.5-16-21A9 9 0 0 1 24 14a9 9 0 0 1 16 7c0 11.5-16 21-16 21Z" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/></svg>
+          <div class="hs-field" id="hs-price-field" hidden>
+            <label for="hs-price">価格上限</label>
+            <select id="hs-price" name="priceMax">
+              <option value="">上限なし</option>
+              <option value="100000000">1億円以下</option>
+              <option value="300000000">3億円以下</option>
+              <option value="500000000">5億円以下</option>
+              <option value="1000000000">10億円以下</option>
+            </select>
           </div>
-          <h3>個人店舗から大手チェーンまで対応</h3>
-          <p>出店規模や業態を問わず、個人事業主の一号店から複数店舗展開まで幅広くご相談いただけます。</p>
-          <p class="strength-fact"><!-- TODO: 実数値が確定次第、◯を差し替える -->対応可能な物件タイプ ◯種以上</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- NETWORK STATS -->
-  <section class="stats">
-    <div class="container stats-grid">
-      <div class="stat-item">
-        <span class="stat-number">2022<small>年8月</small></span>
-        <span class="stat-label">設立</span>
-      </div>
-      <div class="stat-item">
-        <span class="stat-number">2025<small>年7月</small></span>
-        <span class="stat-label">RE/MAX正式加盟</span>
-      </div>
-      <div class="stat-item">
-        <span class="stat-number">110<small>ヶ国+</small></span>
-        <span class="stat-label">グローバル展開エリア</span>
-      </div>
-      <div class="stat-item">
-        <span class="stat-number">9,000<small>拠点+</small></span>
-        <span class="stat-label">世界の拠点数</span>
-      </div>
-    </div>
-  </section>
-
-  <!-- GLOBAL NETWORK -->
-  <section class="network" id="network">
-    <div class="container network-grid">
-      <div class="network-text">
-        <p class="section-eyebrow">GLOBAL NETWORK</p>
-        <h2 class="section-title">世界最大級のネットワークを、<br>地域の力に。</h2>
-        <p class="section-lead">2025年7月、RE/MAXへ正式加盟。世界中のエージェントとつながる情報網を、東京の商業不動産探しに活かしています。</p>
-        <figure class="network-photo">
-          <img src="images/32F29E92-0A00-484F-963F-9BDC7529A88E.jpeg" width="1280" height="960" alt="RE/MAX COMPASSチームの様子" loading="lazy">
-          <figcaption>RE/MAX COMPASS 正式加盟を祝う社内の様子</figcaption>
-        </figure>
-      </div>
-      <div class="network-media">
-        <img src="images/25_675-Socials2.png" width="1080" height="1080" alt="RE/MAXグローバルネットワーク実績：世界9,000以上の拠点、14万人以上のエージェント、110ヶ国以上の国と地域に展開" loading="lazy">
-      </div>
-    </div>
-    <div class="container">
-      <div class="network-video">
-        <video controls preload="metadata" poster="images/Global-Map_4242870b7a.avif" width="1600" height="900">
-          <source src="images/2025002_global_video_v4-1080p.webm" type="video/webm">
-        </video>
-      </div>
-    </div>
-  </section>
-
-  <!-- SERVICES -->
-  <section class="services" id="services">
-    <div class="container">
-      <p class="section-eyebrow">SERVICES</p>
-      <h2 class="section-title">サービス内容</h2>
-      <p class="section-lead">出店をお考えの事業者様、テナント募集をお考えの物件オーナー様、それぞれのお悩みに合わせてサポートします。</p>
-
-      <div class="service-grid">
-        <div class="service-card">
-          <h3>出店をお考えの事業者様へ</h3>
-          <ul class="service-list">
-            <li>出店エリア・物件のご提案</li>
-            <li>賃料・契約条件の交渉サポート</li>
-            <li>契約手続き・開店準備のサポート</li>
-          </ul>
-          <a href="#contact" class="link-cta">出店のご相談をする</a>
-        </div>
-        <div class="service-card">
-          <h3>物件オーナー・デベロッパー様へ</h3>
-          <ul class="service-list">
-            <li>空き区画のテナント募集・誘致</li>
-            <li>賃料査定・条件設定のご提案</li>
-            <li>売買仲介・資産活用のご相談</li>
-          </ul>
-          <a href="#contact" class="link-cta">オーナー様のご相談をする</a>
-        </div>
-      </div>
-
-      <div class="type-grid">
-        <div class="type-card">
-          <div class="strength-icon" aria-hidden="true">
-            <svg viewBox="0 0 48 48"><path d="M6 20 10 8h28l4 12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/><path d="M8 20v20h32V20M18 40V28h12v12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/></svg>
+          <div class="hs-field hs-field-kw">
+            <label for="hs-q">フリーワード</label>
+            <input type="search" id="hs-q" name="q" placeholder="駅名・エリア・居抜き など">
           </div>
-          <h4>店舗物件</h4>
-          <p>路面店・商業施設内の区画まで幅広く対応</p>
-        </div>
-        <div class="type-card">
-          <div class="strength-icon" aria-hidden="true">
-            <svg viewBox="0 0 48 48"><rect x="10" y="4" width="28" height="40" fill="none" stroke="currentColor" stroke-width="2.5"/><path d="M16 12h4M28 12h4M16 20h4M28 20h4M16 28h4M28 28h4" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg>
-          </div>
-          <h4>オフィス物件</h4>
-          <p>事業拡大・移転に合わせたオフィス探し</p>
-        </div>
-        <div class="type-card">
-          <div class="strength-icon" aria-hidden="true">
-            <svg viewBox="0 0 48 48"><rect x="4" y="16" width="40" height="26" fill="none" stroke="currentColor" stroke-width="2.5"/><path d="M4 16 24 4l20 12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/></svg>
-          </div>
-          <h4>倉庫・物流施設</h4>
-          <p>保管・物流拠点としての活用をご提案</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- SUB CTA BANNER: after services -->
-  <section class="cta-banner">
-    <div class="container cta-banner-inner">
-      <div class="cta-banner-text">
-        <h2>まずは物件情報だけでも</h2>
-        <p>来店・電話が難しい方は、取扱い中の物件情報のお届けだけでもご利用いただけます。</p>
-      </div>
-      <div class="cta-banner-actions">
-        <a href="#contact" class="btn btn-primary">無料相談する</a>
-        <form class="subcta-form" data-subcta>
-          <label for="subcta-email-1">メールアドレスで物件情報を受け取る</label>
-          <div class="subcta-row">
-            <input type="email" id="subcta-email-1" name="email" placeholder="example@mail.com" autocomplete="email" inputmode="email" required>
-            <button type="submit" class="btn btn-outline-dark">受け取る</button>
-          </div>
-          <p class="subcta-note" data-subcta-note></p>
-        </form>
-      </div>
-    </div>
-  </section>
-
-  <!-- FLOW -->
-  <section class="flow" id="flow">
-    <div class="container">
-      <p class="section-eyebrow">FLOW</p>
-      <h2 class="section-title">ご相談の流れ</h2>
-      <p class="section-lead">ご契約が成立するまで、費用は一切かかりません。</p>
-
-      <ol class="flow-steps">
-        <li class="flow-step">
-          <span class="flow-num">1</span>
-          <h3>お問い合わせ</h3>
-          <p class="flow-time">目安：即日</p>
-          <p>出店エリア・ご希望条件、または募集中の物件情報をお聞かせください。</p>
-        </li>
-        <li class="flow-step">
-          <span class="flow-num">2</span>
-          <h3>ヒアリング</h3>
-          <p class="flow-time">目安：1〜3日以内</p>
-          <p>事業内容やご希望条件を専任担当が丁寧にお伺いします。</p>
-        </li>
-        <li class="flow-step">
-          <span class="flow-num">3</span>
-          <h3>物件・テナントのご提案</h3>
-          <p class="flow-time">目安：1〜2週間</p>
-          <p>条件に合う物件、またはテナント候補を厳選してご提案します。</p>
-        </li>
-        <li class="flow-step">
-          <span class="flow-num">4</span>
-          <h3>契約・開店/入居サポート</h3>
-          <p class="flow-time">目安：ご都合に合わせて</p>
-          <p>契約手続きから開店・入居準備まで、引き続きサポートします。</p>
-        </li>
-      </ol>
-    </div>
-  </section>
-
-  <!-- SUB CTA BANNER: after flow -->
-  <section class="cta-banner cta-banner-alt">
-    <div class="container cta-banner-inner">
-      <div class="cta-banner-text">
-        <h2>相談だけでも大丈夫です</h2>
-        <p>構想段階でも歓迎します。まずは出店エリアやご希望条件だけお聞かせください。</p>
-      </div>
-      <div class="cta-banner-actions">
-        <a href="#contact" class="btn btn-primary">無料相談する</a>
-        <form class="subcta-form" data-subcta>
-          <label for="subcta-email-2">メールアドレスで物件情報を受け取る</label>
-          <div class="subcta-row">
-            <input type="email" id="subcta-email-2" name="email" placeholder="example@mail.com" autocomplete="email" inputmode="email" required>
-            <button type="submit" class="btn btn-outline-dark">受け取る</button>
-          </div>
-          <p class="subcta-note" data-subcta-note></p>
-        </form>
-      </div>
-    </div>
-  </section>
-
-  <!-- FAQ -->
-  <section class="faq" id="faq">
-    <div class="container">
-      <p class="section-eyebrow">FAQ</p>
-      <h2 class="section-title">よくある質問</h2>
-
-      <div class="faq-list">
-        <div class="faq-item">
-          <button class="faq-question" type="button" aria-expanded="false">
-            <span>個人事業主でも相談できますか？</span>
-            <span class="faq-icon" aria-hidden="true"></span>
-          </button>
-          <div class="faq-answer">
-            <p>はい。個人店舗の一号店から大手チェーンの複数店舗展開まで、規模を問わずご相談いただけます。</p>
-          </div>
-        </div>
-        <div class="faq-item">
-          <button class="faq-question" type="button" aria-expanded="false">
-            <span>仲介手数料はいつ発生しますか？</span>
-            <span class="faq-icon" aria-hidden="true"></span>
-          </button>
-          <div class="faq-answer">
-            <p>ご相談・物件のご提案は無料です。費用が発生するのは、賃貸・売買のご契約が成立した場合の仲介手数料のみです。</p>
-          </div>
-        </div>
-        <div class="faq-item">
-          <button class="faq-question" type="button" aria-expanded="false">
-            <span>対応エリアはどこですか？</span>
-            <span class="faq-icon" aria-hidden="true"></span>
-          </button>
-          <div class="faq-answer">
-            <p>東京23区を中心とした商業不動産に強みがあります。エリア外のご相談も、まずはお問い合わせください。</p>
-          </div>
-        </div>
-        <div class="faq-item">
-          <button class="faq-question" type="button" aria-expanded="false">
-            <span>物件オーナーですが、テナント募集だけ依頼できますか？</span>
-            <span class="faq-icon" aria-hidden="true"></span>
-          </button>
-          <div class="faq-answer">
-            <p>承っております。空き区画のテナント募集のみのご依頼も歓迎しております。</p>
-          </div>
-        </div>
-        <div class="faq-item">
-          <button class="faq-question" type="button" aria-expanded="false">
-            <span>出店したい業態がまだ決まっていなくても相談できますか？</span>
-            <span class="faq-icon" aria-hidden="true"></span>
-          </button>
-          <div class="faq-answer">
-            <p>問題ありません。事業構想の段階からご相談いただけます。</p>
-          </div>
-        </div>
-        <div class="faq-item">
-          <button class="faq-question" type="button" aria-expanded="false">
-            <span>RE/MAXのネットワークとは何ですか？</span>
-            <span class="faq-icon" aria-hidden="true"></span>
-          </button>
-          <div class="faq-answer">
-            <p>世界110ヶ国以上、14万人を超えるエージェントが加盟する世界最大級の不動産フランチャイズです。2025年7月に正式加盟し、グローバルな情報網を活かしたご提案が可能です。</p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- SUB CTA BANNER: after FAQ -->
-  <section class="cta-banner">
-    <div class="container cta-banner-inner">
-      <div class="cta-banner-text">
-        <h2>不安が解消したら、次の一歩へ</h2>
-        <p>ご相談・お問い合わせは無料です。まずはお気軽にご連絡ください。</p>
-      </div>
-      <div class="cta-banner-actions">
-        <a href="#contact" class="btn btn-primary">無料相談する</a>
-        <form class="subcta-form" data-subcta>
-          <label for="subcta-email-3">メールアドレスで物件情報を受け取る</label>
-          <div class="subcta-row">
-            <input type="email" id="subcta-email-3" name="email" placeholder="example@mail.com" autocomplete="email" inputmode="email" required>
-            <button type="submit" class="btn btn-outline-dark">受け取る</button>
-          </div>
-          <p class="subcta-note" data-subcta-note></p>
-        </form>
-      </div>
-    </div>
-  </section>
-
-  <!-- COMPANY -->
-  <section class="company" id="company">
-    <div class="container company-solo">
-      <p class="section-eyebrow">COMPANY</p>
-      <h2 class="section-title">会社概要</h2>
-      <img src="images/04.png" width="1382" height="331" alt="株式会社ロメッツ" class="company-logo" loading="lazy">
-      <table class="company-table">
-        <tbody>
-          <tr><th>会社名</th><td>株式会社ロメッツ（屋号：RE/MAX COMPASS）</td></tr>
-          <tr><th>設立</th><td>2022年8月</td></tr>
-          <tr><th>資本金</th><td>300万円</td></tr>
-          <tr><th>代表者</th><td>代表取締役　向井 瑛一郎</td></tr>
-          <tr><th>所在地</th><td>〒101-0061 東京都千代田区神田三崎町三丁目4番9号 横山ビル3F</td></tr>
-          <tr><th>電話番号</th><td>03-6261-5098</td></tr>
-          <tr><th>FAX</th><td>03-6261-5099</td></tr>
-          <tr><th>メール</th><td>info@lomets-inc.com</td></tr>
-          <tr><th>事業内容</th><td>不動産の賃貸・仲介・売買・保有及び運用／商業施設に関連する業務の企画・コンサルティング</td></tr>
-          <tr><th>宅地建物取引業免許番号</th><td>東京都知事(1)第110605号</td></tr>
-          <tr><th>加盟ネットワーク</th><td>RE/MAX（世界110ヶ国以上、2025年7月正式加盟）</td></tr>
-        </tbody>
-      </table>
-    </div>
-  </section>
-
-  <!-- CONTACT -->
-  <section class="contact" id="contact">
-    <div class="container contact-inner">
-      <p class="section-eyebrow">CONTACT</p>
-      <h2 class="section-title">お問い合わせ・無料相談</h2>
-      <p class="section-lead">ご相談は無料です。まずはお気軽にお問い合わせください。</p>
-      <p class="contact-promise">しつこい営業電話はいたしません。個人情報は相談対応以外に利用しません。</p>
-
-      <form class="contact-form" id="contact-form" novalidate>
-        <div class="form-row">
-          <label for="name">お名前<span class="required">必須</span></label>
-          <input type="text" id="name" name="name" placeholder="山田 太郎" autocomplete="name" required>
-          <p class="field-error" data-error-for="name"></p>
-        </div>
-        <div class="form-row">
-          <label for="company">会社名・屋号<span class="optional">任意</span></label>
-          <input type="text" id="company" name="company" placeholder="株式会社〇〇" autocomplete="organization">
-        </div>
-        <div class="form-row">
-          <label for="email">メールアドレス<span class="required">必須</span></label>
-          <input type="email" id="email" name="email" placeholder="example@mail.com" autocomplete="email" inputmode="email" required>
-          <p class="field-error" data-error-for="email"></p>
-        </div>
-        <div class="form-row">
-          <label for="tel">電話番号<span class="optional">任意</span></label>
-          <input type="tel" id="tel" name="tel" placeholder="090-0000-0000" autocomplete="tel" inputmode="tel">
-        </div>
-        <div class="form-row form-row-full">
-          <label for="type">ご相談内容<span class="optional">任意</span></label>
-          <select id="type" name="type">
-            <option value="tenant">出店・テナントについて</option>
-            <option value="owner">物件オーナー・テナント募集について</option>
-            <option value="sell">売買・資産活用について</option>
-            <option value="other">その他</option>
-          </select>
-        </div>
-        <div class="form-row form-row-full">
-          <label for="message">ご相談内容の詳細<span class="required">必須</span></label>
-          <textarea id="message" name="message" rows="5" placeholder="出店をお考えのエリアや、募集中の物件情報などをご記入ください" required></textarea>
-          <p class="field-error" data-error-for="message"></p>
-        </div>
-        <div class="form-row form-row-full">
-          <ul class="trust-signals">
-            <li>1営業日以内にご返信します</li>
-            <li>しつこい営業電話はいたしません</li>
-            <li>個人情報は相談対応以外に利用しません</li>
-          </ul>
-          <button type="submit" class="btn btn-primary btn-lg" id="contact-submit">
-            <span class="btn-label">無料で相談内容を送る</span>
-          </button>
-          <p class="form-note" id="form-note" role="status" aria-live="polite"></p>
+          <button type="submit" class="btn btn-primary hs-submit">この条件で検索<span class="hs-count" id="hs-count"></span></button>
         </div>
       </form>
+
+      <ul class="hero-quick">
+        <li><a href="properties.html?feature=%E5%B1%85%E6%8A%9C%E3%81%8D">居抜き物件</a></li>
+        <li><a href="properties.html?feature=1%E9%9A%8E%E8%B7%AF%E9%9D%A2">1階路面</a></li>
+        <li><a href="properties.html?feature=%E3%82%BB%E3%83%83%E3%83%88%E3%82%A2%E3%83%83%E3%83%97">セットアップオフィス</a></li>
+        <li><a href="properties.html?walk=5">駅徒歩5分以内</a></li>
+        <li><a href="properties.html?status=new">新着物件</a></li>
+        <li><a href="properties.html?deal=sale&amp;type=building">売買・一棟ビル</a></li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- TYPE NAV -->
+  <section class="type-nav">
+    <div class="container">
+      <h2 class="section-title-sm">種別から探す</h2>
+      <ul class="type-grid" id="type-grid"></ul>
+    </div>
+  </section>
+
+  <!-- NEW / FEATURED -->
+  <section class="listing-block">
+    <div class="container">
+      <div class="block-head">
+        <div>
+          <p class="section-eyebrow">NEW ARRIVALS</p>
+          <h2 class="section-title">新着・注目の物件</h2>
+        </div>
+        <a href="properties.html?sort=new" class="link-cta">すべての物件を見る</a>
+      </div>
+      <div class="p-grid" id="featured-grid"></div>
+    </div>
+  </section>
+
+  <!-- AREA -->
+  <section class="area-block">
+    <div class="container">
+      <div class="block-head">
+        <div>
+          <p class="section-eyebrow">AREA</p>
+          <h2 class="section-title">エリアから探す</h2>
+          <p class="section-lead">東京都・神奈川県・埼玉県・千葉県の一都三県が対象です。</p>
+        </div>
+      </div>
+      <div class="area-groups" id="area-groups"></div>
+    </div>
+  </section>
+
+  <!-- HISTORY -->
+  <section class="listing-block listing-block-alt" id="history-block" hidden>
+    <div class="container">
+      <div class="block-head">
+        <div>
+          <p class="section-eyebrow">HISTORY</p>
+          <h2 class="section-title">最近見た物件</h2>
+        </div>
+      </div>
+      <div class="p-grid" id="history-grid"></div>
+    </div>
+  </section>
+
+  <!-- WHY US -->
+  <section class="why-block">
+    <div class="container">
+      <p class="section-eyebrow">WHY REMAX COMPASS</p>
+      <h2 class="section-title">掲載物件だけが、選択肢ではありません</h2>
+      <p class="section-lead">ポータルに掲載していない非公開物件も多数お預かりしています。ご希望の条件をお伝えいただければ、条件に合う物件をお探ししてご提案します。</p>
+      <div class="why-grid">
+        <div class="why-card">
+          <p class="why-num">01</p>
+          <h3>商業不動産に特化</h3>
+          <p>店舗・オフィス・倉庫など事業用不動産に特化。デベロッパー・鉄道会社・アセットマネジメント会社で培った知見で、出店計画から契約実務までサポートします。</p>
+        </div>
+        <div class="why-card">
+          <p class="why-num">02</p>
+          <h3>REMAXグローバルネットワーク</h3>
+          <p>世界110ヶ国以上、14万人以上のエージェントが所属するREMAXネットワークの一員として、国内外の事業者・オーナーをつなぎます。</p>
+        </div>
+        <div class="why-card">
+          <p class="why-num">03</p>
+          <h3>非公開物件のご紹介</h3>
+          <p>Webに掲載できない相対取引の物件情報も取り扱っています。条件をご登録いただいた方に、新着情報を優先してご案内します。</p>
+        </div>
+      </div>
+      <div class="why-actions">
+        <a href="contact.html" class="btn btn-primary btn-lg">条件を伝えて物件を探してもらう</a>
+        <a href="owner.html" class="link-cta">物件オーナー様・テナント募集のご相談はこちら</a>
+      </div>
     </div>
   </section>
 
@@ -480,30 +211,56 @@
 
 <footer class="site-footer">
   <div class="container footer-inner">
-    <div class="footer-logo-row">
-      <img src="images/COMPASS_BLACK_Side.png" width="2700" height="600" alt="RE/MAX COMPASS" class="footer-brand-logo">
-      <span class="footer-brand-divider" aria-hidden="true"></span>
-      <img src="images/04.png" width="1382" height="331" alt="株式会社ロメッツ" class="footer-brand-logo footer-brand-logo-lomets">
+    <div class="footer-brand">
+      <img src="images/COMPASS_CREAM_Primary.png" width="1200" height="600" alt="REMAX COMPASS" class="footer-logo">
+      <p class="footer-company">株式会社ロメッツ（屋号：REMAX COMPASS）</p>
+      <p class="footer-address">〒101-0061 東京都千代田区神田三崎町三丁目4番9号 横山ビル3F<br>TEL 03-6261-5098／宅地建物取引業免許番号 東京都知事(1)第110605号</p>
     </div>
-    <ul class="footer-links">
-      <li><a href="#strengths">選ばれる理由</a></li>
-      <li><a href="#network">ネットワーク</a></li>
-      <li><a href="#services">サービス内容</a></li>
-      <li><a href="#flow">ご相談の流れ</a></li>
-      <li><a href="#faq">よくある質問</a></li>
-      <li><a href="#company">会社概要</a></li>
-      <li><a href="#contact">お問い合わせ</a></li>
-    </ul>
-    <p class="footer-copy">株式会社ロメッツ（宅地建物取引業 東京都知事(1)第110605号）&copy; 2026 RE/MAX COMPASS All Rights Reserved.</p>
+    <nav class="footer-nav" aria-label="フッターナビゲーション">
+      <div>
+        <h3>賃貸で探す</h3>
+        <ul>
+          <li><a href="properties.html?type=shop">店舗</a></li>
+          <li><a href="properties.html?type=office">オフィス</a></li>
+          <li><a href="properties.html?type=warehouse">倉庫・工場</a></li>
+          <li><a href="properties.html?type=building">一棟ビル</a></li>
+          <li><a href="properties.html?type=land">事業用地</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3>売買で探す</h3>
+        <ul>
+          <li><a href="properties.html?deal=sale&amp;type=building">一棟ビル</a></li>
+          <li><a href="properties.html?deal=sale&amp;type=office">オフィス</a></li>
+          <li><a href="properties.html?deal=sale&amp;type=shop">店舗</a></li>
+          <li><a href="properties.html?deal=sale&amp;type=warehouse">倉庫・工場</a></li>
+          <li><a href="properties.html?deal=sale&amp;type=land">事業用地</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3>サービス</h3>
+        <ul>
+          <li><a href="properties.html">物件検索</a></li>
+          <li><a href="favorites.html">お気に入り</a></li>
+          <li><a href="owner.html">物件オーナー様へ</a></li>
+          <li><a href="contact.html">お問い合わせ</a></li>
+          <li><a href="privacy.html">プライバシーポリシー</a></li>
+        </ul>
+      </div>
+    </nav>
+  </div>
+  <div class="container footer-legal">
+    <p>掲載物件はすべて当社が媒介（仲介）する物件です。ご相談・物件のご紹介・内見に費用はかかりません。<strong>ご成約時に、宅地建物取引業法に定める報酬額を仲介手数料として申し受けます</strong>（賃貸：賃料の1ヶ月分（税別）／売買：売買価格の3%＋6万円（税別））。</p>
+    <p>掲載内容は情報更新日時点のものです。取引条件は変更される場合がありますので、最新の条件はお問い合わせください。表示価格・賃料は特記のない限り消費税別です。</p>
+  </div>
+  <div class="container footer-bottom">
+    <p>&copy; <span id="current-year">2026</span> LOMETS Inc. All rights reserved.</p>
+    <p class="footer-note">掲載物件はデモ用のサンプルデータです。</p>
   </div>
 </footer>
 
-<!-- MOBILE FIXED CTA BAR -->
-<div class="mobile-cta-bar" id="mobile-cta-bar" aria-hidden="true">
-  <a href="tel:0362615098" class="mobile-cta-btn mobile-cta-tel">電話する</a>
-  <a href="#contact" class="mobile-cta-btn mobile-cta-form">無料相談する</a>
-</div>
-
-<script src="js/main.js"></script>
+<script src="data/properties.js"></script>
+<script src="js/portal.js"></script>
+<script src="js/home.js"></script>
 </body>
 </html>

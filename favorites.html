@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>お気に入り物件｜REMAX COMPASS 物件ポータル</title>
+<meta name="description" content="お気に入りに登録した事業用物件の一覧です。まとめてお問い合わせいただけます。">
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Zen+Kaku+Gothic+New:wght@400;500;700;900&display=swap" rel="stylesheet">
+<link rel="canonical" href="">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="REMAX COMPASS 物件ポータル">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:title" content="お気に入り物件｜REMAX COMPASS 物件ポータル">
+<meta property="og:description" content="">
+<meta property="og:url" content="">
+<meta property="og:image" content="images/COMPASS_BLACK_Primary.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="お気に入り物件｜REMAX COMPASS 物件ポータル">
+<meta name="twitter:description" content="">
+<meta name="twitter:image" content="images/COMPASS_BLACK_Primary.png">
+<link rel="icon" href="images/Balloon_Mark_RGB.png" type="image/png">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<a href="#main" class="skip-link">本文へスキップ</a>
+
+<header class="site-header" id="header">
+  <div class="container header-inner">
+    <a href="index.html" class="logo"><img src="images/COMPASS_BLACK_Primary.png" width="1200" height="600" alt="REMAX COMPASS" class="logo-img"></a>
+    <nav class="main-nav" id="main-nav" aria-label="メインナビゲーション">
+      <ul>
+        <li><a href="properties.html">賃貸で探す</a></li>
+        <li><a href="properties.html?deal=sale">売買で探す</a></li>
+        <li><a href="properties.html?type=shop">店舗</a></li>
+        <li><a href="properties.html?type=office">オフィス</a></li>
+        <li><a href="owner.html">オーナー様へ</a></li>
+        <li><a href="contact.html">お問い合わせ</a></li>
+      </ul>
+    </nav>
+    <div class="header-cta">
+      <a href="favorites.html" class="header-fav">お気に入り<span class="fav-count" data-fav-count hidden>0</span></a>
+      <a href="tel:0362615098" class="header-tel">
+        <span class="tel-label">お電話でのご相談</span>
+        <span class="tel-number">03-6261-5098</span>
+      </a>
+      <a href="contact.html" class="btn btn-primary">無料相談する</a>
+    </div>
+    <button class="nav-toggle" id="nav-toggle" aria-label="メニューを開く" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
+
+<p class="demo-notice" role="note">本サイトに掲載している物件情報は、ポータル機能のデモンストレーション用に作成したサンプルデータです。実際の募集物件ではありません。</p>
+
+<main id="main" class="page-simple">
+  <div class="container">
+    <nav class="breadcrumb" aria-label="パンくずリスト">
+      <ol>
+        <li><a href="index.html">ホーム</a></li>
+        <li aria-current="page">お気に入り</li>
+      </ol>
+    </nav>
+
+    <h1 class="page-title">お気に入り物件</h1>
+    <p class="page-lead" id="fav-summary">読み込み中…</p>
+
+    <div class="p-grid" id="fav-grid"></div>
+
+    <div class="empty-state" id="fav-empty" hidden>
+      <h2>お気に入りに登録された物件はありません</h2>
+      <p>物件カードのハートアイコンから、気になる物件を登録できます。登録内容はこのブラウザに保存されます。</p>
+      <div class="empty-actions">
+        <a href="properties.html" class="btn btn-primary">物件検索へ</a>
+      </div>
+    </div>
+
+    <div class="fav-actions" id="fav-actions" hidden>
+      <a href="contact.html" class="btn btn-primary btn-lg">お気に入りの物件をまとめて問い合わせる</a>
+      <button type="button" class="btn btn-ghost" id="fav-clear">お気に入りをすべて削除</button>
+    </div>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div class="container footer-inner">
+    <div class="footer-brand">
+      <img src="images/COMPASS_CREAM_Primary.png" width="1200" height="600" alt="REMAX COMPASS" class="footer-logo">
+      <p class="footer-company">株式会社ロメッツ（屋号：REMAX COMPASS）</p>
+      <p class="footer-address">〒101-0061 東京都千代田区神田三崎町三丁目4番9号 横山ビル3F<br>TEL 03-6261-5098／宅地建物取引業免許番号 東京都知事(1)第110605号</p>
+    </div>
+    <nav class="footer-nav" aria-label="フッターナビゲーション">
+      <div>
+        <h3>賃貸で探す</h3>
+        <ul>
+          <li><a href="properties.html?type=shop">店舗</a></li>
+          <li><a href="properties.html?type=office">オフィス</a></li>
+          <li><a href="properties.html?type=warehouse">倉庫・工場</a></li>
+          <li><a href="properties.html?type=building">一棟ビル</a></li>
+          <li><a href="properties.html?type=land">事業用地</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3>売買で探す</h3>
+        <ul>
+          <li><a href="properties.html?deal=sale&amp;type=building">一棟ビル</a></li>
+          <li><a href="properties.html?deal=sale&amp;type=office">オフィス</a></li>
+          <li><a href="properties.html?deal=sale&amp;type=shop">店舗</a></li>
+          <li><a href="properties.html?deal=sale&amp;type=warehouse">倉庫・工場</a></li>
+          <li><a href="properties.html?deal=sale&amp;type=land">事業用地</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3>サービス</h3>
+        <ul>
+          <li><a href="properties.html">物件検索</a></li>
+          <li><a href="favorites.html">お気に入り</a></li>
+          <li><a href="owner.html">物件オーナー様へ</a></li>
+          <li><a href="contact.html">お問い合わせ</a></li>
+          <li><a href="privacy.html">プライバシーポリシー</a></li>
+        </ul>
+      </div>
+    </nav>
+  </div>
+  <div class="container footer-legal">
+    <p>掲載物件はすべて当社が媒介（仲介）する物件です。ご相談・物件のご紹介・内見に費用はかかりません。<strong>ご成約時に、宅地建物取引業法に定める報酬額を仲介手数料として申し受けます</strong>（賃貸：賃料の1ヶ月分（税別）／売買：売買価格の3%＋6万円（税別））。</p>
+    <p>掲載内容は情報更新日時点のものです。取引条件は変更される場合がありますので、最新の条件はお問い合わせください。表示価格・賃料は特記のない限り消費税別です。</p>
+  </div>
+  <div class="container footer-bottom">
+    <p>&copy; <span id="current-year">2026</span> LOMETS Inc. All rights reserved.</p>
+    <p class="footer-note">掲載物件はデモ用のサンプルデータです。</p>
+  </div>
+</footer>
+
+<script src="data/properties.js"></script>
+<script src="js/portal.js"></script>
+<script src="js/favorites.js"></script>
+</body>
+</html>

@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>物件検索｜REMAX COMPASS 物件ポータル</title>
+<meta name="description" content="店舗・オフィス・倉庫・一棟ビル・事業用地を、エリア・賃料・面積・駅徒歩・こだわり条件で絞り込んで検索できます。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Zen+Kaku+Gothic+New:wght@400;500;700;900&display=swap" rel="stylesheet">
+<link rel="canonical" href="">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="REMAX COMPASS 物件ポータル">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:title" content="物件検索｜REMAX COMPASS 物件ポータル">
+<meta property="og:description" content="">
+<meta property="og:url" content="">
+<meta property="og:image" content="images/COMPASS_BLACK_Primary.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="物件検索｜REMAX COMPASS 物件ポータル">
+<meta name="twitter:description" content="">
+<meta name="twitter:image" content="images/COMPASS_BLACK_Primary.png">
+<link rel="icon" href="images/Balloon_Mark_RGB.png" type="image/png">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<a href="#main" class="skip-link">本文へスキップ</a>
+
+<header class="site-header" id="header">
+  <div class="container header-inner">
+    <a href="index.html" class="logo"><img src="images/COMPASS_BLACK_Primary.png" width="1200" height="600" alt="REMAX COMPASS" class="logo-img"></a>
+    <nav class="main-nav" id="main-nav" aria-label="メインナビゲーション">
+      <ul>
+        <li><a href="properties.html">賃貸で探す</a></li>
+        <li><a href="properties.html?deal=sale">売買で探す</a></li>
+        <li><a href="properties.html?type=shop">店舗</a></li>
+        <li><a href="properties.html?type=office">オフィス</a></li>
+        <li><a href="owner.html">オーナー様へ</a></li>
+        <li><a href="contact.html">お問い合わせ</a></li>
+      </ul>
+    </nav>
+    <div class="header-cta">
+      <a href="favorites.html" class="header-fav">お気に入り<span class="fav-count" data-fav-count hidden>0</span></a>
+      <a href="tel:0362615098" class="header-tel">
+        <span class="tel-label">お電話でのご相談</span>
+        <span class="tel-number">03-6261-5098</span>
+      </a>
+      <a href="contact.html" class="btn btn-primary">無料相談する</a>
+    </div>
+    <button class="nav-toggle" id="nav-toggle" aria-label="メニューを開く" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
+
+<p class="demo-notice" role="note">本サイトに掲載している物件情報は、ポータル機能のデモンストレーション用に作成したサンプルデータです。実際の募集物件ではありません。</p>
+
+<main id="main" class="page-search">
+  <div class="container">
+    <nav class="breadcrumb" aria-label="パンくずリスト">
+      <ol>
+        <li><a href="index.html">ホーム</a></li>
+        <li aria-current="page">物件検索</li>
+      </ol>
+    </nav>
+
+    <div class="search-layout">
+
+      <!-- FILTER -->
+      <aside class="filter-panel" id="filter-panel" aria-label="絞り込み条件">
+        <div class="filter-head">
+          <h2>絞り込み条件</h2>
+          <button type="button" class="filter-close" id="filter-close" aria-label="絞り込みを閉じる">閉じる</button>
+        </div>
+
+        <form id="filter-form">
+          <fieldset class="filter-group">
+            <legend class="filter-label">取引種別</legend>
+            <div class="deal-segment" id="f-deal">
+              <label><input type="radio" name="deal" value="rent" checked><span>賃貸</span></label>
+              <label><input type="radio" name="deal" value="sale"><span>売買</span></label>
+            </div>
+          </fieldset>
+
+          <div class="filter-group">
+            <label class="filter-label" for="f-keyword">フリーワード</label>
+            <input type="search" id="f-keyword" name="keyword" placeholder="駅名・エリア・居抜き など">
+          </div>
+
+          <fieldset class="filter-group">
+            <legend class="filter-label">物件種別</legend>
+            <div class="check-list" id="f-types"></div>
+          </fieldset>
+
+          <fieldset class="filter-group">
+            <legend class="filter-label">都県</legend>
+            <div class="check-list check-list-2col" id="f-prefs"></div>
+          </fieldset>
+
+          <fieldset class="filter-group">
+            <legend class="filter-label">エリア（市区）</legend>
+            <div class="check-groups" id="f-areas"></div>
+          </fieldset>
+
+          <fieldset class="filter-group">
+            <legend class="filter-label">沿線・駅</legend>
+            <div class="line-picker">
+              <label class="sr-only" for="f-line">沿線</label>
+              <select id="f-line">
+                <option value="">沿線を選ぶ</option>
+              </select>
+              <div class="check-list check-list-2col" id="f-stations"></div>
+              <p class="filter-hint" id="f-station-hint">沿線を選ぶと駅を絞り込めます。</p>
+            </div>
+          </fieldset>
+
+          <fieldset class="filter-group" id="f-rent-group">
+            <legend class="filter-label">月額賃料</legend>
+            <div class="range-row">
+              <select id="f-rent-min" name="rentMin">
+                <option value="">下限なし</option>
+                <option value="200000">20万円〜</option>
+                <option value="500000">50万円〜</option>
+                <option value="1000000">100万円〜</option>
+                <option value="2000000">200万円〜</option>
+              </select>
+              <span class="range-sep">〜</span>
+              <select id="f-rent-max" name="rentMax">
+                <option value="">上限なし</option>
+                <option value="300000">〜30万円</option>
+                <option value="500000">〜50万円</option>
+                <option value="1000000">〜100万円</option>
+                <option value="2000000">〜200万円</option>
+                <option value="5000000">〜500万円</option>
+              </select>
+            </div>
+          </fieldset>
+
+          <fieldset class="filter-group" id="f-price-group" hidden>
+            <legend class="filter-label">販売価格</legend>
+            <div class="range-row">
+              <select id="f-price-min" name="priceMin">
+                <option value="">下限なし</option>
+                <option value="100000000">1億円〜</option>
+                <option value="300000000">3億円〜</option>
+                <option value="500000000">5億円〜</option>
+                <option value="1000000000">10億円〜</option>
+              </select>
+              <span class="range-sep">〜</span>
+              <select id="f-price-max" name="priceMax">
+                <option value="">上限なし</option>
+                <option value="100000000">〜1億円</option>
+                <option value="300000000">〜3億円</option>
+                <option value="500000000">〜5億円</option>
+                <option value="1000000000">〜10億円</option>
+              </select>
+            </div>
+          </fieldset>
+
+          <fieldset class="filter-group">
+            <legend class="filter-label">面積（坪）</legend>
+            <div class="range-row">
+              <input type="number" id="f-tsubo-min" name="tsuboMin" min="0" step="1" placeholder="下限" inputmode="numeric">
+              <span class="range-sep">〜</span>
+              <input type="number" id="f-tsubo-max" name="tsuboMax" min="0" step="1" placeholder="上限" inputmode="numeric">
+            </div>
+          </fieldset>
+
+          <div class="filter-group">
+            <label class="filter-label" for="f-walk">駅徒歩</label>
+            <select id="f-walk" name="walk">
+              <option value="">指定なし</option>
+              <option value="3">3分以内</option>
+              <option value="5">5分以内</option>
+              <option value="10">10分以内</option>
+              <option value="15">15分以内</option>
+            </select>
+          </div>
+
+          <fieldset class="filter-group">
+            <legend class="filter-label">募集状況</legend>
+            <div class="check-list" id="f-status"></div>
+          </fieldset>
+
+          <fieldset class="filter-group">
+            <legend class="filter-label">こだわり条件</legend>
+            <div class="check-list check-list-2col" id="f-features"></div>
+          </fieldset>
+
+          <div class="filter-actions">
+            <button type="button" class="btn btn-ghost" id="filter-reset">条件をクリア</button>
+            <button type="button" class="btn btn-primary filter-apply" id="filter-apply">この条件で見る<span id="filter-apply-count"></span></button>
+          </div>
+        </form>
+      </aside>
+
+      <!-- RESULTS -->
+      <section class="results" aria-label="検索結果">
+        <div class="results-head">
+          <div class="results-count">
+            <h1 class="results-title" id="results-title">賃貸物件を探す</h1>
+            <p id="result-summary" aria-live="polite">検索中…</p>
+          </div>
+          <div class="results-tools">
+            <button type="button" class="btn btn-ghost filter-open" id="filter-open">絞り込み</button>
+            <label class="sort-field">
+              <span>並び替え</span>
+              <select id="sort-select"></select>
+            </label>
+          </div>
+        </div>
+
+        <ul class="active-chips" id="active-chips"></ul>
+
+        <div class="p-grid p-grid-results" id="result-grid"></div>
+
+        <div class="empty-state" id="empty-state" hidden>
+          <h2>条件に一致する物件が見つかりませんでした</h2>
+          <p>条件を広げて再検索いただくか、ご希望の条件をお知らせください。ポータル未掲載の非公開物件からお探しします。</p>
+          <div class="empty-actions">
+            <button type="button" class="btn btn-ghost" id="empty-reset">条件をクリア</button>
+            <a href="contact.html" class="btn btn-primary">条件を伝えて探してもらう</a>
+          </div>
+        </div>
+
+        <nav class="pagination" id="pagination" aria-label="ページ送り"></nav>
+      </section>
+
+    </div>
+  </div>
+
+  <section class="cta-band">
+    <div class="container cta-band-inner">
+      <div>
+        <h2>お探しの条件の物件が見つかりませんか？</h2>
+        <p>ポータルに掲載していない非公開物件も多数お預かりしています。条件をお知らせいただければ、専任担当がお探しします。</p>
+      </div>
+      <a href="contact.html" class="btn btn-primary btn-lg">条件を伝えて相談する</a>
+    </div>
+  </section>
+</main>
+
+<div class="filter-backdrop" id="filter-backdrop" hidden></div>
+
+<footer class="site-footer">
+  <div class="container footer-inner">
+    <div class="footer-brand">
+      <img src="images/COMPASS_CREAM_Primary.png" width="1200" height="600" alt="REMAX COMPASS" class="footer-logo">
+      <p class="footer-company">株式会社ロメッツ（屋号：REMAX COMPASS）</p>
+      <p class="footer-address">〒101-0061 東京都千代田区神田三崎町三丁目4番9号 横山ビル3F<br>TEL 03-6261-5098／宅地建物取引業免許番号 東京都知事(1)第110605号</p>
+    </div>
+    <nav class="footer-nav" aria-label="フッターナビゲーション">
+      <div>
+        <h3>賃貸で探す</h3>
+        <ul>
+          <li><a href="properties.html?type=shop">店舗</a></li>
+          <li><a href="properties.html?type=office">オフィス</a></li>
+          <li><a href="properties.html?type=warehouse">倉庫・工場</a></li>
+          <li><a href="properties.html?type=building">一棟ビル</a></li>
+          <li><a href="properties.html?type=land">事業用地</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3>売買で探す</h3>
+        <ul>
+          <li><a href="properties.html?deal=sale&amp;type=building">一棟ビル</a></li>
+          <li><a href="properties.html?deal=sale&amp;type=office">オフィス</a></li>
+          <li><a href="properties.html?deal=sale&amp;type=shop">店舗</a></li>
+          <li><a href="properties.html?deal=sale&amp;type=warehouse">倉庫・工場</a></li>
+          <li><a href="properties.html?deal=sale&amp;type=land">事業用地</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3>サービス</h3>
+        <ul>
+          <li><a href="properties.html">物件検索</a></li>
+          <li><a href="favorites.html">お気に入り</a></li>
+          <li><a href="owner.html">物件オーナー様へ</a></li>
+          <li><a href="contact.html">お問い合わせ</a></li>
+          <li><a href="privacy.html">プライバシーポリシー</a></li>
+        </ul>
+      </div>
+    </nav>
+  </div>
+  <div class="container footer-legal">
+    <p>掲載物件はすべて当社が媒介（仲介）する物件です。ご相談・物件のご紹介・内見に費用はかかりません。<strong>ご成約時に、宅地建物取引業法に定める報酬額を仲介手数料として申し受けます</strong>（賃貸：賃料の1ヶ月分（税別）／売買：売買価格の3%＋6万円（税別））。</p>
+    <p>掲載内容は情報更新日時点のものです。取引条件は変更される場合がありますので、最新の条件はお問い合わせください。表示価格・賃料は特記のない限り消費税別です。</p>
+  </div>
+  <div class="container footer-bottom">
+    <p>&copy; <span id="current-year">2026</span> LOMETS Inc. All rights reserved.</p>
+    <p class="footer-note">掲載物件はデモ用のサンプルデータです。</p>
+  </div>
+</footer>
+
+<script src="data/properties.js"></script>
+<script src="js/portal.js"></script>
+<script src="js/search.js"></script>
+</body>
+</html>

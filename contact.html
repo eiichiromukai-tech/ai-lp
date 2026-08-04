@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>お問い合わせ・物件リクエスト｜REMAX COMPASS 物件ポータル</title>
+<meta name="description" content="出店をお考えの事業者様からのご相談・物件リクエストを承ります。ポータル未掲載の非公開物件からもお探しします。ご相談は無料です。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Zen+Kaku+Gothic+New:wght@400;500;700;900&display=swap" rel="stylesheet">
+<link rel="canonical" href="">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="REMAX COMPASS 物件ポータル">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:title" content="お問い合わせ・物件リクエスト｜REMAX COMPASS 物件ポータル">
+<meta property="og:description" content="">
+<meta property="og:url" content="">
+<meta property="og:image" content="images/COMPASS_BLACK_Primary.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="お問い合わせ・物件リクエスト｜REMAX COMPASS 物件ポータル">
+<meta name="twitter:description" content="">
+<meta name="twitter:image" content="images/COMPASS_BLACK_Primary.png">
+<link rel="icon" href="images/Balloon_Mark_RGB.png" type="image/png">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<a href="#main" class="skip-link">本文へスキップ</a>
+
+<header class="site-header" id="header">
+  <div class="container header-inner">
+    <a href="index.html" class="logo"><img src="images/COMPASS_BLACK_Primary.png" width="1200" height="600" alt="REMAX COMPASS" class="logo-img"></a>
+    <nav class="main-nav" id="main-nav" aria-label="メインナビゲーション">
+      <ul>
+        <li><a href="properties.html">賃貸で探す</a></li>
+        <li><a href="properties.html?deal=sale">売買で探す</a></li>
+        <li><a href="properties.html?type=shop">店舗</a></li>
+        <li><a href="properties.html?type=office">オフィス</a></li>
+        <li><a href="owner.html">オーナー様へ</a></li>
+        <li><a href="contact.html">お問い合わせ</a></li>
+      </ul>
+    </nav>
+    <div class="header-cta">
+      <a href="favorites.html" class="header-fav">お気に入り<span class="fav-count" data-fav-count hidden>0</span></a>
+      <a href="tel:0362615098" class="header-tel">
+        <span class="tel-label">お電話でのご相談</span>
+        <span class="tel-number">03-6261-5098</span>
+      </a>
+      <a href="contact.html" class="btn btn-primary">無料相談する</a>
+    </div>
+    <button class="nav-toggle" id="nav-toggle" aria-label="メニューを開く" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
+
+<p class="demo-notice" role="note">本サイトに掲載している物件情報は、ポータル機能のデモンストレーション用に作成したサンプルデータです。お問い合わせフォームも送信先は未設定です。</p>
+
+<main id="main" class="page-simple">
+  <div class="container">
+    <nav class="breadcrumb" aria-label="パンくずリスト">
+      <ol>
+        <li><a href="index.html">ホーム</a></li>
+        <li aria-current="page">お問い合わせ</li>
+      </ol>
+    </nav>
+
+    <h1 class="page-title">お問い合わせ・物件リクエスト</h1>
+    <p class="page-lead">出店をお考えのエリア・業態・ご予算をお知らせください。ポータルに掲載していない非公開物件を含めて、条件に合う物件をお探しします。ご相談・物件のご紹介・内見に費用はかかりません。ご成約時に、宅地建物取引業法に定める仲介手数料を申し受けます。</p>
+
+    <div class="contact-layout">
+      <form class="inquiry-form contact-form" id="contact-form" novalidate>
+        <div class="form-row"><label for="c-name">お名前<span class="required">必須</span></label>
+          <input type="text" id="c-name" name="name" autocomplete="name" placeholder="山田 太郎" required>
+          <p class="field-error" data-error-for="c-name"></p></div>
+
+        <div class="form-row"><label for="c-company">会社名・屋号<span class="optional">任意</span></label>
+          <input type="text" id="c-company" name="company" autocomplete="organization" placeholder="株式会社〇〇"></div>
+
+        <div class="form-row"><label for="c-email">メールアドレス<span class="required">必須</span></label>
+          <input type="email" id="c-email" name="email" autocomplete="email" inputmode="email" placeholder="example@mail.com" required>
+          <p class="field-error" data-error-for="c-email"></p></div>
+
+        <div class="form-row form-row-full"><label for="c-address">ご住所<span class="optional">任意</span></label>
+          <input type="text" id="c-address" name="address" autocomplete="street-address" placeholder="例：東京都千代田区神田三崎町3-4-9 横山ビル3F">
+          <p class="field-hint">資料の郵送をご希望の場合にご記入ください。</p></div>
+
+        <div class="form-row"><label for="c-tel">電話番号<span class="optional">任意</span></label>
+          <input type="tel" id="c-tel" name="tel" autocomplete="tel" inputmode="tel" placeholder="090-0000-0000"></div>
+
+        <div class="form-row"><label for="c-type">ご希望の物件種別<span class="optional">任意</span></label>
+          <select id="c-type" name="type">
+            <option value="">選択してください</option>
+            <option value="shop">店舗</option>
+            <option value="office">オフィス</option>
+            <option value="warehouse">倉庫・工場</option>
+            <option value="building">一棟ビル</option>
+            <option value="land">事業用地</option>
+            <option value="other">未定・その他</option>
+          </select></div>
+
+        <div class="form-row"><label for="c-area">ご希望エリア<span class="optional">任意</span></label>
+          <input type="text" id="c-area" name="area" placeholder="例：渋谷区・港区、山手線沿線 など"></div>
+
+        <div class="form-row"><label for="c-budget">ご予算（月額賃料）<span class="optional">任意</span></label>
+          <select id="c-budget" name="budget">
+            <option value="">選択してください</option>
+            <option value="30">〜30万円</option>
+            <option value="50">30〜50万円</option>
+            <option value="100">50〜100万円</option>
+            <option value="200">100〜200万円</option>
+            <option value="201">200万円〜</option>
+          </select></div>
+
+        <div class="form-row"><label for="c-tsubo">ご希望面積<span class="optional">任意</span></label>
+          <input type="text" id="c-tsubo" name="tsubo" placeholder="例：20〜30坪"></div>
+
+        <div class="form-row form-row-full"><label for="c-message">ご相談内容<span class="required">必須</span></label>
+          <textarea id="c-message" name="message" rows="6" placeholder="想定業態、希望出店時期、現在の検討状況などをご記入ください。お気に入りに登録された物件がある場合は自動で添付されます。" required></textarea>
+          <p class="field-error" data-error-for="c-message"></p></div>
+
+        <div class="form-row form-row-full" id="fav-attach-row" hidden>
+          <p class="fav-attach">お気に入り登録中の物件<span id="fav-attach-count"></span>件を、お問い合わせに添付します。</p>
+          <ul class="fav-attach-list" id="fav-attach-list"></ul>
+        </div>
+
+        <div class="form-row form-row-full consent-row">
+          <label class="consent-label" for="c-consent">
+            <input type="checkbox" id="c-consent" name="consent" required>
+            <span><a href="privacy.html" target="_blank" rel="noopener">プライバシーポリシー</a>に同意し、物件情報のご案内（メール・郵送等）を受け取ることに同意します<span class="required">必須</span></span>
+          </label>
+          <p class="field-error" data-error-for="c-consent"></p>
+        </div>
+
+        <div class="form-row form-row-full">
+          <ul class="trust-signals">
+            <li>2営業日以内にご返信します</li>
+            <li>しつこい営業電話はいたしません</li>
+            <li>ご入力内容は物件のご提案・ご案内に利用します</li>
+          </ul>
+          <button type="submit" class="btn btn-primary btn-lg" id="contact-submit">この内容で送信する</button>
+          <p class="form-status" id="contact-status" role="status"></p>
+        </div>
+      </form>
+
+      <aside class="contact-side">
+        <div class="side-card">
+          <h2>お電話でのご相談</h2>
+          <a href="tel:0362615098" class="side-tel"><strong>03-6261-5098</strong><small>平日 9:30〜18:30</small></a>
+          <p class="side-note">物件番号がお決まりの場合は、番号をお伝えいただくとスムーズです。</p>
+        </div>
+        <div class="side-card">
+          <h2>会社概要</h2>
+          <table class="company-table">
+            <tbody>
+              <tr><th>会社名</th><td>株式会社ロメッツ<br>（屋号：REMAX COMPASS）</td></tr>
+              <tr><th>設立</th><td>2022年8月</td></tr>
+              <tr><th>代表者</th><td>代表取締役　向井 瑛一郎</td></tr>
+              <tr><th>所在地</th><td>〒101-0061<br>東京都千代田区神田三崎町三丁目4番9号 横山ビル3F</td></tr>
+              <tr><th>電話番号</th><td>03-6261-5098</td></tr>
+              <tr><th>事業内容</th><td>不動産の賃貸・仲介・売買・保有及び運用／商業施設に関連する業務の企画・コンサルティング</td></tr>
+              <tr><th>免許番号</th><td>東京都知事(1)第110605号</td></tr>
+              <tr><th>加盟</th><td>REMAX（世界110ヶ国以上、2025年7月正式加盟）</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </aside>
+    </div>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div class="container footer-inner">
+    <div class="footer-brand">
+      <img src="images/COMPASS_CREAM_Primary.png" width="1200" height="600" alt="REMAX COMPASS" class="footer-logo">
+      <p class="footer-company">株式会社ロメッツ（屋号：REMAX COMPASS）</p>
+      <p class="footer-address">〒101-0061 東京都千代田区神田三崎町三丁目4番9号 横山ビル3F<br>TEL 03-6261-5098／宅地建物取引業免許番号 東京都知事(1)第110605号</p>
+    </div>
+    <nav class="footer-nav" aria-label="フッターナビゲーション">
+      <div>
+        <h3>賃貸で探す</h3>
+        <ul>
+          <li><a href="properties.html?type=shop">店舗</a></li>
+          <li><a href="properties.html?type=office">オフィス</a></li>
+          <li><a href="properties.html?type=warehouse">倉庫・工場</a></li>
+          <li><a href="properties.html?type=building">一棟ビル</a></li>
+          <li><a href="properties.html?type=land">事業用地</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3>売買で探す</h3>
+        <ul>
+          <li><a href="properties.html?deal=sale&amp;type=building">一棟ビル</a></li>
+          <li><a href="properties.html?deal=sale&amp;type=office">オフィス</a></li>
+          <li><a href="properties.html?deal=sale&amp;type=shop">店舗</a></li>
+          <li><a href="properties.html?deal=sale&amp;type=warehouse">倉庫・工場</a></li>
+          <li><a href="properties.html?deal=sale&amp;type=land">事業用地</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3>サービス</h3>
+        <ul>
+          <li><a href="properties.html">物件検索</a></li>
+          <li><a href="favorites.html">お気に入り</a></li>
+          <li><a href="owner.html">物件オーナー様へ</a></li>
+          <li><a href="contact.html">お問い合わせ</a></li>
+          <li><a href="privacy.html">プライバシーポリシー</a></li>
+        </ul>
+      </div>
+    </nav>
+  </div>
+  <div class="container footer-legal">
+    <p>掲載物件はすべて当社が媒介（仲介）する物件です。ご相談・物件のご紹介・内見に費用はかかりません。<strong>ご成約時に、宅地建物取引業法に定める報酬額を仲介手数料として申し受けます</strong>（賃貸：賃料の1ヶ月分（税別）／売買：売買価格の3%＋6万円（税別））。</p>
+    <p>掲載内容は情報更新日時点のものです。取引条件は変更される場合がありますので、最新の条件はお問い合わせください。表示価格・賃料は特記のない限り消費税別です。</p>
+  </div>
+  <div class="container footer-bottom">
+    <p>&copy; <span id="current-year">2026</span> LOMETS Inc. All rights reserved.</p>
+    <p class="footer-note">掲載物件はデモ用のサンプルデータです。</p>
+  </div>
+</footer>
+
+<script src="data/properties.js"></script>
+<script src="js/portal.js"></script>
+<script src="js/contact.js"></script>
+</body>
+</html>

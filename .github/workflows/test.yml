@@ -1,0 +1,52 @@
+# =====================================================
+# 変更のたびにサイトが壊れていないかを自動で確認します。
+#
+#   ・push とプルリクエストのたびに実行されます
+#   ・実際のブラウザ（Chromium）で全ページを開いて確認します
+#   ・失敗すると Actions タブに赤く出ます。ログに日本語でどの項目が
+#     失敗したか出るので、そこを直してから公開してください
+#
+# 手元で同じものを実行するには:
+#   npm install
+#   npx playwright install --with-deps chromium
+#   npm test
+# =====================================================
+name: テスト
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+
+      - name: 依存をインストール
+        run: npm ci
+
+      - name: ブラウザをインストール
+        run: npx playwright install --with-deps chromium
+
+      - name: データの整合性を確認
+        run: node tools/csv-to-properties.js --check
+
+      - name: 生成物が最新か確認
+        run: |
+          node tools/csv-to-properties.js
+          if ! git diff --quiet -- data/properties.js sitemap.xml robots.txt; then
+            echo "::error::data/properties.js または sitemap.xml が最新ではありません。"
+            echo "手元で node tools/csv-to-properties.js を実行し、結果をコミットしてください。"
+            git diff --stat -- data/properties.js sitemap.xml robots.txt
+            exit 1
+          fi
+
+      - name: サイトのテスト
+        run: npm test
