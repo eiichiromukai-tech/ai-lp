@@ -162,6 +162,14 @@ function section(title) { console.log('\n' + title); }
       (await page.locator('.fee-note').textContent()).indexOf('宅地建物取引業法に定める報酬額') !== -1);
     check('賃貸の手数料額を明示している',
       (await page.locator('.spec-table').textContent()).indexOf('月額賃料の1ヶ月分（税別）') !== -1);
+    check('築年月を年月で表示している（表示規約）', has('築年月'));
+    check('築年月に月まで出ている',
+      /\d{4}年\d{1,2}月/.test(await page.evaluate(function () {
+        var tr = [].filter.call(document.querySelectorAll('.spec-table tr'), function (t) {
+          return t.children[0].textContent.trim() === '築年月';
+        })[0];
+        return tr ? tr.children[1].textContent : '';
+      })));
     check('写真がない物件はイメージである旨を明示',
       (await page.locator('.gallery-note').textContent()).indexOf('イメージイラスト') !== -1);
     check('フッターに手数料と免許の共通表示がある',

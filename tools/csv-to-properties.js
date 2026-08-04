@@ -120,6 +120,7 @@ function renderProperty(p) {
   lines.push('      floor: ' + q(p.floor) + ',');
   lines.push('      floorsTotal: ' + p.floorsTotal + ',');
   lines.push('      builtYear: ' + (p.builtYear == null ? 'null' : p.builtYear) + ',');
+  if (p.builtMonth) lines.push('      builtMonth: ' + p.builtMonth + ',');
   lines.push('      structure: ' + q(p.structure) + ',');
   if (p.zoning) lines.push('      zoning: ' + q(p.zoning) + ',');
   if (p.buildingCoverage != null) lines.push('      buildingCoverage: ' + p.buildingCoverage + ',');

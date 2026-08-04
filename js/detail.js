@@ -186,7 +186,7 @@
               row('面積', P.formatArea(p)) +
               row('階数', p.floor + (p.floorsTotal ? '（地上' + p.floorsTotal + '階建）' : '')) +
               row('構造', p.structure) +
-              row('築年', p.builtYear ? p.builtYear + '年' : '—') +
+              row('築年月', P.formatBuilt(p)) +
               (p.zoning ? row('用途地域', p.zoning) : '') +
               (p.buildingCoverage != null || p.floorAreaRatio != null
                 ? row('建ぺい率／容積率',

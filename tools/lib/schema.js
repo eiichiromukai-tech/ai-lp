@@ -73,7 +73,7 @@ const COLUMNS = [
   { key: 'areaTsubo', header: '面積(坪)' },
   { key: 'floor', header: '階数' },
   { key: 'floorsTotal', header: '建物階数' },
-  { key: 'builtYear', header: '築年' },
+  { key: 'built', header: '築年月' },
   { key: 'structure', header: '構造' },
   { key: 'zoning', header: '用途地域' },
   { key: 'buildingCoverage', header: '建ぺい率(%)' },
@@ -131,7 +131,12 @@ function toRow(p) {
       case 'access': return encodeAccess(p.access);
       case 'features': return encodeList(p.features);
       case 'usage': return encodeList(p.usage);
-      case 'builtYear': return p.builtYear == null ? '' : p.builtYear;
+      /* 築年月は YYYY-MM で書き出す（月が分からない物件は YYYY だけ） */
+      case 'built':
+        if (p.builtYear == null) return '';
+        return p.builtMonth
+          ? p.builtYear + '-' + String(p.builtMonth).padStart(2, '0')
+          : String(p.builtYear);
       case 'buildingCoverage': case 'floorAreaRatio':
         return p[col.key] == null ? '' : p[col.key];
       case 'contractTerm': return sale ? '' : (p.contractTerm || '');
@@ -253,8 +258,31 @@ function fromRow(cells, index, errors, warnings) {
   p.floor = get('floor') || '—';
   p.floorsTotal = num(get('floorsTotal'), '建物階数', rowLabel, errors);
 
-  const builtYear = get('builtYear');
-  p.builtYear = builtYear === '' ? null : num(builtYear, '築年', rowLabel, errors);
+  /* 築年月。「2005-04」「2005/4」「2005年4月」「2005」のいずれでも受け付ける。
+     不動産の表示に関する公正競争規約では建築年月の表示が求められるため、
+     年だけの入力には警告を出す。 */
+  const built = get('built');
+  p.builtYear = null;
+  p.builtMonth = null;
+  if (built !== '') {
+    const m = /^(\d{4})(?:\s*[-/年.]\s*(\d{1,2})\s*月?)?$/.exec(built.replace(/\s+/g, ''));
+    if (!m) {
+      errors.push(rowLabel + '築年月「' + built + '」の形式が不正です（2005-04 のように年-月で入力してください）');
+    } else {
+      p.builtYear = Number(m[1]);
+      if (m[2] != null) {
+        const mm = Number(m[2]);
+        if (mm < 1 || mm > 12) {
+          errors.push(rowLabel + '築年月「' + built + '」の月が1〜12の範囲外です');
+        } else {
+          p.builtMonth = mm;
+        }
+      } else {
+        warnings.push(rowLabel + '築年月が年だけです（' + built +
+          '）。分かる場合は「' + built + '-04」のように月まで入力してください');
+      }
+    }
+  }
 
   p.structure = get('structure');
 
@@ -319,7 +347,7 @@ function fromRow(cells, index, errors, warnings) {
     warnings.push(rowLabel + '面積が' + p.areaTsubo + '坪です。m²で入力していませんか');
   }
   if (p.builtYear != null && Number.isFinite(p.builtYear) && (p.builtYear < 1900 || p.builtYear > 2100)) {
-    warnings.push(rowLabel + '築年「' + p.builtYear + '」を確認してください');
+    warnings.push(rowLabel + '築年月の年「' + p.builtYear + '」を確認してください');
   }
   if (!p.access.length) warnings.push(rowLabel + '交通が空です');
 

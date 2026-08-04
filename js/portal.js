@@ -162,6 +162,12 @@
     return p.areaTsubo.toFixed(1) + '坪（' + p.areaSqm.toFixed(1) + 'm²）';
   }
 
+  /* 築年月。月が分からない物件は年だけ出す */
+  function formatBuilt(p) {
+    if (!p.builtYear) return '—';
+    return p.builtYear + '年' + (p.builtMonth ? p.builtMonth + '月' : '');
+  }
+
   function formatDate(iso) {
     var d = iso.split('-');
     return d[0] + '年' + Number(d[1]) + '月' + Number(d[2]) + '日';
@@ -813,6 +819,7 @@
     formatYen: formatYen,
     formatMonths: formatMonths,
     formatArea: formatArea,
+    formatBuilt: formatBuilt,
     formatDate: formatDate,
     nearestAccess: nearestAccess,
     minWalk: minWalk,
