@@ -203,6 +203,20 @@ function section(title) { console.log('\n' + title); }
     check('フッターに手数料と免許の共通表示がある',
       (await page.locator('.footer-legal').textContent()).indexOf('仲介手数料') !== -1);
 
+    /* REMAXフランチャイズの必須表記。全ページに入っていないと規約違反になる */
+    const FC = 'Each Office Independently Owned and Operated.';
+    const fcPages = ['/index.html', '/properties.html', '/property.html?id=CMP-1025',
+      '/contact.html', '/favorites.html', '/owner.html', '/privacy.html', '/404.html'];
+    const fcMissing = [];
+    for (const path of fcPages) {
+      await go(path); await settle(250);
+      if ((await page.locator('.footer-franchise').count()) === 0 ||
+          (await page.locator('.footer-franchise').textContent()).indexOf(FC) === -1) {
+        fcMissing.push(path);
+      }
+    }
+    check('全ページにフランチャイズの必須表記がある', fcMissing.length === 0, fcMissing.join(', '));
+
     await go('/property.html?id=CMP-2013'); await settle(700);
     const saleRows = await page.evaluate(function () {
       return [].map.call(document.querySelectorAll('.spec-table tr'), function (tr) {

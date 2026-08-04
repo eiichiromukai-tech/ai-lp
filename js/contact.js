@@ -5,6 +5,7 @@
   var P = window.Portal;
 
   var REQUIRED = [
+    { id: 'c-purpose', message: 'ご相談の種類をお選びください' },
     { id: 'c-name', message: 'お名前をご入力ください' },
     { id: 'c-email', message: 'メールアドレスをご入力ください' },
     { id: 'c-message', message: 'ご相談内容をご入力ください' }
@@ -94,27 +95,36 @@
         return;
       }
 
+      /* 問い合わせの種類が分かると、担当の割り振りと初動が変わる */
+      function purposeLabel() {
+        var v = value('c-purpose');
+        if (v === 'owner') return '【オーナー様のご相談】';
+        if (v === 'tenant') return '【物件リクエスト】';
+        return '【お問い合わせ】';
+      }
+
       P.runInquirySubmit({
         name: 'contact',
         submit: submit,
         status: status,
         label: 'この内容で送信する',
-        subject: '【物件リクエスト】' + value('c-name') + '様',
+        subject: purposeLabel() + ' ' + value('c-name') + '様',
         fields: function () {
           var favs = P.getFavorites().map(P.findById).filter(Boolean);
           return {
-            _subject: '【REMAX COMPASS 物件ポータル】物件リクエスト（' + value('c-name') + '様）',
+            _subject: '【REMAX COMPASS 物件ポータル】' + purposeLabel() + '（' + value('c-name') + '様）',
             _template: 'table',
             _captcha: 'false',
             '送信元': 'お問い合わせページ',
+            'ご相談の種類': purposeLabel(),
             'お名前': value('c-name'),
             '会社名・屋号': value('c-company'),
             'メールアドレス': value('c-email'),
             'ご住所': value('c-address'),
             '電話番号': value('c-tel'),
-            'ご希望の物件種別': value('c-type'),
-            'ご希望エリア': value('c-area'),
-            'ご予算（月額賃料）': value('c-budget'),
+            '物件種別': value('c-type'),
+            'エリア': value('c-area'),
+            '月額賃料の目安': value('c-budget'),
             'ご希望面積': value('c-tsubo'),
             'ご相談内容': value('c-message'),
             'お気に入り物件': favs.map(function (p) { return p.id + ' ' + p.title; }).join(' / '),

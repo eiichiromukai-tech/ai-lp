@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>お問い合わせ・物件リクエスト｜REMAX COMPASS 物件ポータル</title>
-<meta name="description" content="出店をお考えの事業者様からのご相談・物件リクエストを承ります。ポータル未掲載の非公開物件からもお探しします。ご相談は無料です。">
+<title>お問い合わせ｜REMAX COMPASS 物件ポータル</title>
+<meta name="description" content="物件をお探しの事業者様、物件をお持ちのオーナー様、どちらのご相談も承ります。非公開物件のご紹介、テナント募集・賃料査定にも対応します。ご相談は無料です。">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Zen+Kaku+Gothic+New:wght@400;500;700;900&display=swap" rel="stylesheet">
@@ -12,15 +12,17 @@
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="REMAX COMPASS 物件ポータル">
 <meta property="og:locale" content="ja_JP">
-<meta property="og:title" content="お問い合わせ・物件リクエスト｜REMAX COMPASS 物件ポータル">
+<meta property="og:title" content="お問い合わせ｜REMAX COMPASS 物件ポータル">
 <meta property="og:description" content="">
 <meta property="og:url" content="">
 <meta property="og:image" content="images/COMPASS_BLACK_Primary.png">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="お問い合わせ・物件リクエスト｜REMAX COMPASS 物件ポータル">
+<meta name="twitter:title" content="お問い合わせ｜REMAX COMPASS 物件ポータル">
 <meta name="twitter:description" content="">
 <meta name="twitter:image" content="images/COMPASS_BLACK_Primary.png">
-<link rel="icon" href="images/Balloon_Mark_RGB.png" type="image/png">
+<link rel="icon" href="favicon.ico" sizes="32x32">
+<link rel="icon" href="images/favicon-96.png" type="image/png" sizes="96x96">
+<meta name="theme-color" content="#000B35">
 <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -29,7 +31,7 @@
 
 <header class="site-header" id="header">
   <div class="container header-inner">
-    <a href="index.html" class="logo"><img src="images/COMPASS_BLACK_Primary.png" width="1200" height="600" alt="REMAX COMPASS" class="logo-img"></a>
+    <a href="index.html" class="logo"><img src="images/logo-header.png" width="240" height="120" alt="REMAX COMPASS" class="logo-img"></a>
     <nav class="main-nav" id="main-nav" aria-label="メインナビゲーション">
       <ul>
         <li><a href="properties.html">賃貸で探す</a></li>
@@ -65,8 +67,8 @@
       </ol>
     </nav>
 
-    <h1 class="page-title">お問い合わせ・物件リクエスト</h1>
-    <p class="page-lead">出店をお考えのエリア・業態・ご予算をお知らせください。ポータルに掲載していない非公開物件を含めて、条件に合う物件をお探しします。ご相談・物件のご紹介・内見に費用はかかりません。ご成約時に、宅地建物取引業法に定める仲介手数料を申し受けます。</p>
+    <h1 class="page-title">お問い合わせ</h1>
+    <p class="page-lead"><strong>物件をお探しの事業者様</strong>も、<strong>物件をお持ちのオーナー様</strong>も、こちらからご相談ください。お探しの場合は、ポータルに掲載していない非公開物件を含めて条件に合う物件をご提案します。お持ちの物件のご相談は、テナント募集・賃料査定・資産活用の方針づくりからお手伝いします。ご相談・物件のご紹介・内見・査定に費用はかかりません。ご成約時に、宅地建物取引業法に定める仲介手数料を申し受けます。</p>
 
     <div class="contact-layout">
       <form class="inquiry-form contact-form" id="contact-form" novalidate>
@@ -88,7 +90,17 @@
         <div class="form-row"><label for="c-tel">電話番号<span class="optional">任意</span></label>
           <input type="tel" id="c-tel" name="tel" autocomplete="tel" inputmode="tel" placeholder="090-0000-0000"></div>
 
-        <div class="form-row"><label for="c-type">ご希望の物件種別<span class="optional">任意</span></label>
+        <div class="form-row form-row-full"><label for="c-purpose">ご相談の種類<span class="required">必須</span></label>
+          <select id="c-purpose" name="purpose" required>
+            <option value="">選択してください</option>
+            <option value="tenant">物件を探している（借りたい・買いたい）</option>
+            <option value="owner">物件を貸したい・売りたい（オーナー様）</option>
+            <option value="other">その他のご相談</option>
+          </select>
+          <p class="field-error" data-error-for="c-purpose"></p>
+          <p class="form-note">以下の項目は、あてはまるものだけご記入ください。</p></div>
+
+        <div class="form-row"><label for="c-type">物件種別<span class="optional">任意</span></label>
           <select id="c-type" name="type">
             <option value="">選択してください</option>
             <option value="shop">店舗</option>
@@ -99,10 +111,10 @@
             <option value="other">未定・その他</option>
           </select></div>
 
-        <div class="form-row"><label for="c-area">ご希望エリア<span class="optional">任意</span></label>
-          <input type="text" id="c-area" name="area" placeholder="例：渋谷区・港区、山手線沿線 など"></div>
+        <div class="form-row"><label for="c-area">エリア<span class="optional">任意</span></label>
+          <input type="text" id="c-area" name="area" placeholder="お探しのエリア／物件の所在地"></div>
 
-        <div class="form-row"><label for="c-budget">ご予算（月額賃料）<span class="optional">任意</span></label>
+        <div class="form-row"><label for="c-budget">月額賃料の目安<span class="optional">任意</span></label>
           <select id="c-budget" name="budget">
             <option value="">選択してください</option>
             <option value="30">〜30万円</option>
@@ -160,7 +172,6 @@
               <tr><th>電話番号</th><td>03-6261-5098</td></tr>
               <tr><th>事業内容</th><td>不動産の賃貸・仲介・売買・保有及び運用／商業施設に関連する業務の企画・コンサルティング</td></tr>
               <tr><th>免許番号</th><td>東京都知事(1)第110605号</td></tr>
-              <tr><th>加盟</th><td>REMAX（世界110ヶ国以上、2025年7月正式加盟）</td></tr>
             </tbody>
           </table>
         </div>
@@ -172,7 +183,7 @@
 <footer class="site-footer">
   <div class="container footer-inner">
     <div class="footer-brand">
-      <img src="images/COMPASS_CREAM_Primary.png" width="1200" height="600" alt="REMAX COMPASS" class="footer-logo">
+      <img src="images/logo-footer.png" width="272" height="136" alt="REMAX COMPASS" class="footer-logo">
       <p class="footer-company">株式会社ロメッツ（屋号：REMAX COMPASS）</p>
       <p class="footer-address">〒101-0061 東京都千代田区神田三崎町三丁目4番9号 横山ビル3F<br>TEL 03-6261-5098／宅地建物取引業免許番号 東京都知事(1)第110605号</p>
     </div>
@@ -214,6 +225,7 @@
     <p>掲載内容は情報更新日時点のものです。取引条件は変更される場合がありますので、最新の条件はお問い合わせください。表示価格・賃料は特記のない限り消費税別です。</p>
   </div>
   <div class="container footer-bottom">
+    <p class="footer-franchise">Each Office Independently Owned and Operated.</p>
     <p>&copy; <span id="current-year">2026</span> LOMETS Inc. All rights reserved.</p>
     <p class="footer-note">掲載物件はデモ用のサンプルデータです。</p>
   </div>
