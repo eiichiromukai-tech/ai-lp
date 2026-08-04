@@ -366,7 +366,6 @@ function section(title) { console.log('\n' + title); }
     }
   }
   runSub('microCMS取り込み', 'cms.js', '物件と写真の取り込み（検証・ページ送り・エラー処理）');
-  runSub('Googleドライブ同期', 'drive.js', '写真の同期（追加・更新・削除・エラー処理）');
 
   console.log('\n' + '='.repeat(50));
   if (failures.length) {
