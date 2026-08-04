@@ -54,10 +54,18 @@ try {
   console.error('エラー: スプレッドシートを取得できませんでした。');
   console.error('  ' + String(e.message || e).split('\n')[0]);
   console.error('');
-  console.error('確認してください:');
-  console.error('  ・スプレッドシートの共有設定が「リンクを知っている全員」→「閲覧者」になっているか');
-  console.error('  ・URLが正しいか（' + csvUrl + '）');
-  console.error('  ・ネットワークに接続できているか');
+  if (e.blockedByNetwork) {
+    /* 接続そのものが張れていない。共有設定は関係ない */
+    console.error('Googleに接続できていません。ネットワーク側で遮断されている可能性があります。');
+    console.error('  ・社内プロキシやファイアウォールで docs.google.com が許可されているか');
+    console.error('  ・プロキシを使う場合は HTTPS_PROXY 環境変数が設定されているか');
+    console.error('  ※ この状態はスプレッドシートの共有設定とは無関係です。');
+  } else {
+    console.error('Googleがアクセスを拒否しました（HTTP ' + e.httpStatus + '）。共有設定をご確認ください。');
+    console.error('  ・［共有］→「一般的なアクセス」が「リンクを知っている全員」→「閲覧者」になっているか');
+    console.error('  ・シートが削除・移動されていないか');
+    console.error('  ・URLが正しいか（' + csvUrl + '）');
+  }
   process.exit(1);
 }
 

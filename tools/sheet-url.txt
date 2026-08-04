@@ -12,4 +12,4 @@
 #   node tools/fetch-sheet.js
 #
 # ↓ この行の下にURLを貼ってください
-https://docs.google.com/spreadsheets/d/16nrsgVLg1tzu_zaKS-s5_8eJQ4QNbzdF1jHsIbBpEmY/edit?usp=sharing
+https://docs.google.com/spreadsheets/d/16nrsgVLg1tzu_zaKS-s5_8eJQ4QNbzdF1jHsIbBpEmY/edit?gid=1002587657#gid=1002587657

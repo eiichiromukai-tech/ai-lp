@@ -12,6 +12,7 @@
 
 const fs = require('fs');
 const path = require('path');
+const os = require('os');
 const { execFileSync } = require('child_process');
 
 const URL_FILE = path.join(__dirname, '..', 'sheet-url.txt');
@@ -48,13 +49,39 @@ function toCsvUrl(url) {
   return '';
 }
 
-/* curl で取得する（社内プロキシ環境でも動くように） */
+/* curl で取得する（社内プロキシ環境でも動くように）。
+   --fail を使うとプロキシのCONNECT拒否もHTTP 403として見えてしまい、
+   「ネットワークで遮断された」のか「Googleに拒否された」のか区別できない。
+   そのため本文はファイルに落とし、ステータスコードだけを受け取って判定する。
+   接続自体が張れていない場合、curl は http_code に 000 を返す。 */
 function download(csvUrl) {
-  const out = execFileSync('curl', [
-    '--fail', '--silent', '--show-error', '--location',
-    '--max-time', '60', csvUrl
-  ], { maxBuffer: 64 * 1024 * 1024 });
-  return out.toString('utf8');
+  const tmp = path.join(os.tmpdir(), 'portal-sheet-' + process.pid + '.csv');
+  try {
+    let status = 0;
+    let stderr = '';
+    try {
+      const out = execFileSync('curl', [
+        '--silent', '--show-error', '--location', '--max-time', '60',
+        '--output', tmp, '--write-out', '%{http_code}', csvUrl
+      ], { maxBuffer: 1024 * 1024, stdio: ['ignore', 'pipe', 'pipe'] });
+      status = Number(String(out).trim()) || 0;
+    } catch (e) {
+      stderr = String(e.stderr || '').trim();
+      status = 0;
+    }
+
+    if (status === 200) return fs.readFileSync(tmp, 'utf8');
+
+    const err = new Error(status ? 'HTTP ' + status : (stderr || 'ネットワークに接続できません'));
+    err.httpStatus = status;
+    /* 000 は接続そのものが張れていない＝プロキシ・ファイアウォール・DNSの問題。
+       共有設定とは無関係なので、案内を分けるために印を付ける。 */
+    err.blockedByNetwork = status === 0;
+    err.stderrText = stderr;
+    throw err;
+  } finally {
+    try { fs.unlinkSync(tmp); } catch (ignore) { /* 消せなくても支障なし */ }
+  }
 }
 
 module.exports = {
