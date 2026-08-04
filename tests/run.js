@@ -311,6 +311,17 @@ function section(title) { console.log('\n' + title); }
     server.close();
   }
 
+  /* Googleドライブ同期の検証（APIをモックして実行する） */
+  section('Googleドライブ同期');
+  try {
+    require('child_process').execFileSync(process.execPath,
+      [require('path').join(__dirname, 'drive.js')], { stdio: 'pipe' });
+    check('写真の同期（追加・更新・削除・エラー処理）', true);
+  } catch (e) {
+    check('写真の同期（追加・更新・削除・エラー処理）', false,
+      String(e.stdout || '').split('\n').filter(function (l) { return l.indexOf('✗') !== -1; }).join(' / '));
+  }
+
   console.log('\n' + '='.repeat(50));
   if (failures.length) {
     console.log('失敗 ' + failures.length + '件 / 成功 ' + passed + '件');

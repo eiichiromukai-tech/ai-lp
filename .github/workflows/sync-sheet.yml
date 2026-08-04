@@ -40,7 +40,11 @@ jobs:
         with:
           node-version: '22'
 
-      - name: スプレッドシートを取り込んで反映
+      - name: スプレッドシートと写真を取り込んで反映
+        env:
+          # 写真をGoogleドライブから取り込む場合に設定します。
+          # 未設定でもスプレッドシートの反映は動きます（写真は images/properties/ のまま）。
+          GOOGLE_SERVICE_ACCOUNT_JSON: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_JSON }}
         run: node tools/fetch-sheet.js
 
       - name: 変更があればコミットする
