@@ -278,6 +278,18 @@ function convert(rec) {
       /^[a-z0-9_-]+$/.test(toContentId('YOKOHAMA-CONNECT-SQ-15-17F')),
       toContentId('YOKOHAMA-CONNECT-SQ-15-17F'));
 
+    /* セレクトフィールドは、1つしか選べない項目でも配列で送る必要がある。
+       文字列のまま送ると microCMS に "has unexpected data type" で弾かれる。
+       スキーマにセレクトを足したときは、送信側にも足す必要がある。 */
+    const singleSelects = gen.apiFields
+      .filter(f => f.kind === 'select' && !f.multipleSelect)
+      .map(f => f.fieldId);
+    const wrapBlock = /\['deal'[\s\S]*?\]\.forEach/.exec(impSrc);
+    const wrapList = wrapBlock ? (wrapBlock[0].match(/'(\w+)'/g) || []).map(x => x.slice(1, -1)) : [];
+    const notWrapped = singleSelects.filter(f => wrapList.indexOf(f) === -1);
+    check('単一選択のセレクトを配列で送っている', notWrapped.length === 0,
+      '配列にしていない: ' + notWrapped.join(', '));
+
     console.log('\nエラーの伝えかた');
     listStatus = 401;
     let msg = '';

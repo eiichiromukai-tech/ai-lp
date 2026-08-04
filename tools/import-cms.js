@@ -149,7 +149,12 @@ function toBody(rec) {
       if (Number.isFinite(n)) body[k] = n; else delete body[k];
     }
   });
-  /* 選択式・繰り返しは配列で送る */
+  /* セレクトフィールドは、1つしか選べない項目でも配列で送る。
+     文字列のまま送ると「has unexpected data type」で弾かれる。 */
+  ['deal', 'type', 'status', 'ward'].forEach(function (k) {
+    if (body[k] !== undefined) body[k] = [String(body[k])];
+  });
+  /* 複数選べる項目と繰り返しフィールド */
   body.features = rec.features;
   body.usage = rec.usage;
   body.access = rec.access;
