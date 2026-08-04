@@ -50,7 +50,7 @@
     analyticsId: '',
 
     /* デモ用サンプルデータの注意書きを出すかどうか。実データに入れ替えたら false に */
-    demoNotice: true
+    demoNotice: false
   };
 
   /* ---------- 地図の設定 ----------
