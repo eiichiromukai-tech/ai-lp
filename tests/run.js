@@ -11,7 +11,29 @@
 'use strict';
 
 const { chromium } = require('playwright');
+
+/* テストは tests/fixture/ の固定データで動かす。
+   実際に掲載している物件の件数が変わってもテストが壊れないようにするため。
+   （サーバーは SITE_OVERLAY にあるファイルを優先して返す） */
+buildFixture();
+process.env.SITE_OVERLAY = require('path').join(__dirname, 'fixture', 'site');
+
 const server = require('../tools/serve.js');
+
+function buildFixture() {
+  const path = require('path');
+  const dir = path.join(__dirname, 'fixture');
+  require('child_process').execFileSync(process.execPath, [
+    path.join(__dirname, '..', 'tools', 'csv-to-properties.js'),
+    '--csv', path.join(dir, 'properties.csv'),
+    '--out-dir', path.join(dir, 'site')
+  ], {
+    stdio: 'pipe',
+    env: Object.assign({}, process.env, {
+      IMAGES_DIR: path.join(dir, 'site', 'images', 'properties')
+    })
+  });
+}
 
 const PORT = Number(process.env.PORT || 8080);
 const BASE = 'http://localhost:' + PORT;

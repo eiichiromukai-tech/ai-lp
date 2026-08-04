@@ -19,8 +19,20 @@ const schema = require('./lib/schema');
 const images = require('./lib/images');
 const seo = require('./lib/seo');
 
-const CSV_PATH = path.join(__dirname, '..', 'data', 'properties.csv');
-const JS_PATH = path.join(__dirname, '..', 'data', 'properties.js');
+/* テストは固定のサンプルデータで動かすため、入力と出力先を差し替えられるようにしてある。
+   指定がなければ、これまでどおり data/ の実データを読み書きする。
+     --csv <ファイル>    読み込むCSV
+     --out-dir <フォルダ> properties.js / sitemap.xml / robots.txt の書き出し先 */
+function argOf(name, fallback) {
+  const i = process.argv.indexOf(name);
+  return i !== -1 && process.argv[i + 1] ? path.resolve(process.argv[i + 1]) : fallback;
+}
+const DATA_DIR = path.join(__dirname, '..', 'data');
+const CSV_PATH = argOf('--csv', path.join(DATA_DIR, 'properties.csv'));
+const OUT_DIR = argOf('--out-dir', path.join(__dirname, '..'));
+const JS_PATH = path.join(OUT_DIR, 'data', 'properties.js');
+/* 書き出し先を変えるときも、雛形（マスタや設定）は実データから引き継ぐ */
+const TEMPLATE_PATH = path.join(DATA_DIR, 'properties.js');
 const CHECK_ONLY = process.argv.includes('--check');
 
 const BEGIN = '/* === PROPERTIES:BEGIN';
@@ -154,7 +166,7 @@ const block = [
   END
 ].join('\n');
 
-const source = fs.readFileSync(JS_PATH, 'utf8');
+const source = fs.readFileSync(TEMPLATE_PATH, 'utf8');
 const startAt = source.indexOf('  ' + BEGIN);
 const endAt = source.indexOf(END);
 if (startAt === -1 || endAt === -1) {
@@ -169,6 +181,7 @@ if (CHECK_ONLY) {
   process.exit(0);
 }
 
+fs.mkdirSync(path.dirname(JS_PATH), { recursive: true });
 fs.writeFileSync(JS_PATH, updated);
 
 /* 生成物が実際に読み込めるか確認する */
@@ -206,7 +219,7 @@ console.log('物件写真: ' + photoCount + '枚（' + withPhotos.length + '件�
 const sandbox2 = { window: {} };
 new Function('window', fs.readFileSync(JS_PATH, 'utf8'))(sandbox2.window);
 const data = sandbox2.window.PORTAL_DATA;
-const urlCount = seo.write(data.site.siteUrl, data.properties, data.prefectures);
+const urlCount = seo.write(data.site.siteUrl, data.properties, data.prefectures, OUT_DIR);
 console.log('sitemap.xml / robots.txt を更新しました（' + urlCount + 'URL）。');
 
 if (warnings.length) console.log('警告 ' + warnings.length + '件は内容をご確認ください。');

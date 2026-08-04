@@ -82,10 +82,12 @@ function build(siteUrl, properties, prefectures) {
   return { xml: xml, robots: robots, count: urls.length };
 }
 
-function write(siteUrl, properties, prefectures) {
+function write(siteUrl, properties, prefectures, outDir) {
   const out = build(siteUrl, properties, prefectures);
-  fs.writeFileSync(path.join(ROOT, 'sitemap.xml'), out.xml);
-  fs.writeFileSync(path.join(ROOT, 'robots.txt'), out.robots);
+  const dir = outDir || ROOT;
+  fs.mkdirSync(dir, { recursive: true });
+  fs.writeFileSync(path.join(dir, 'sitemap.xml'), out.xml);
+  fs.writeFileSync(path.join(dir, 'robots.txt'), out.robots);
   return out.count;
 }
 
