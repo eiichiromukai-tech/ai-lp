@@ -182,14 +182,29 @@
                   row('坪単価', p.tsuboUnitPrice ? p.tsuboUnitPrice.toLocaleString('ja-JP') + '円／坪' : '—') +
                   row('敷金・保証金', P.formatMonths(p.deposit)) +
                   row('礼金', P.formatMonths(p.keyMoney))) +
+              (sale ? '' : row('契約期間', p.contractTerm || 'お問い合わせください')) +
               row('面積', P.formatArea(p)) +
               row('階数', p.floor + (p.floorsTotal ? '（地上' + p.floorsTotal + '階建）' : '')) +
               row('構造', p.structure) +
               row('築年', p.builtYear ? p.builtYear + '年' : '—') +
+              (p.zoning ? row('用途地域', p.zoning) : '') +
+              (p.buildingCoverage != null || p.floorAreaRatio != null
+                ? row('建ぺい率／容積率',
+                    (p.buildingCoverage != null ? p.buildingCoverage + '%' : '—') + '／' +
+                    (p.floorAreaRatio != null ? p.floorAreaRatio + '%' : '—'))
+                : '') +
+              (p.privateRoad ? row('私道負担', p.privateRoad) : '') +
+              (p.buildingPermit ? row('建築確認番号', p.buildingPermit) : '') +
               row('用途', (p.usage || []).join('／') || '—') +
               row(sale ? '引渡し時期' : '入居可能時期', p.availableFrom) +
+              row('仲介手数料', sale
+                ? '売買価格の3%＋6万円（税別）を上限とする、宅地建物取引業法に定める報酬額'
+                : '月額賃料の1ヶ月分（税別）を上限とする、宅地建物取引業法に定める報酬額') +
               row('取引態様', '仲介') +
+              row('情報提供元', P.site.companyName + '（' + P.site.brandName + '）／宅地建物取引業免許 ' + P.site.license) +
               row('情報更新日', P.formatDate(p.updatedAt)) +
+              row('取引条件の有効期限', P.formatDate(p.validUntil) +
+                '（期限後は最新の条件をお問い合わせください）') +
             '</tbody></table>' +
           '</section>' +
 
@@ -202,11 +217,14 @@
               (sale
                 ? '<li><span class="flow-step">STEP 2</span><h3>資料のご開示</h3><p>謄本・図面・レントロール・修繕履歴などをお送りし、現地内覧を調整します。</p></li>' +
                   '<li><span class="flow-step">STEP 3</span><h3>買付・条件交渉</h3><p>買付証明書のご提出後、価格・引渡し条件を売主様と交渉します。</p></li>' +
-                  '<li><span class="flow-step">STEP 4</span><h3>売買契約・決済</h3><p>宅地建物取引士が重要事項をご説明のうえ契約を締結し、決済・引渡しを行います。</p></li>'
+                  '<li><span class="flow-step">STEP 4</span><h3>売買契約・決済</h3><p>宅地建物取引士が重要事項をご説明のうえ契約を締結し、決済・引渡しを行います。このときに仲介手数料を申し受けます。</p></li>'
                 : '<li><span class="flow-step">STEP 2</span><h3>詳細資料のご案内</h3><p>図面・現地写真・詳細条件をお送りし、ご希望に応じて内見を調整します。</p></li>' +
                   '<li><span class="flow-step">STEP 3</span><h3>条件交渉・申込</h3><p>賃料・フリーレント・契約期間などの条件をオーナー様と交渉します。</p></li>' +
-                  '<li><span class="flow-step">STEP 4</span><h3>重要事項説明・契約</h3><p>宅地建物取引士が重要事項をご説明のうえ、ご契約手続きを行います。</p></li>') +
+                  '<li><span class="flow-step">STEP 4</span><h3>重要事項説明・契約</h3><p>宅地建物取引士が重要事項をご説明のうえ、ご契約手続きを行います。このときに仲介手数料を申し受けます。</p></li>') +
             '</ol>' +
+            '<p class="fee-note">ご相談・物件のご紹介・内見に費用はかかりません。' +
+              '<strong>ご成約時のみ、宅地建物取引業法に定める報酬額の範囲内で仲介手数料を申し受けます</strong>' +
+              '（' + (sale ? '売買価格の3%＋6万円（税別）が上限' : '月額賃料の1ヶ月分（税別）が上限') + '）。</p>' +
           '</section>') +
         '</div>' +
 
@@ -262,6 +280,9 @@
       '<div class="form-row"><label for="i-email">メールアドレス<span class="required">必須</span></label>' +
         '<input type="email" id="i-email" name="email" autocomplete="email" inputmode="email" placeholder="example@mail.com" required>' +
         '<p class="field-error" data-error-for="i-email"></p></div>' +
+      '<div class="form-row form-row-full"><label for="i-address">ご住所<span class="optional">任意</span></label>' +
+        '<input type="text" id="i-address" name="address" autocomplete="street-address" placeholder="例：東京都千代田区神田三崎町3-4-9 横山ビル3F">' +
+        '<p class="field-hint">資料の郵送をご希望の場合にご記入ください。</p></div>' +
       '<div class="form-row"><label for="i-tel">電話番号<span class="optional">任意</span></label>' +
         '<input type="tel" id="i-tel" name="tel" autocomplete="tel" inputmode="tel" placeholder="090-0000-0000"></div>' +
       '<div class="form-row form-row-full"><label for="i-purpose">ご希望<span class="optional">任意</span></label>' +
@@ -275,7 +296,7 @@
         '<textarea id="i-message" name="message" rows="5" placeholder="想定業態、希望入居時期、ご予算などをご記入ください"></textarea></div>' +
       P.consentHtml('i-consent') +
       '<div class="form-row form-row-full">' +
-        '<ul class="trust-signals"><li>1営業日以内にご返信します</li><li>しつこい営業電話はいたしません</li><li>個人情報は相談対応以外に利用しません</li></ul>' +
+        '<ul class="trust-signals"><li>2営業日以内にご返信します</li><li>しつこい営業電話はいたしません</li><li>ご入力内容は物件のご提案・ご案内に利用します</li></ul>' +
         '<button type="submit" class="btn btn-primary btn-lg" id="inquiry-submit">この内容で問い合わせる</button>' +
         '<p class="form-status" id="inquiry-status" role="status"></p>' +
       '</div>' +
@@ -349,6 +370,7 @@
             'メールアドレス': value('i-email'),
             '電話番号': value('i-tel'),
             'ご希望': value('i-purpose'),
+            'ご住所': value('i-address'),
             'ご質問・ご要望': value('i-message'),
             '同意': 'プライバシーポリシーに同意済み'
           };
@@ -389,8 +411,13 @@
       '<figcaption id="gallery-caption">' +
         (real
           ? (first.caption ? P.escapeHtml(first.caption) : '現地写真')
-          : '※ 画像は物件種別に基づくイメージです。現地写真・図面は個別にご案内します。') +
+          : '') +
       '</figcaption>' +
+      '<p class="gallery-note">' +
+        (real
+          ? '※ 掲載写真は当該物件を撮影したものです。撮影時期により現況と異なる場合があります。'
+          : '※ 現地写真は未掲載です。上の画像は物件種別に基づくイメージイラストで、当該物件の外観・内装とは異なります。現地写真・図面は個別にご案内します。') +
+      '</p>' +
     '</figure>';
   }
 

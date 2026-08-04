@@ -69,11 +69,17 @@ const COLUMNS = [
   { key: 'price', header: '販売価格(円)' },
   { key: 'yieldRate', header: '表面利回り(%)' },
   { key: 'tenure', header: '権利形態' },
+  { key: 'contractTerm', header: '契約期間' },
   { key: 'areaTsubo', header: '面積(坪)' },
   { key: 'floor', header: '階数' },
   { key: 'floorsTotal', header: '建物階数' },
   { key: 'builtYear', header: '築年' },
   { key: 'structure', header: '構造' },
+  { key: 'zoning', header: '用途地域' },
+  { key: 'buildingCoverage', header: '建ぺい率(%)' },
+  { key: 'floorAreaRatio', header: '容積率(%)' },
+  { key: 'privateRoad', header: '私道負担' },
+  { key: 'buildingPermit', header: '建築確認番号' },
   { key: 'features', header: 'こだわり条件' },
   { key: 'usage', header: '用途' },
   { key: 'availableFrom', header: '入居可能時期・引渡し時期' },
@@ -126,6 +132,9 @@ function toRow(p) {
       case 'features': return encodeList(p.features);
       case 'usage': return encodeList(p.usage);
       case 'builtYear': return p.builtYear == null ? '' : p.builtYear;
+      case 'buildingCoverage': case 'floorAreaRatio':
+        return p[col.key] == null ? '' : p[col.key];
+      case 'contractTerm': return sale ? '' : (p.contractTerm || '');
       /* 取引種別で使わない側の金額列は空欄で書き出す */
       case 'rent': case 'managementFee': case 'deposit': case 'keyMoney':
         return sale ? '' : (p[col.key] == null ? '' : p[col.key]);
@@ -248,6 +257,28 @@ function fromRow(cells, index, errors, warnings) {
   p.builtYear = builtYear === '' ? null : num(builtYear, '築年', rowLabel, errors);
 
   p.structure = get('structure');
+
+  /* 契約期間は不動産の表示に関する公正競争規約で賃貸の必須表示事項 */
+  p.contractTerm = isSale ? '' : get('contractTerm');
+  if (!isSale && !p.contractTerm) {
+    warnings.push(rowLabel + '契約期間が空です（賃貸では表示が必要な項目です）');
+  }
+
+  /* 売買・事業用地で必要になる法令上の制限。分かる範囲で入力してください */
+  p.zoning = get('zoning');
+  p.buildingCoverage = get('buildingCoverage') === '' ? null
+    : num(get('buildingCoverage'), '建ぺい率', rowLabel, errors);
+  p.floorAreaRatio = get('floorAreaRatio') === '' ? null
+    : num(get('floorAreaRatio'), '容積率', rowLabel, errors);
+  p.privateRoad = get('privateRoad');
+  p.buildingPermit = get('buildingPermit');
+
+  if (isSale && !p.zoning) {
+    warnings.push(rowLabel + '用途地域が空です（売買では表示が求められる項目です）');
+  }
+  if (isSale && p.type === 'land' && !p.privateRoad) {
+    warnings.push(rowLabel + '私道負担が空です（土地の売買では表示が必要な項目です）');
+  }
 
   p.features = decodeList(get('features'));
   p.features.forEach(function (f) {

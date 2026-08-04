@@ -165,6 +165,7 @@
         { line: '都営三田線', station: '水道橋', walk: 5 }
       ],
       rent: 480000, managementFee: 35000, deposit: 10, keyMoney: 0,
+      contractTerm: '2年（定期借家）',
       areaTsubo: 22.4,
       floor: '1F',
       floorsTotal: 8,
@@ -189,6 +190,7 @@
         { line: '東京メトロ千代田線', station: '二重橋前', walk: 2 }
       ],
       rent: 3850000, managementFee: 0, deposit: 12, keyMoney: 0,
+      contractTerm: '3年（普通借家）',
       areaTsubo: 110,
       floor: '6F',
       floorsTotal: 22,
@@ -198,7 +200,7 @@
       usage: ['事務所'],
       availableFrom: '2026年10月',
       updatedAt: '2026-07-12',
-      description: '東京駅至近、丸の内エリアのハイグレードビル6階フロアです。無柱空間で天井高2,800mm、OAフロア100mm、個別空調。共用部のグレードが高く、来訪の多い企業の本社機能に適します。基準階一括での賃貸が可能です。'
+      description: '東京駅から徒歩4分、丸の内エリアのハイグレードビル6階フロアです。無柱空間で天井高2,800mm、OAフロア100mm、個別空調。共用部のグレードが高く、来訪の多い企業の本社機能に適します。基準階一括での賃貸が可能です。'
     },
     {
       id: 'CMP-1003',
@@ -213,6 +215,7 @@
         { line: 'JR山手線', station: '有楽町', walk: 7 }
       ],
       rent: 1650000, managementFee: 120000, deposit: 12, keyMoney: 0,
+      contractTerm: '5年（定期借家）',
       areaTsubo: 34.8,
       floor: '2F',
       floorsTotal: 9,
@@ -237,6 +240,7 @@
         { line: 'JR各線', station: '新宿', walk: 9 }
       ],
       rent: 1420000, managementFee: 96000, deposit: 10, keyMoney: 0,
+      contractTerm: '2年（普通借家）',
       areaTsubo: 58.2,
       floor: '11F',
       floorsTotal: 20,
@@ -261,6 +265,7 @@
         { line: '東京メトロ半蔵門線', station: '表参道', walk: 3 }
       ],
       rent: 2200000, managementFee: 150000, deposit: 12, keyMoney: 2,
+      contractTerm: '2年（普通借家）',
       areaTsubo: 41.5,
       floor: '1F',
       floorsTotal: 5,
@@ -285,6 +290,7 @@
         { line: '東京メトロ銀座線', station: '渋谷', walk: 4 }
       ],
       rent: 620000, managementFee: 40000, deposit: 10, keyMoney: 0,
+      contractTerm: '2年（普通借家）',
       areaTsubo: 28,
       floor: 'B1F',
       floorsTotal: 6,
@@ -309,6 +315,7 @@
         { line: '東急池上線', station: '大崎広小路', walk: 4 }
       ],
       rent: 780000, managementFee: 62000, deposit: 10, keyMoney: 0,
+      contractTerm: '2年（定期借家）',
       areaTsubo: 46,
       floor: '8F',
       floorsTotal: 10,
@@ -332,6 +339,7 @@
         { line: 'JR京葉線', station: '新木場', walk: 12 }
       ],
       rent: 2850000, managementFee: 0, deposit: 6, keyMoney: 0,
+      contractTerm: '2年（普通借家）',
       areaTsubo: 310,
       floor: '1F',
       floorsTotal: 3,
@@ -356,6 +364,7 @@
         { line: '東京メトロ有楽町線', station: '東池袋', walk: 6 }
       ],
       rent: 890000, managementFee: 70000, deposit: 10, keyMoney: 1,
+      contractTerm: '3年（普通借家）',
       areaTsubo: 37.2,
       floor: '2F',
       floorsTotal: 7,
@@ -380,6 +389,7 @@
         { line: '都営浅草線', station: '浅草', walk: 5 }
       ],
       rent: 2400000, managementFee: 0, deposit: 12, keyMoney: 0,
+      contractTerm: '2年（普通借家）',
       areaTsubo: 96,
       floor: '1F-4F',
       floorsTotal: 4,
@@ -404,6 +414,7 @@
         { line: '東京メトロ日比谷線', station: '中目黒', walk: 2 }
       ],
       rent: 385000, managementFee: 25000, deposit: 10, keyMoney: 0,
+      contractTerm: '2年（普通借家）',
       areaTsubo: 14.6,
       floor: '1F',
       floorsTotal: 1,
@@ -427,6 +438,7 @@
         { line: '東急田園都市線', station: '三軒茶屋', walk: 4 }
       ],
       rent: 320000, managementFee: 20000, deposit: 8, keyMoney: 0,
+      contractTerm: '5年（定期借家）',
       areaTsubo: 19.8,
       floor: '2F',
       floorsTotal: 5,
@@ -451,6 +463,7 @@
         { line: 'JR総武快速線', station: '新日本橋', walk: 4 }
       ],
       rent: 1180000, managementFee: 88000, deposit: 12, keyMoney: 0,
+      contractTerm: '5年（定期借家）',
       areaTsubo: 52.5,
       floor: '4F',
       floorsTotal: 11,
@@ -475,6 +488,7 @@
         { line: '東京メトロ半蔵門線', station: '錦糸町', walk: 5 }
       ],
       rent: 1250000, managementFee: 90000, deposit: 10, keyMoney: 0,
+      contractTerm: '2年（普通借家）',
       areaTsubo: 68,
       floor: '1F・B1F',
       floorsTotal: 6,
@@ -498,6 +512,7 @@
         { line: 'JR京浜東北線', station: '大井町', walk: 8 }
       ],
       rent: 1450000, managementFee: 0, deposit: 6, keyMoney: 0,
+      contractTerm: '3年（普通借家）',
       areaTsubo: 182,
       floor: '—',
       floorsTotal: 0,
@@ -522,6 +537,7 @@
         { line: '東京メトロ日比谷線', station: '恵比寿', walk: 5 }
       ],
       rent: 940000, managementFee: 60000, deposit: 10, keyMoney: 0,
+      contractTerm: '2年（普通借家）',
       areaTsubo: 38.4,
       floor: '3F',
       floorsTotal: 6,
@@ -545,6 +561,7 @@
         { line: 'JR山手線', station: '田町', walk: 11 }
       ],
       rent: 1380000, managementFee: 0, deposit: 6, keyMoney: 0,
+      contractTerm: '5年（定期借家）',
       areaTsubo: 120,
       floor: '1F・2F',
       floorsTotal: 2,
@@ -569,6 +586,7 @@
         { line: '東京メトロ半蔵門線', station: '神保町', walk: 3 }
       ],
       rent: 265000, managementFee: 18000, deposit: 10, keyMoney: 0,
+      contractTerm: '2年（普通借家）',
       areaTsubo: 11.2,
       floor: '1F',
       floorsTotal: 5,
@@ -593,6 +611,7 @@
         { line: '都営浅草線', station: '新橋', walk: 3 }
       ],
       rent: 430000, managementFee: 30000, deposit: 10, keyMoney: 0,
+      contractTerm: '2年（普通借家）',
       areaTsubo: 24,
       floor: '3F',
       floorsTotal: 8,
@@ -617,6 +636,7 @@
         { line: 'ゆりかもめ', station: '豊洲', walk: 5 }
       ],
       rent: 4200000, managementFee: 0, deposit: 12, keyMoney: 0,
+      contractTerm: '3年（普通借家）',
       areaTsubo: 240,
       floor: '14F',
       floorsTotal: 24,
@@ -641,6 +661,7 @@
         { line: '小田急線', station: '下北沢', walk: 4 }
       ],
       rent: 298000, managementFee: 22000, deposit: 8, keyMoney: 0,
+      contractTerm: '2年（普通借家）',
       areaTsubo: 17.5,
       floor: '2F',
       floorsTotal: 4,
@@ -664,6 +685,7 @@
         { line: '東京メトロ半蔵門線', station: '押上', walk: 6 }
       ],
       rent: 1780000, managementFee: 0, deposit: 10, keyMoney: 0,
+      contractTerm: '5年（定期借家）',
       areaTsubo: 88,
       floor: '1F-5F',
       floorsTotal: 5,
@@ -673,7 +695,7 @@
       usage: ['事務所', '店舗', '複合'],
       availableFrom: '相談',
       updatedAt: '2026-04-03',
-      description: '東京スカイツリー至近の5層一棟ビル。現況で2フロアにテナントが入居しており、収益を確保しながらの取得・一棟借りが可能です。1階は路面店舗として稼働中。'
+      description: '東京スカイツリーまで徒歩圏の5層一棟ビル。現況で2フロアにテナントが入居しており、収益を確保しながらの取得・一棟借りが可能です。1階は路面店舗として稼働中。'
     },
     {
       id: 'CMP-1023',
@@ -688,6 +710,7 @@
         { line: '西武新宿線', station: '高田馬場', walk: 5 }
       ],
       rent: 520000, managementFee: 38000, deposit: 10, keyMoney: 0,
+      contractTerm: '2年（普通借家）',
       areaTsubo: 32,
       floor: '3F',
       floorsTotal: 7,
@@ -712,6 +735,7 @@
         { line: '都営大江戸線', station: '築地市場', walk: 5 }
       ],
       rent: 560000, managementFee: 42000, deposit: 10, keyMoney: 0,
+      contractTerm: '3年（普通借家）',
       areaTsubo: 26.3,
       floor: '1F',
       floorsTotal: 6,
@@ -744,6 +768,9 @@
       floorsTotal: 8,
       builtYear: 2007,
       structure: 'SRC造',
+      zoning: '商業地域',
+      buildingCoverage: 80,
+      floorAreaRatio: 500,
       features: ['駅徒歩5分以内', 'エレベーターあり', '24時間利用可'],
       usage: ['事務所', '店舗'],
       availableFrom: '相談',
@@ -771,6 +798,9 @@
       floorsTotal: 12,
       builtYear: 2012,
       structure: 'S造',
+      zoning: '近隣商業地域',
+      buildingCoverage: 80,
+      floorAreaRatio: 400,
       features: ['駅徒歩5分以内', 'エレベーターあり', '空調更新済'],
       usage: ['事務所'],
       availableFrom: '2026年10月',
@@ -797,6 +827,9 @@
       floorsTotal: 3,
       builtYear: 2014,
       structure: 'RC造',
+      zoning: '商業地域',
+      buildingCoverage: 80,
+      floorAreaRatio: 400,
       features: ['1階路面', '駅徒歩5分以内', '看板設置可'],
       usage: ['店舗', '物販'],
       availableFrom: '相談',
@@ -823,6 +856,10 @@
       floorsTotal: 0,
       builtYear: null,
       structure: '更地',
+      zoning: '近隣商業地域',
+      buildingCoverage: 80,
+      floorAreaRatio: 300,
+      privateRoad: 'なし',
       features: ['駐車場あり'],
       usage: ['事業用建物', '店舗', '倉庫'],
       availableFrom: '即引渡し可',
@@ -849,6 +886,9 @@
       floorsTotal: 5,
       builtYear: 1998,
       structure: 'RC造',
+      zoning: '商業地域',
+      buildingCoverage: 80,
+      floorAreaRatio: 500,
       features: ['1階路面', '飲食可', '深夜営業可', '駅徒歩5分以内'],
       usage: ['飲食店', '店舗'],
       availableFrom: '相談',
@@ -876,6 +916,9 @@
       floorsTotal: 21,
       builtYear: 2010,
       structure: 'S造',
+      zoning: '近隣商業地域',
+      buildingCoverage: 80,
+      floorAreaRatio: 300,
       features: ['駅徒歩5分以内', 'エレベーターあり', '24時間利用可', '空調更新済'],
       usage: ['事務所'],
       availableFrom: '即引渡し可',
@@ -903,6 +946,9 @@
       floorsTotal: 4,
       builtYear: 2004,
       structure: 'RC造',
+      zoning: '商業地域',
+      buildingCoverage: 80,
+      floorAreaRatio: 400,
       features: ['1階路面', '飲食可', '看板設置可'],
       usage: ['店舗', '飲食店', '宿泊'],
       availableFrom: '相談',
@@ -929,6 +975,9 @@
       floorsTotal: 4,
       builtYear: 2019,
       structure: 'RC造',
+      zoning: '商業地域',
+      buildingCoverage: 80,
+      floorAreaRatio: 700,
       features: ['1階路面', '飲食可', 'エレベーターあり', '空調更新済'],
       usage: ['店舗', '事務所'],
       availableFrom: '相談',
@@ -955,6 +1004,9 @@
       floorsTotal: 2,
       builtYear: 2006,
       structure: 'S造',
+      zoning: '工業地域',
+      buildingCoverage: 60,
+      floorAreaRatio: 300,
       features: ['24時間利用可', '駐車場あり'],
       usage: ['倉庫', '軽作業', '事務所'],
       availableFrom: '2026年12月',
@@ -981,6 +1033,9 @@
       floorsTotal: 6,
       builtYear: 2001,
       structure: 'RC造',
+      zoning: '近隣商業地域',
+      buildingCoverage: 80,
+      floorAreaRatio: 400,
       features: ['1階路面', '飲食可', '駅徒歩5分以内', '看板設置可'],
       usage: ['店舗', '飲食店'],
       availableFrom: '相談',
@@ -1000,6 +1055,7 @@
         { line: '東急東横線', station: '横浜', walk: 5 }
       ],
       rent: 880000, managementFee: 65000, deposit: 10, keyMoney: 0,
+      contractTerm: '2年（定期借家）',
       areaTsubo: 32.5,
       floor: '1F',
       floorsTotal: 8,
@@ -1036,6 +1092,7 @@
         { line: '京急本線', station: '京急川崎', walk: 6 }
       ],
       rent: 1120000, managementFee: 84000, deposit: 10, keyMoney: 0,
+      contractTerm: '2年（定期借家）',
       areaTsubo: 78,
       floor: '6F',
       floorsTotal: 12,
@@ -1059,6 +1116,7 @@
         { line: 'JR各線', station: '大宮', walk: 5 }
       ],
       rent: 620000, managementFee: 45000, deposit: 10, keyMoney: 1,
+      contractTerm: '3年（普通借家）',
       areaTsubo: 26,
       floor: '1F',
       floorsTotal: 5,
@@ -1082,6 +1140,7 @@
         { line: 'JR京葉線', station: '二俣新町', walk: 12 }
       ],
       rent: 1450000, managementFee: 0, deposit: 6, keyMoney: 0,
+      contractTerm: '3年（普通借家）',
       areaTsubo: 420,
       floor: '1F-2F',
       floorsTotal: 2,
@@ -1106,6 +1165,7 @@
         { line: '東武アーバンパークライン', station: '柏', walk: 3 }
       ],
       rent: 450000, managementFee: 32000, deposit: 10, keyMoney: 0,
+      contractTerm: '3年（普通借家）',
       areaTsubo: 28,
       floor: '2F',
       floorsTotal: 6,
@@ -1129,6 +1189,7 @@
         { line: 'JR京浜東北線', station: '川口', walk: 18 }
       ],
       rent: 980000, managementFee: 0, deposit: 6, keyMoney: 0,
+      contractTerm: '2年（普通借家）',
       areaTsubo: 265,
       floor: '1F',
       floorsTotal: 1,
@@ -1153,6 +1214,7 @@
         { line: '小田急江ノ島線', station: '藤沢', walk: 5 }
       ],
       rent: 520000, managementFee: 38000, deposit: 10, keyMoney: 0,
+      contractTerm: '2年（定期借家）',
       areaTsubo: 24,
       floor: '1F',
       floorsTotal: 4,
@@ -1177,6 +1239,7 @@
         { line: '新京成線', station: '松戸', walk: 2 }
       ],
       rent: 385000, managementFee: 28000, deposit: 8, keyMoney: 0,
+      contractTerm: '5年（定期借家）',
       areaTsubo: 32,
       floor: '4F',
       floorsTotal: 9,
@@ -1209,6 +1272,9 @@
       floorsTotal: 7,
       builtYear: 2003,
       structure: 'SRC造',
+      zoning: '近隣商業地域',
+      buildingCoverage: 80,
+      floorAreaRatio: 400,
       features: ['駅徒歩5分以内', 'エレベーターあり', '24時間利用可'],
       usage: ['事務所', '店舗'],
       availableFrom: '相談',
@@ -1218,7 +1284,7 @@
         { src: 'images/properties/CMP-2011-02_エントランス.png', caption: 'エントランス' },
         { src: 'images/properties/CMP-2011-03_基準階.png', caption: '基準階' }
       ],
-      description: '関内駅至近の一棟オフィスビルです。現況は満室稼働で、事務所テナント中心に長期入居が続いています。レントロールと修繕履歴は個別にご開示します。'
+      description: '関内駅から徒歩4分の一棟オフィスビルです。現況は満室稼働で、事務所テナント中心に長期入居が続いています。レントロールと修繕履歴は個別にご開示します。'
     },
     {
       id: 'CMP-2012',
@@ -1241,6 +1307,9 @@
       floorsTotal: 5,
       builtYear: 1997,
       structure: 'RC造',
+      zoning: '近隣商業地域',
+      buildingCoverage: 80,
+      floorAreaRatio: 300,
       features: ['1階路面', '飲食可', '深夜営業可', '看板設置可'],
       usage: ['飲食店', '店舗'],
       availableFrom: '相談',
@@ -1267,6 +1336,10 @@
       floorsTotal: 0,
       builtYear: null,
       structure: '更地',
+      zoning: '準工業地域',
+      buildingCoverage: 60,
+      floorAreaRatio: 300,
+      privateRoad: 'なし',
       features: ['駐車場あり'],
       usage: ['事業用建物', '店舗', '倉庫'],
       availableFrom: '即引渡し可',
@@ -1293,6 +1366,9 @@
       floorsTotal: 2,
       builtYear: 2009,
       structure: 'S造',
+      zoning: '準工業地域',
+      buildingCoverage: 60,
+      floorAreaRatio: 300,
       features: ['24時間利用可', '駐車場あり'],
       usage: ['倉庫', '工場', '軽作業'],
       availableFrom: '2026年11月',
@@ -1312,6 +1388,7 @@
         { line: '多摩都市モノレール', station: '立川北', walk: 3 }
       ],
       rent: 680000, managementFee: 48000, deposit: 10, keyMoney: 0,
+      contractTerm: '3年（普通借家）',
       areaTsubo: 29.5,
       floor: '1F',
       floorsTotal: 7,
@@ -1342,6 +1419,7 @@
         { line: '京王井の頭線', station: '吉祥寺', walk: 4 }
       ],
       rent: 560000, managementFee: 40000, deposit: 10, keyMoney: 1,
+      contractTerm: '5年（定期借家）',
       areaTsubo: 21,
       floor: '2F',
       floorsTotal: 5,
@@ -1370,6 +1448,7 @@
         { line: '小田急小田原線', station: '町田', walk: 6 }
       ],
       rent: 420000, managementFee: 32000, deposit: 8, keyMoney: 0,
+      contractTerm: '5年（定期借家）',
       areaTsubo: 38,
       floor: '5F',
       floorsTotal: 9,
@@ -1393,6 +1472,7 @@
         { line: 'JR八高線', station: '北八王子', walk: 14 }
       ],
       rent: 890000, managementFee: 0, deposit: 6, keyMoney: 0,
+      contractTerm: '2年（普通借家）',
       areaTsubo: 310,
       floor: '1F-2F',
       floorsTotal: 2,
@@ -1416,6 +1496,7 @@
         { line: 'JR中央線', station: '三鷹', walk: 3 }
       ],
       rent: 365000, managementFee: 28000, deposit: 8, keyMoney: 0,
+      contractTerm: '2年（普通借家）',
       areaTsubo: 27.5,
       floor: '4F',
       floorsTotal: 8,
@@ -1447,6 +1528,9 @@
       floorsTotal: 5,
       builtYear: 2002,
       structure: 'RC造',
+      zoning: '近隣商業地域',
+      buildingCoverage: 80,
+      floorAreaRatio: 400,
       features: ['駅徒歩5分以内', 'エレベーターあり', '1階路面'],
       usage: ['事務所', '店舗'],
       availableFrom: '相談',
@@ -1473,6 +1557,10 @@
       floorsTotal: 0,
       builtYear: null,
       structure: '更地',
+      zoning: '近隣商業地域',
+      buildingCoverage: 80,
+      floorAreaRatio: 400,
+      privateRoad: 'なし',
       features: ['駐車場あり'],
       usage: ['事業用建物', '店舗', '倉庫'],
       availableFrom: '即引渡し可',
@@ -1489,6 +1577,9 @@
      割り当てていますが、実データでは各物件に必ず設定してください。 */
   var FALLBACK_BASE = new Date('2026-07-17T00:00:00');
 
+  /* 取引条件の有効期限を情報更新日から何日後にするか */
+  var VALID_DAYS = 14;
+
   PROPERTIES.forEach(function (p, i) {
     if (!p.updatedAt) {
       var d = new Date(FALLBACK_BASE.getTime() - i * 5 * 86400000);
@@ -1496,6 +1587,11 @@
     }
     /* 都県は市区名から補完する（マスタにない市区は空のまま） */
     p.pref = AREA_PREF[p.ward] || '';
+    /* 取引条件の有効期限。不動産の表示に関する公正競争規約で表示が必要な項目。
+       情報更新日から VALID_DAYS 日間として自動算出するため、入力は不要です。 */
+    var validUntil = new Date(p.updatedAt + 'T00:00:00');
+    validUntil.setDate(validUntil.getDate() + VALID_DAYS);
+    p.validUntil = validUntil.toISOString().slice(0, 10);
     p.areaSqm = Math.round(p.areaTsubo * 3.30578 * 10) / 10;
     /* 賃貸は月額賃料、売買は販売価格を金額として扱う */
     p.amount = p.deal === 'sale' ? p.price : p.rent;

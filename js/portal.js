@@ -347,7 +347,7 @@
 
     return sendInquiry(fields).then(function () {
       btn.textContent = '送信しました';
-      status.textContent = 'お問い合わせを受け付けました。担当より1営業日以内にご連絡します。';
+      status.textContent = 'お問い合わせを受け付けました。担当より2営業日以内にご連絡します。';
       status.className = 'form-status is-success';
       track('inquiry_submit', { form: o.name, property_id: fields['物件番号'] || '' });
     }).catch(function () {
@@ -369,7 +369,8 @@
       '<label class="consent-label" for="' + id + '">' +
         '<input type="checkbox" id="' + id + '" name="consent" required>' +
         '<span><a href="privacy.html" target="_blank" rel="noopener">プライバシーポリシー</a>' +
-        'に同意します<span class="required">必須</span></span>' +
+        'に同意し、物件情報のご案内（メール・郵送等）を受け取ることに同意します' +
+        '<span class="required">必須</span></span>' +
       '</label>' +
       '<p class="field-error" data-error-for="' + id + '"></p>' +
     '</div>';

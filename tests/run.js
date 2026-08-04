@@ -142,9 +142,55 @@ function section(title) { console.log('\n' + title); }
     await go('/property.html?id=NOPE'); await settle(400);
     check('存在しない物件は案内が出る', (await page.locator('h1').textContent()).indexOf('見つかりません') !== -1);
 
+    /* ---------- 宅建業法・表示規約への適合 ---------- */
+    section('宅建業法・不動産の表示に関する公正競争規約');
+    await go('/property.html?id=CMP-1001'); await settle(700);
+    const specRows = await page.evaluate(function () {
+      return [].map.call(document.querySelectorAll('.spec-table tr'), function (tr) {
+        return tr.children[0].textContent.trim();
+      });
+    });
+    const has = function (label) { return specRows.indexOf(label) !== -1; };
+    check('取引態様を明示している（法34条）', has('取引態様'));
+    check('賃貸に契約期間がある（表示規約）', has('契約期間'));
+    check('取引条件の有効期限がある（表示規約）', has('取引条件の有効期限'));
+    check('仲介手数料を明示している（法46条）', has('仲介手数料'));
+    check('情報提供元と免許番号を明示している', has('情報提供元'));
+    check('消費税の扱いを明示している',
+      (await page.locator('.spec-table').textContent()).indexOf('（税別）') !== -1);
+    check('契約の流れに手数料の説明がある',
+      (await page.locator('.fee-note').textContent()).indexOf('宅地建物取引業法に定める報酬額') !== -1);
+    check('写真がない物件はイメージである旨を明示',
+      (await page.locator('.gallery-note').textContent()).indexOf('イメージイラスト') !== -1);
+    check('フッターに手数料と免許の共通表示がある',
+      (await page.locator('.footer-legal').textContent()).indexOf('仲介手数料') !== -1);
+
+    await go('/property.html?id=CMP-2013'); await settle(700);
+    const saleRows = await page.evaluate(function () {
+      return [].map.call(document.querySelectorAll('.spec-table tr'), function (tr) {
+        return tr.children[0].textContent.trim();
+      });
+    });
+    check('売買に用途地域がある（表示規約）', saleRows.indexOf('用途地域') !== -1);
+    check('売買に建ぺい率・容積率がある（表示規約）', saleRows.indexOf('建ぺい率／容積率') !== -1);
+    check('土地に私道負担がある（表示規約）', saleRows.indexOf('私道負担') !== -1);
+
+    await go('/property.html?id=CMP-1025'); await settle(800);
+    check('写真がある物件は当該物件の写真である旨を明示',
+      (await page.locator('.gallery-note').textContent()).indexOf('当該物件を撮影') !== -1);
+
+    const banned = /完全|絶対|万全|日本一|抜群|当社だけ|一流|特選|厳選|最高級|至便|買得|掘出|格安|投売|破格|激安|完璧/;
+    await go('/properties.html'); await settle(700);
+    check('検索結果に表示規約の特定用語がない', !banned.test(await page.locator('#result-grid').textContent()));
+
     /* ---------- お問い合わせ ---------- */
     section('お問い合わせフォーム');
     await go('/property.html?id=CMP-1001'); await settle(700);
+    check('住所欄がある', await page.locator('#i-address').count() === 1);
+    check('返信の目安が2営業日',
+      (await page.locator('.trust-signals').textContent()).indexOf('2営業日') !== -1);
+    check('個人情報の使いみちを明示している',
+      (await page.locator('.trust-signals').textContent()).indexOf('物件のご提案・ご案内') !== -1);
     await page.fill('#i-name', 'テスト太郎');
     await page.fill('#i-email', 'test@example.com');
     await page.click('#inquiry-submit'); await settle(400);
@@ -189,6 +235,14 @@ function section(title) { console.log('\n' + title); }
     check('オーナー向けページがある', (await page.locator('h1').count()) === 1);
     await go('/contact.html'); await settle(500);
     check('お問い合わせページに同意欄がある', await page.locator('#c-consent').count() === 1);
+    check('お問い合わせページに住所欄がある', await page.locator('#c-address').count() === 1);
+    check('リード文に手数料の説明がある',
+      (await page.locator('.page-lead').textContent()).indexOf('仲介手数料') !== -1);
+    await go('/privacy.html'); await settle(400);
+    const policy = await page.locator('body').textContent();
+    check('利用目的にメールマガジン・DMが含まれる', policy.indexOf('メールマガジン') !== -1);
+    check('配信停止の方法が書かれている', policy.indexOf('いつでも停止できます') !== -1);
+    check('仲介手数料の説明がある', policy.indexOf('宅地建物取引業法第46条') !== -1);
 
     /* ---------- 生成物 ---------- */
     section('sitemap / robots');

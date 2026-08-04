@@ -115,11 +115,17 @@ function renderProperty(p) {
     lines.push('      yieldRate: ' + p.yieldRate + ',');
     lines.push('      tenure: ' + q(p.tenure) + ',');
   }
+  if (p.contractTerm) lines.push('      contractTerm: ' + q(p.contractTerm) + ',');
   lines.push('      areaTsubo: ' + p.areaTsubo + ',');
   lines.push('      floor: ' + q(p.floor) + ',');
   lines.push('      floorsTotal: ' + p.floorsTotal + ',');
   lines.push('      builtYear: ' + (p.builtYear == null ? 'null' : p.builtYear) + ',');
   lines.push('      structure: ' + q(p.structure) + ',');
+  if (p.zoning) lines.push('      zoning: ' + q(p.zoning) + ',');
+  if (p.buildingCoverage != null) lines.push('      buildingCoverage: ' + p.buildingCoverage + ',');
+  if (p.floorAreaRatio != null) lines.push('      floorAreaRatio: ' + p.floorAreaRatio + ',');
+  if (p.privateRoad) lines.push('      privateRoad: ' + q(p.privateRoad) + ',');
+  if (p.buildingPermit) lines.push('      buildingPermit: ' + q(p.buildingPermit) + ',');
   lines.push('      features: [' + p.features.map(q).join(', ') + '],');
   lines.push('      usage: [' + p.usage.map(q).join(', ') + '],');
   lines.push('      availableFrom: ' + q(p.availableFrom) + ',');

@@ -110,6 +110,7 @@
             'お名前': value('c-name'),
             '会社名・屋号': value('c-company'),
             'メールアドレス': value('c-email'),
+            'ご住所': value('c-address'),
             '電話番号': value('c-tel'),
             'ご希望の物件種別': value('c-type'),
             'ご希望エリア': value('c-area'),

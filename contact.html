@@ -66,7 +66,7 @@
     </nav>
 
     <h1 class="page-title">お問い合わせ・物件リクエスト</h1>
-    <p class="page-lead">出店をお考えのエリア・業態・ご予算をお知らせください。ポータルに掲載していない非公開物件を含めて、条件に合う物件をお探しします。ご相談・物件探しに費用はかかりません。</p>
+    <p class="page-lead">出店をお考えのエリア・業態・ご予算をお知らせください。ポータルに掲載していない非公開物件を含めて、条件に合う物件をお探しします。ご相談・物件のご紹介・内見に費用はかかりません。ご成約時のみ、宅地建物取引業法に定める報酬額の範囲内で仲介手数料を申し受けます。</p>
 
     <div class="contact-layout">
       <form class="inquiry-form contact-form" id="contact-form" novalidate>
@@ -80,6 +80,10 @@
         <div class="form-row"><label for="c-email">メールアドレス<span class="required">必須</span></label>
           <input type="email" id="c-email" name="email" autocomplete="email" inputmode="email" placeholder="example@mail.com" required>
           <p class="field-error" data-error-for="c-email"></p></div>
+
+        <div class="form-row form-row-full"><label for="c-address">ご住所<span class="optional">任意</span></label>
+          <input type="text" id="c-address" name="address" autocomplete="street-address" placeholder="例：東京都千代田区神田三崎町3-4-9 横山ビル3F">
+          <p class="field-hint">資料の郵送をご希望の場合にご記入ください。</p></div>
 
         <div class="form-row"><label for="c-tel">電話番号<span class="optional">任意</span></label>
           <input type="tel" id="c-tel" name="tel" autocomplete="tel" inputmode="tel" placeholder="090-0000-0000"></div>
@@ -123,16 +127,16 @@
         <div class="form-row form-row-full consent-row">
           <label class="consent-label" for="c-consent">
             <input type="checkbox" id="c-consent" name="consent" required>
-            <span><a href="privacy.html" target="_blank" rel="noopener">プライバシーポリシー</a>に同意します<span class="required">必須</span></span>
+            <span><a href="privacy.html" target="_blank" rel="noopener">プライバシーポリシー</a>に同意し、物件情報のご案内（メール・郵送等）を受け取ることに同意します<span class="required">必須</span></span>
           </label>
           <p class="field-error" data-error-for="c-consent"></p>
         </div>
 
         <div class="form-row form-row-full">
           <ul class="trust-signals">
-            <li>1営業日以内にご返信します</li>
+            <li>2営業日以内にご返信します</li>
             <li>しつこい営業電話はいたしません</li>
-            <li>個人情報は相談対応以外に利用しません</li>
+            <li>ご入力内容は物件のご提案・ご案内に利用します</li>
           </ul>
           <button type="submit" class="btn btn-primary btn-lg" id="contact-submit">この内容で送信する</button>
           <p class="form-status" id="contact-status" role="status"></p>
@@ -205,6 +209,10 @@
         </ul>
       </div>
     </nav>
+  </div>
+  <div class="container footer-legal">
+    <p>掲載物件はすべて当社が媒介（仲介）する物件です。ご相談・物件のご紹介・内見に費用はかかりません。<strong>ご成約時のみ、宅地建物取引業法に定める報酬額の範囲内で仲介手数料を申し受けます</strong>（賃貸：賃料の1ヶ月分（税別）が上限／売買：売買価格の3%＋6万円（税別）が上限）。</p>
+    <p>掲載内容は情報更新日時点のものです。取引条件は変更される場合がありますので、最新の条件はお問い合わせください。表示価格・賃料は特記のない限り消費税別です。</p>
   </div>
   <div class="container footer-bottom">
     <p>&copy; <span id="current-year">2026</span> LOMETS Inc. All rights reserved.</p>

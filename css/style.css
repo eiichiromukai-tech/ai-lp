@@ -561,6 +561,12 @@ input::placeholder, textarea::placeholder { color: #9a9a9a; }
   border-radius: var(--radius); background: var(--dark-blue);
 }
 .detail-gallery figcaption { font-size: 0.74rem; color: var(--text-muted); margin-top: 8px; }
+.gallery-note { font-size: 0.72rem; color: var(--text-muted); margin: 6px 0 0; line-height: 1.7; }
+.fee-note {
+  margin: var(--space-4) 0 0; padding: var(--space-3);
+  background: var(--cream); border-left: 3px solid var(--red);
+  font-size: 0.84rem; line-height: 1.8;
+}
 
 /* 前へ／次へ。写真が2枚以上あるときだけ描画される */
 .gallery-nav {
@@ -677,6 +683,7 @@ input::placeholder, textarea::placeholder { color: #9a9a9a; }
 }
 .required { background: var(--red); color: var(--black); }
 .optional { background: var(--cream); color: var(--text-muted); border: 1px solid var(--line); }
+.field-hint { margin: 6px 0 0; font-size: 0.76rem; color: var(--text-muted); }
 .field-error { margin: 0; font-size: 0.76rem; color: var(--bridge-red); font-weight: 700; min-height: 1em; }
 input[aria-invalid="true"], textarea[aria-invalid="true"] { border-color: var(--bridge-red); }
 
@@ -699,6 +706,7 @@ input[aria-invalid="true"], textarea[aria-invalid="true"] { border-color: var(--
 .policy-list { display: grid; gap: 8px; margin: 0 0 var(--space-3); }
 .policy-list li { padding-left: 1.1em; position: relative; }
 .policy-list li::before { content: "・"; position: absolute; left: 0; color: var(--red); }
+.policy-small { font-size: 0.78rem; color: var(--text-muted); }
 .policy-date { font-size: 0.8rem; color: var(--text-muted); margin-top: var(--space-4); }
 
 .form-status { margin: var(--space-3) 0 0; font-size: 0.84rem; font-weight: 700; }
@@ -729,6 +737,16 @@ input[aria-invalid="true"], textarea[aria-invalid="true"] { border-color: var(--
 .footer-nav ul { display: grid; gap: 8px; }
 .footer-nav a { font-size: 0.82rem; }
 .footer-nav a:hover { color: var(--white); text-decoration: underline; }
+/* 宅建業法・表示規約に基づく共通表示 */
+.footer-legal {
+  border-top: 1px solid var(--line-light);
+  padding: var(--space-3) var(--space-4);
+  font-size: 0.74rem; line-height: 1.9;
+}
+.footer-legal p { margin: 0 0 6px; }
+.footer-legal p:last-child { margin-bottom: 0; }
+.footer-legal strong { color: var(--white); }
+
 .footer-bottom {
   display: flex; justify-content: space-between; gap: var(--space-3); flex-wrap: wrap;
   border-top: 1px solid var(--line-light); padding-top: var(--space-3);
