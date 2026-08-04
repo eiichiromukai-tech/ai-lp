@@ -247,7 +247,7 @@
               : '<a href="#detail-inquiry" class="btn btn-primary btn-block">この物件を問い合わせる</a>' +
                 '<button type="button" class="btn btn-ghost btn-block fav-btn-wide' + (P.isFavorite(p.id) ? ' is-active' : '') + '" ' +
                   'data-fav-id="' + p.id + '" aria-pressed="' + P.isFavorite(p.id) + '">お気に入りに追加</button>') +
-            '<a href="tel:0362615098" class="side-tel"><span>お電話でのご相談</span><strong>03-6261-5098</strong><small>平日 9:30〜18:30</small></a>' +
+            '<a href="tel:0362615098" class="side-tel"><span>お電話でのご相談</span><strong>03-6261-5098</strong><small>' + P.escapeHtml(P.SITE.businessHours || '') + '</small></a>' +
           '</div>' +
         '</aside>' +
       '</div>' +
