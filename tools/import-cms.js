@@ -153,7 +153,9 @@ function toBody(rec) {
   return body;
 }
 
-console.log(items.length + '件を' + (DRAFT ? '下書き' : '公開状態') + 'で登録します。');
+console.log(DRY_RUN
+  ? items.length + '件を確認しました（送信はしません）。'
+  : items.length + '件を' + (DRAFT ? '下書き' : '公開状態') + 'で登録します。');
 console.log('交通の分解: ' + items.reduce(function (a, x) { return a + x.access.length; }, 0) + '件');
 console.log('');
 

@@ -1,0 +1,91 @@
+# =====================================================
+# CSVの物件を microCMS へまとめて登録します。
+#
+#   管理画面のCSV取り込みでは「交通」（繰り返しフィールド）を登録できない
+#   ため、こちらから登録します。パソコンにツールを入れる必要はありません。
+#
+# 使いかた:
+#   1. 登録したいCSVを data/import/ に置く（GitHubの画面から
+#      Add file → Upload files でアップロードできます）
+#   2. microCMS の APIキーに、一時的に「PUT」の権限を足す
+#   3. Settings → Secrets and variables → Actions で
+#      MICROCMS_WRITE_API_KEY にそのキーを登録する
+#   4. Actionsタブ →「物件をCSVから一括登録」→ Run workflow
+#      まず「確認だけ（dry-run）」で実行し、内容を見てから本番実行します
+#   5. 終わったら Secrets のキーを削除し、PUTの権限も外す
+#
+# 【重要】このワークフローは microCMS の内容を書き換えます。
+#   物件番号が同じものは上書きになります。まず dry-run でご確認ください。
+# =====================================================
+name: 物件をCSVから一括登録
+
+on:
+  workflow_dispatch:
+    inputs:
+      csv:
+        description: '登録するCSVのパス'
+        required: true
+        default: 'data/import/2026-08_東急不動産.csv'
+      mode:
+        description: '実行のしかた'
+        required: true
+        default: '確認だけ（何も登録しません）'
+        type: choice
+        options:
+          - '確認だけ（何も登録しません）'
+          - '下書きとして登録'
+          - '公開状態で登録'
+
+concurrency:
+  # 反映の処理と重ならないようにする
+  group: sync-content
+  cancel-in-progress: false
+
+jobs:
+  import:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '22'
+
+      - name: APIキーが登録されているか確認する
+        if: inputs.mode != '確認だけ（何も登録しません）'
+        env:
+          KEY: ${{ secrets.MICROCMS_WRITE_API_KEY }}
+        run: |
+          if [ -z "$KEY" ]; then
+            echo "::error::Secrets に MICROCMS_WRITE_API_KEY がありません。"
+            echo "Settings → Secrets and variables → Actions で登録してください。"
+            echo "PUT権限のあるAPIキーが必要です。"
+            exit 1
+          fi
+
+      - name: 登録する
+        env:
+          MICROCMS_WRITE_API_KEY: ${{ secrets.MICROCMS_WRITE_API_KEY }}
+        run: |
+          case "${{ inputs.mode }}" in
+            "確認だけ（何も登録しません）") FLAG="--dry-run" ;;
+            "下書きとして登録")             FLAG="--draft" ;;
+            *)                              FLAG="" ;;
+          esac
+          echo "CSV : ${{ inputs.csv }}"
+          echo "実行: ${{ inputs.mode }}"
+          echo ""
+          node tools/import-cms.js "${{ inputs.csv }}" $FLAG
+
+      - name: このあとにすること
+        if: success() && inputs.mode != '確認だけ（何も登録しません）'
+        run: |
+          echo "## 登録が終わりました" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "1. microCMS の管理画面で内容をご確認ください" >> $GITHUB_STEP_SUMMARY
+          echo "2. サイトへの反映は15分おきの自動同期、または" >> $GITHUB_STEP_SUMMARY
+          echo "   「物件情報を反映（microCMS）」の Run workflow で行われます" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### 忘れずに" >> $GITHUB_STEP_SUMMARY
+          echo "- Secrets の \`MICROCMS_WRITE_API_KEY\` を削除する" >> $GITHUB_STEP_SUMMARY
+          echo "- microCMS の APIキーから \`PUT\` の権限を外す" >> $GITHUB_STEP_SUMMARY
