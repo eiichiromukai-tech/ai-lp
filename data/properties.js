@@ -25,6 +25,8 @@
     companyName: '株式会社ロメッツ',
     brandName: 'REMAX COMPASS',
     tel: '03-6261-5098',
+    /* 電話受付時間。画面表示に使います */
+    businessHours: '平日 9:30〜18:00',
     address: {
       postalCode: '101-0061',
       region: '東京都',

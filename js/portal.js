@@ -850,6 +850,7 @@
     findById: findById,
     propertyCard: propertyCard,
     statusBadge: statusBadge,
+    SITE: SITE,
     escapeHtml: escapeHtml,
     bindFavoriteButtons: bindFavoriteButtons,
     getFavorites: getFavorites,
@@ -867,6 +868,21 @@
   };
 
   /* サンプルデータの注意書きは SITE_CONFIG.demoNotice で出し分ける */
+  /* data-site="hours" などの箇所を SITE_CONFIG の値で上書きする。
+     HTMLに直接書いた値と設定がずれるのを防ぐため。 */
+  function applySiteText() {
+    var map = {
+      hours: SITE.businessHours,
+      tel: SITE.tel,
+      company: SITE.companyName,
+      license: SITE.license
+    };
+    document.querySelectorAll('[data-site]').forEach(function (el) {
+      var v = map[el.getAttribute('data-site')];
+      if (v) el.textContent = v;
+    });
+  }
+
   function applyDemoNotice() {
     if (SITE.demoNotice !== false) return;
     document.querySelectorAll('.demo-notice, .footer-note').forEach(function (el) { el.remove(); });
@@ -875,6 +891,7 @@
   document.addEventListener('DOMContentLoaded', function () {
     initAnalytics();
     applyMeta();
+    applySiteText();
     applyDemoNotice();
     initHeader();
     bindFavoriteButtons(document);
