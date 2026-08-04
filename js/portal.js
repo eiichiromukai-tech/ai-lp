@@ -498,8 +498,10 @@
       /* 成約済は明示的に指定されたときだけ検索結果に含める */
       if (isClosed(p) && !wantsClosed) return false;
       if (c.deal && dealOf(p) !== c.deal) return false;
-      if (c.priceMin != null && (!isSale(p) || p.price < c.priceMin)) return false;
-      if (c.priceMax != null && (!isSale(p) || p.price > c.priceMax)) return false;
+      /* 金額が「応相談」の物件は、金額で絞り込んだときは対象外にする。
+         予算に合うかどうかが分からないため、範囲内として出すのは誤解を招く。 */
+      if (c.priceMin != null && (!isSale(p) || !p.price || p.price < c.priceMin)) return false;
+      if (c.priceMax != null && (!isSale(p) || !p.price || p.price > c.priceMax)) return false;
       if (c.types && c.types.length && c.types.indexOf(p.type) === -1) return false;
       if (c.prefs && c.prefs.length && c.prefs.indexOf(prefOf(p)) === -1) return false;
       if (c.lines && c.lines.length) {
@@ -512,8 +514,8 @@
       }
       if (c.areas && c.areas.length && c.areas.indexOf(p.ward) === -1) return false;
       if (c.status && c.status.length && c.status.indexOf(displayStatus(p)) === -1) return false;
-      if (c.rentMin != null && (isSale(p) || p.rent < c.rentMin)) return false;
-      if (c.rentMax != null && (isSale(p) || p.rent > c.rentMax)) return false;
+      if (c.rentMin != null && (isSale(p) || !p.rent || p.rent < c.rentMin)) return false;
+      if (c.rentMax != null && (isSale(p) || !p.rent || p.rent > c.rentMax)) return false;
       if (c.tsuboMin != null && p.areaTsubo < c.tsuboMin) return false;
       if (c.tsuboMax != null && p.areaTsubo > c.tsuboMax) return false;
       if (c.walk != null && minWalk(p) > c.walk) return false;
@@ -538,14 +540,27 @@
     });
   }
 
+  function byAmount(a, b, dir) {
+    if (!a.amount && !b.amount) return 0;
+    if (!a.amount) return 1;
+    if (!b.amount) return -1;
+    return (a.amount - b.amount) * dir;
+  }
+
   /* 金額の並び替えは取引種別ごとの amount（賃料 or 価格）で比較する */
   var SORTERS = {
     'new': function (a, b) { return b.updatedAt.localeCompare(a.updatedAt); },
-    'rent-asc': function (a, b) { return a.amount - b.amount; },
-    'rent-desc': function (a, b) { return b.amount - a.amount; },
+    /* 金額が「応相談」（0）の物件は、安い順・高い順とも末尾にまとめる */
+    'rent-asc': function (a, b) { return byAmount(a, b, 1); },
+    'rent-desc': function (a, b) { return byAmount(a, b, -1); },
     'area-desc': function (a, b) { return b.areaTsubo - a.areaTsubo; },
     'area-asc': function (a, b) { return a.areaTsubo - b.areaTsubo; },
-    'unit-asc': function (a, b) { return a.tsuboUnitPrice - b.tsuboUnitPrice; },
+    'unit-asc': function (a, b) {
+      if (!a.tsuboUnitPrice && !b.tsuboUnitPrice) return 0;
+      if (!a.tsuboUnitPrice) return 1;
+      if (!b.tsuboUnitPrice) return -1;
+      return a.tsuboUnitPrice - b.tsuboUnitPrice;
+    },
     'yield-desc': function (a, b) { return (b.yieldRate || 0) - (a.yieldRate || 0); }
   };
 
@@ -637,7 +652,9 @@
             '<p class="p-card-access">' + escapeHtml(nearestAccess(p)) + '</p>' +
             '<p class="p-card-rent"><span class="rent-value">' + formatAmount(p) + '</span>' +
               (sale ? '' : '<span class="rent-unit">／月</span>') +
-              '<span class="p-card-unit">坪単価 ' + p.tsuboUnitPrice.toLocaleString('ja-JP') + '円</span></p>' +
+              (p.tsuboUnitPrice
+                ? '<span class="p-card-unit">坪単価 ' + p.tsuboUnitPrice.toLocaleString('ja-JP') + '円</span>'
+                : '') + '</p>' +
             '<dl class="p-card-spec">' +
               '<div><dt>面積</dt><dd>' + p.areaTsubo.toFixed(1) + '坪</dd></div>' +
               '<div><dt>階数</dt><dd>' + escapeHtml(p.floor) + '</dd></div>' +

@@ -152,6 +152,15 @@ function convert(rec) {
     check('売買の用途地域なしを警告する',
       r.warnings.some(w => /用途地域/.test(w)), r.warnings.join(' / '));
 
+    console.log('\n賃料が「応相談」のとき');
+    /* 事業用は賃料非公開の募集が珍しくない。必須にすると1件も載らなくなる */
+    r = convert(record({ rent: null }));
+    check('賃料が空でもエラーにならない', r.errors.length === 0, r.errors.join(' / '));
+    check('賃料は0として扱う', r.p.rent === 0, String(r.p.rent));
+
+    r = convert(record({ deal: '売買', rent: null, price: null, zoning: '商業地域' }));
+    check('販売価格が空でもエラーにならない', r.errors.length === 0, r.errors.join(' / '));
+
     console.log('\n情報更新日の決まりかた');
     check('通常はCMSの更新日時を使う', convert(record()).p.updatedAt === '2026-08-04');
     check('指定があればそちらを優先する',
