@@ -18,7 +18,11 @@ const path = require('path');
 const crypto = require('crypto');
 
 const DIR_REL = 'images/properties';
-const DIR = path.join(__dirname, '..', '..', DIR_REL);
+/* テストは一時フォルダで動かすため、書き込み先を差し替えられるようにしてある。
+   URLに書き出す DIR_REL は変えないので、サイト側の見え方は同じ。 */
+const DIR = process.env.IMAGES_DIR
+  ? path.resolve(process.env.IMAGES_DIR)
+  : path.join(__dirname, '..', '..', DIR_REL);
 const FOLDER_ID_FILE = path.join(__dirname, '..', 'drive-folder-id.txt');
 
 const IMAGE_EXT_RE = /\.(jpe?g|png|webp|avif|gif)$/i;

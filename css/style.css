@@ -845,3 +845,15 @@ input[aria-invalid="true"], textarea[aria-invalid="true"] { border-color: var(--
   .cta-band-inner { flex-direction: column; align-items: flex-start; }
   .cta-band-inline { padding: var(--space-5) var(--space-4); }
 }
+
+/* ---------- 404ページ ---------- */
+.notfound { max-width: 640px; text-align: center; }
+.notfound-lead { margin: var(--space-3) 0 var(--space-5); line-height: 2; color: var(--text-muted); }
+.notfound-actions { display: flex; gap: var(--space-3); justify-content: center; flex-wrap: wrap; }
+.notfound-help { margin-top: var(--space-5); font-size: 0.86rem; color: var(--text-muted); }
+
+/* REMAXフランチャイズの必須表記 */
+.footer-franchise { font-size: 0.72rem; letter-spacing: 0.04em; opacity: 0.85; }
+
+/* お問い合わせフォームの補足文 */
+.form-note { margin: 6px 0 0; font-size: 0.78rem; color: var(--text-muted); }

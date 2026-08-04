@@ -9,6 +9,9 @@ const url = require('url');
 
 const ROOT = path.join(__dirname, '..');
 const PORT = Number(process.env.PORT || 8080);
+/* テスト用。ここに同名のファイルがあれば、そちらを先に返す。
+   実データの件数に左右されずにテストできるようにするための仕組み。 */
+const OVERLAY = process.env.SITE_OVERLAY ? path.resolve(process.env.SITE_OVERLAY) : '';
 
 const MIME = {
   '.html': 'text/html; charset=utf-8',
@@ -26,7 +29,12 @@ const MIME = {
 const server = http.createServer(function (req, res) {
   let pathname = decodeURIComponent(url.parse(req.url).pathname);
   if (pathname === '/') pathname = '/index.html';
-  const file = path.join(ROOT, pathname);
+  let file = path.join(ROOT, pathname);
+  if (OVERLAY) {
+    const overlaid = path.join(OVERLAY, pathname);
+    if (overlaid.startsWith(OVERLAY) && fs.existsSync(overlaid) &&
+        fs.statSync(overlaid).isFile()) file = overlaid;
+  }
 
   if (!file.startsWith(ROOT) || !fs.existsSync(file) || fs.statSync(file).isDirectory()) {
     res.writeHead(404, { 'Content-Type': 'text/plain; charset=utf-8' });

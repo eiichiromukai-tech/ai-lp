@@ -13,7 +13,10 @@ const fs = require('fs');
 const path = require('path');
 
 const ROOT = path.join(__dirname, '..');
-const DIR = path.join(ROOT, 'images/properties');
+
+/* 実際に掲載している写真には触れず、一時フォルダで確認する。 */
+const DIR = fs.mkdtempSync(path.join(require('os').tmpdir(), 'cms-test-'));
+process.env.IMAGES_DIR = DIR;
 
 process.env.MICROCMS_SERVICE_DOMAIN = 'https://test-portal.microcms.io/apis/properties';
 process.env.MICROCMS_API_KEY = 'test-key';
@@ -88,8 +91,7 @@ const cmsPhotos = require(path.join(ROOT, 'tools/lib/cms-photos.js'));
 const schema = require(path.join(ROOT, 'tools/lib/schema.js'));
 
 const listImages = () => fs.readdirSync(DIR).filter(n => /\.(png|jpe?g)$/i.test(n)).sort();
-const backup = {};
-fs.readdirSync(DIR).forEach(n => { backup[n] = fs.readFileSync(path.join(DIR, n)); });
+
 
 let failures = 0;
 function check(name, cond, detail) {
@@ -226,6 +228,31 @@ function convert(rec) {
       masters.features.every(f => new RegExp('^' + f + '$', 'm').test(doc)),
       masters.features.filter(f => !new RegExp('^' + f + '$', 'm').test(doc)).join(','));
 
+    /* 運用マニュアルの数字が実装とずれると、現場の判断を誤らせる */
+    function cronToText(c) {
+      const every = /^\*\/(\d+) \* \* \* \*$/.exec(c);
+      if (every) return every[1] + '分おき';
+      if (/^0 \* \* \* \*$/.test(c)) return '1時間おき';
+      return c;   /* 想定外の書き方はそのまま探して落とす */
+    }
+    const man = fs.readFileSync(path.join(ROOT, 'MANUAL.md'), 'utf8');
+    const wf = fs.readFileSync(path.join(ROOT, '.github/workflows/sync-cms.yml'), 'utf8');
+    const cron = /cron: '([^']+)'/.exec(wf)[1];
+    check('マニュアルの反映間隔がワークフローと一致する',
+      man.indexOf(cronToText(cron)) !== -1, cron + ' → ' + cronToText(cron));
+    check('マニュアルの写真上限が実装と一致する',
+      man.indexOf(cmsPhotos.MAX_PER_PROPERTY + '枚まで') !== -1,
+      String(cmsPhotos.MAX_PER_PROPERTY));
+    check('マニュアルに物件種別がすべて載っている',
+      masters.types.every(t => man.indexOf(t.label) !== -1),
+      masters.types.filter(t => man.indexOf(t.label) === -1).map(t => t.label).join(','));
+    check('マニュアルにこだわり条件がすべて載っている',
+      masters.features.every(f => man.indexOf(f) !== -1),
+      masters.features.filter(f => man.indexOf(f) === -1).join(','));
+    check('マニュアルに移行前の記述が残っていない',
+      !/Webhook|スプレッドシート|GitHubにアップロード/.test(man),
+      (man.match(/Webhook|スプレッドシート|GitHubにアップロード/g) || []).join(','));
+
     console.log('\nエラーの伝えかた');
     listStatus = 401;
     let msg = '';
@@ -238,9 +265,7 @@ function convert(rec) {
     check('API名の誤りを分かる形で伝える', /API名/.test(msg), msg);
     listStatus = 200;
   } finally {
-    /* テスト用の写真を消して、元の写真を戻す */
-    fs.readdirSync(DIR).forEach(n => { if (!backup[n]) fs.unlinkSync(path.join(DIR, n)); });
-    Object.keys(backup).forEach(n => fs.writeFileSync(path.join(DIR, n), backup[n]));
+    fs.rmSync(DIR, { recursive: true, force: true });
     global.fetch = realFetch;
   }
 

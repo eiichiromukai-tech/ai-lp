@@ -3,3 +3,8 @@ node_modules/
 
 # Googleドライブ同期の照合用（コミット不要）
 *.drive-md5
+
+# テスト用の固定データから毎回生成されるもの（元になるCSVと写真だけコミットします）
+tests/fixture/site/data/
+tests/fixture/site/sitemap.xml
+tests/fixture/site/robots.txt
