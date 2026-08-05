@@ -426,7 +426,10 @@ function section(title) { console.log('\n' + title); }
       'f-access', 'f-contractTerm']) {
       await page.fill('#' + id, '');
     }
-    for (const c of await page.locator('#f-features input:checked').all()) await c.uncheck();
+    /* :checked で絞ると、外すたびに対象がずれる。全部を見て、入っているものだけ外す */
+    for (const c of await page.locator('#f-features input').all()) {
+      if (await c.isChecked()) await c.uncheck();
+    }
     await settle(200);
 
     /* 検証はサイト本体と同じルールで動く */
