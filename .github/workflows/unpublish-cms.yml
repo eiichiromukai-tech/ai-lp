@@ -1,0 +1,97 @@
+# =====================================================
+# 公開してしまった物件を、まとめて「下書き」に戻します。
+#
+#   下書きに戻すと、サイトからは消えます
+#   （サイトへの取り込みは、公開済みのものだけを読むため）。
+#
+#   ⚠️ 消えるのは「サイトへの掲載」だけです。microCMS の中身は残るので、
+#      あとから公開し直せます。削除ではありません。
+#
+# 使いかた:
+#   1. microCMS の サービス設定 → 管理APIキー でキーを作る
+#      ※ 物件の登録に使う「APIキー」とは別のものです
+#   2. Settings → Secrets and variables → Actions で
+#      MICROCMS_MANAGEMENT_API_KEY にそのキーを登録する
+#   3. Actionsタブ →「物件をまとめて下書きに戻す」→ Run workflow
+#      まず「確認だけ」で実行し、対象を見てから本番実行します
+#   4. 終わったら Secrets のキーを削除する
+# =====================================================
+name: 物件をまとめて下書きに戻す
+
+on:
+  workflow_dispatch:
+    inputs:
+      target:
+        description: '対象（CSVのパス、または物件番号をカンマ区切りで）'
+        required: true
+        default: 'data/import/物件データ.csv'
+      mode:
+        description: '実行のしかた'
+        required: true
+        default: '確認だけ（何も変えません）'
+        type: choice
+        options:
+          - '確認だけ（何も変えません）'
+          - '下書きに戻す'
+
+concurrency:
+  # 反映の処理と重ならないようにする
+  group: sync-content
+  cancel-in-progress: false
+
+jobs:
+  unpublish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '22'
+
+      - name: 管理APIキーが登録されているか確認する
+        if: inputs.mode == '下書きに戻す'
+        env:
+          KEY: ${{ secrets.MICROCMS_MANAGEMENT_API_KEY }}
+        run: |
+          if [ -z "$KEY" ]; then
+            echo "::error::Secrets に MICROCMS_MANAGEMENT_API_KEY がありません。"
+            echo "microCMS の サービス設定 → 管理APIキー で作成し、"
+            echo "Settings → Secrets and variables → Actions に登録してください。"
+            echo "（物件の登録に使う APIキー とは別のものです）"
+            exit 1
+          fi
+
+      - name: 下書きに戻す
+        env:
+          MICROCMS_MANAGEMENT_API_KEY: ${{ secrets.MICROCMS_MANAGEMENT_API_KEY }}
+        run: |
+          # どれにも当てはまらないときは何もせずに止める
+          case "${{ inputs.mode }}" in
+            "確認だけ（何も変えません）") FLAG="" ;;
+            "下書きに戻す")               FLAG="--run" ;;
+            *)
+              echo "::error::実行のしかた「${{ inputs.mode }}」が分かりません。何も変えていません。"
+              exit 1 ;;
+          esac
+
+          # ファイルとして存在すればCSV、しなければ物件番号の並びとして扱う
+          if [ -f "${{ inputs.target }}" ]; then
+            echo "対象: ${{ inputs.target }}（CSV）"
+            node tools/unpublish-cms.js "${{ inputs.target }}" $FLAG
+          else
+            echo "対象: ${{ inputs.target }}（物件番号）"
+            node tools/unpublish-cms.js --id "${{ inputs.target }}" $FLAG
+          fi
+
+      - name: このあとにすること
+        if: success() && inputs.mode == '下書きに戻す'
+        run: |
+          echo "## 下書きに戻しました" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "1. microCMS の管理画面で、対象が下書きになっているかご確認ください" >> $GITHUB_STEP_SUMMARY
+          echo "2. サイトから消えるのは15分おきの自動同期、または" >> $GITHUB_STEP_SUMMARY
+          echo "   「物件情報を反映（microCMS）」の Run workflow のあとです" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### 忘れずに" >> $GITHUB_STEP_SUMMARY
+          echo "- Secrets の \`MICROCMS_MANAGEMENT_API_KEY\` を削除する" >> $GITHUB_STEP_SUMMARY

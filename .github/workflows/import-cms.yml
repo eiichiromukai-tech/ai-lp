@@ -13,6 +13,8 @@
 #   4. Actionsタブ →「物件をCSVから一括登録」→ Run workflow
 #      まず「確認だけ（dry-run）」で実行し、内容を見てから本番実行します
 #   5. 終わったら Secrets のキーを削除し、PUTの権限も外す
+#   6. data/import/ に置いたCSVを削除する
+#      （このリポジトリは公開されているため、置いたままだと誰でも読めます）
 #
 # 【重要】このワークフローは microCMS の内容を書き換えます。
 #   物件番号が同じものは上書きになります。まず dry-run でご確認ください。
@@ -25,7 +27,7 @@ on:
       csv:
         description: '登録するCSVのパス'
         required: true
-        default: 'data/import/2026-08_東急不動産.csv'
+        default: 'data/import/物件データ.csv'
       mode:
         description: '実行のしかた'
         required: true
@@ -35,6 +37,10 @@ on:
           - '確認だけ（何も登録しません）'
           - '下書きとして登録'
           - '公開状態で登録'
+      confirm:
+        description: '「公開状態で登録」を選んだときだけ、「公開します」と入力してください'
+        required: false
+        default: ''
 
 concurrency:
   # 反映の処理と重ならないようにする
@@ -67,11 +73,29 @@ jobs:
         env:
           MICROCMS_WRITE_API_KEY: ${{ secrets.MICROCMS_WRITE_API_KEY }}
         run: |
+          # どれにも当てはまらないときは公開せずに止める。
+          # ここを「公開」にしておくと、選択肢の文言を変えただけで
+          # 黙って公開されてしまうため。
           case "${{ inputs.mode }}" in
             "確認だけ（何も登録しません）") FLAG="--dry-run" ;;
             "下書きとして登録")             FLAG="--draft" ;;
-            *)                              FLAG="" ;;
+            "公開状態で登録")               FLAG="" ;;
+            *)
+              echo "::error::実行のしかた「${{ inputs.mode }}」が分かりません。何も登録していません。"
+              exit 1 ;;
           esac
+
+          # 公開で登録するときは、合言葉の入力を必須にする。
+          # 下書きのつもりで公開してしまう事故を防ぐため。
+          if [ "$FLAG" = "" ]; then
+            if [ "${{ inputs.confirm }}" != "公開します" ]; then
+              echo "::error::公開状態で登録するには、確認欄に「公開します」と入力してください。"
+              echo "::error::下書きで登録する場合は、実行のしかたで「下書きとして登録」を選んでください。"
+              echo "何も登録していません。"
+              exit 1
+            fi
+          fi
+
           echo "CSV : ${{ inputs.csv }}"
           echo "実行: ${{ inputs.mode }}"
           echo ""
@@ -89,3 +113,5 @@ jobs:
           echo "### 忘れずに" >> $GITHUB_STEP_SUMMARY
           echo "- Secrets の \`MICROCMS_WRITE_API_KEY\` を削除する" >> $GITHUB_STEP_SUMMARY
           echo "- microCMS の APIキーから \`PUT\` の権限を外す" >> $GITHUB_STEP_SUMMARY
+          echo "- \`${{ inputs.csv }}\` を削除する" >> $GITHUB_STEP_SUMMARY
+          echo "  （このリポジトリは公開されているため、置いたままだと誰でも読めます）" >> $GITHUB_STEP_SUMMARY

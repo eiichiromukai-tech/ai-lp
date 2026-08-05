@@ -54,7 +54,16 @@ if (!cms.isConfigured()) {
     process.exit(1);
   }
 
-  if (!records.length) fail('microCMS に公開中の物件が1件もありません。');
+  /* 公開中が0件のときも、そのまま反映する。
+     全部を下書きに戻して掲載を止める、という運用ができなくなるため。
+     （取得そのものが失敗した場合は、この手前で終了している） */
+  if (!records.length) {
+    console.warn('');
+    console.warn('警告: microCMS に公開中の物件が1件もありません。');
+    console.warn('      サイトの物件はすべて掲載されなくなります。');
+    console.warn('      意図した操作でない場合は、管理画面で公開状態をご確認ください。');
+    console.warn('');
+  }
 
   /* ---------- 検証（書き込む前に確認する） ---------- */
   const errors = [];

@@ -57,34 +57,13 @@ if (!KEY && !DRY_RUN) {
   process.exit(1);
 }
 
-/* ---------- 交通の文章を、路線・駅・徒歩分に分解する ---------- */
-/* 「JR山手線・埼京線「大崎」駅徒歩4分」→ 路線ごとに1件ずつ */
-function parseAccess(text) {
-  const out = [];
-  String(text || '').split(/[／/]/).forEach(function (chunk) {
-    const m = /^(.+?)[「『](.+?)[」』]\s*駅?\s*(?:より|から)?\s*徒歩\s*(\d+)\s*分/.exec(chunk.trim());
-    if (!m) return;
-    const station = m[2].replace(/駅$/, '');
-    const walk = Number(m[3]);
-    m[1].split(/[・、,]/).map(function (s) { return s.trim(); }).filter(Boolean)
-      .forEach(function (line) {
-        out.push({ fieldId: 'accessItem', line: line, station: station, walk: walk });
-      });
-  });
-  return out;
-}
+/* 交通の文章を分解する処理は js/schema-core.js にまとめてあります。
+   図面の下書き画面（import.html）と同じ結果になるようにするためです。 */
+const parseAccess = schema.parseAccessText;
 
-/* コンテンツIDに使える文字だけにする。
-   microCMS は英小文字・数字・ハイフン・アンダースコアのみを受け付けるため、
-   物件番号が大文字でも小文字に直して使う。
-   （サイト上の物件番号・URLは propertyId の値をそのまま使うので、
-   ここで小文字にしても表示や物件URLには影響しない） */
-function toContentId(value) {
-  return String(value || '').trim().toLowerCase()
-    .replace(/[^a-z0-9_-]/g, '-')
-    .replace(/-+/g, '-')
-    .replace(/^-|-$/g, '');
-}
+/* コンテンツIDへの変換は js/schema-core.js にまとめてあります。
+   下書きに戻す処理（tools/unpublish-cms.js）と同じIDを指す必要があるためです。 */
+const toContentId = schema.toContentId;
 
 function splitList(value) {
   return String(value || '').split(/[;；]/).map(function (s) { return s.trim(); }).filter(Boolean);

@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>物件の下書きをつくる｜REMAX COMPASS 物件ポータル</title>
+<meta name="description" content="社内用。図面から物件データの下書きを作ります。">
+<meta name="robots" content="noindex, nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Zen+Kaku+Gothic+New:wght@400;500;700;900&display=swap" rel="stylesheet">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="REMAX COMPASS 物件ポータル">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:title" content="お気に入り物件｜REMAX COMPASS 物件ポータル">
+<meta property="og:description" content="">
+<meta property="og:url" content="">
+<meta property="og:image" content="images/COMPASS_BLACK_Primary.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="お気に入り物件｜REMAX COMPASS 物件ポータル">
+<meta name="twitter:description" content="">
+<meta name="twitter:image" content="images/COMPASS_BLACK_Primary.png">
+<link rel="icon" href="favicon.ico" sizes="32x32">
+<link rel="icon" href="images/favicon-96.png" type="image/png" sizes="96x96">
+<meta name="theme-color" content="#000B35">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<a href="#main" class="skip-link">本文へスキップ</a>
+
+<header class="site-header" id="header">
+  <div class="container header-inner">
+    <a href="index.html" class="logo"><img src="images/logo-header.png" width="240" height="120" alt="REMAX COMPASS" class="logo-img"></a>
+    <nav class="main-nav" id="main-nav" aria-label="メインナビゲーション">
+      <ul>
+        <li><a href="properties.html">賃貸で探す</a></li>
+        <li><a href="properties.html?deal=sale">売買で探す</a></li>
+        <li><a href="properties.html?type=shop">店舗</a></li>
+        <li><a href="properties.html?type=office">オフィス</a></li>
+        <li><a href="owner.html">オーナー様へ</a></li>
+        <li><a href="contact.html">お問い合わせ</a></li>
+      </ul>
+    </nav>
+    <div class="header-cta">
+      <a href="favorites.html" class="header-fav">お気に入り<span class="fav-count" data-fav-count hidden>0</span></a>
+      <a href="tel:0362615098" class="header-tel">
+        <span class="tel-label">お電話でのご相談</span>
+        <span class="tel-number">03-6261-5098</span>
+      </a>
+      <a href="contact.html" class="btn btn-primary">無料相談する</a>
+    </div>
+    <button class="nav-toggle" id="nav-toggle" aria-label="メニューを開く" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
+
+<p class="demo-notice" role="note">本サイトに掲載している物件情報は、ポータル機能のデモンストレーション用に作成したサンプルデータです。実際の募集物件ではありません。</p>
+
+<main id="main">
+  <section class="section">
+    <div class="container">
+      <p class="section-eyebrow">社内用ツール</p>
+      <h1 class="section-title">物件の下書きをつくる</h1>
+      <p class="imp-lead">
+        図面（PDF）を落として文字を取り出し、右のフォームに書き写します。
+        入力はその場で検証され、間違いがあれば赤字で出ます。
+        必要な件数を足したら、CSVを書き出して一括登録に使ってください。
+      </p>
+      <p class="imp-note">
+        <strong>PDFはこの画面の中だけで読み込まれます。</strong>どこかへ送信されることはありません。
+      </p>
+
+      <div class="imp-layout">
+        <div class="imp-source">
+          <div id="pdf-drop" class="imp-drop">
+            <p><strong>PDFをここに落とす</strong></p>
+            <p class="imp-drop-sub">または<label for="pdf-input" class="imp-file">ファイルを選ぶ</label></p>
+            <input type="file" id="pdf-input" accept="application/pdf" hidden>
+          </div>
+          <p id="pdf-status" class="imp-pdf-status"></p>
+          <textarea id="pdf-text" class="imp-pdf-text" rows="24"
+            placeholder="ここに図面から取り出した文字が出ます。手で貼り付けても構いません。"></textarea>
+        </div>
+
+        <form id="property-form" class="imp-form" autocomplete="off">
+        <fieldset class="imp-group"><legend>基本</legend>
+          <div class="imp-row"><label for="f-id">物件番号</label><input type="text" id="f-id"><small>他と重複しない番号。URLになります</small></div>
+          <div class="imp-row"><label for="f-title">物件名</label><input type="text" id="f-title"></div>
+          <div class="imp-row"><label for="f-deal">取引種別</label><select id="f-deal"></select></div>
+          <div class="imp-row"><label for="f-type">物件種別</label><select id="f-type"></select></div>
+          <div class="imp-row"><label for="f-status">募集状況</label><select id="f-status"></select></div>
+          <div class="imp-row"><label for="f-ward">エリア（市区）</label><select id="f-ward"></select></div>
+          <div class="imp-row"><label for="f-address">所在地</label><input type="text" id="f-address"><small>番地・号まで書くと地図が出ます</small></div>
+          <div class="imp-row"><label for="f-access">交通</label><input type="text" id="f-access"><small>例: JR山手線・埼京線「大崎」駅徒歩4分／都営浅草線「五反田」駅徒歩6分</small></div>
+        </fieldset>
+        <fieldset class="imp-group"><legend>賃貸のとき</legend>
+          <div class="imp-row"><label for="f-rent">月額賃料(円)</label><input type="text" inputmode="decimal" id="f-rent"></div>
+          <div class="imp-row"><label for="f-managementFee">共益費(円)</label><input type="text" inputmode="decimal" id="f-managementFee"></div>
+          <div class="imp-row"><label for="f-deposit">敷金(ヶ月)</label><input type="text" inputmode="decimal" id="f-deposit"></div>
+          <div class="imp-row"><label for="f-keyMoney">礼金(ヶ月)</label><input type="text" inputmode="decimal" id="f-keyMoney"></div>
+          <div class="imp-row"><label for="f-contractTerm">契約期間</label><input type="text" id="f-contractTerm"></div>
+        </fieldset>
+        <fieldset class="imp-group"><legend>売買のとき</legend>
+          <div class="imp-row"><label for="f-price">販売価格(円)</label><input type="text" inputmode="decimal" id="f-price"></div>
+          <div class="imp-row"><label for="f-yieldRate">表面利回り(%)</label><input type="text" inputmode="decimal" id="f-yieldRate"></div>
+          <div class="imp-row"><label for="f-tenure">権利形態</label><input type="text" id="f-tenure"></div>
+          <div class="imp-row"><label for="f-zoning">用途地域</label><input type="text" id="f-zoning"></div>
+          <div class="imp-row"><label for="f-buildingCoverage">建ぺい率(%)</label><input type="text" inputmode="decimal" id="f-buildingCoverage"></div>
+          <div class="imp-row"><label for="f-floorAreaRatio">容積率(%)</label><input type="text" inputmode="decimal" id="f-floorAreaRatio"></div>
+          <div class="imp-row"><label for="f-privateRoad">私道負担</label><input type="text" id="f-privateRoad"></div>
+          <div class="imp-row"><label for="f-buildingPermit">建築確認番号</label><input type="text" id="f-buildingPermit"></div>
+        </fieldset>
+        <fieldset class="imp-group"><legend>建物・条件</legend>
+          <div class="imp-row"><label for="f-areaTsubo">面積(坪)</label><input type="text" inputmode="decimal" id="f-areaTsubo"><small>坪。m²ではありません</small></div>
+          <div class="imp-row"><label for="f-floor">階数</label><input type="text" id="f-floor"></div>
+          <div class="imp-row"><label for="f-floorsTotal">建物階数</label><input type="text" inputmode="decimal" id="f-floorsTotal"></div>
+          <div class="imp-row"><label for="f-built">築年月</label><input type="text" id="f-built"><small>2015-04 のように年-月で</small></div>
+          <div class="imp-row"><label for="f-structure">構造</label><input type="text" id="f-structure"></div>
+          <div class="imp-row"><label for="f-usage">用途</label><div>
+            <div id="f-usage-checks" class="imp-checks"></div>
+            <input type="text" id="f-usage" placeholder="飲食店;カフェ のように「;」で区切ります">
+          </div></div>
+          <div class="imp-row"><label for="f-availableFrom">入居可能時期・引渡し時期</label><input type="text" id="f-availableFrom"></div>
+          <div class="imp-row"><label for="f-updatedAt">情報更新日</label><input type="text" id="f-updatedAt"></div>
+        </fieldset>
+        <fieldset class="imp-group"><legend>説明</legend>
+          <div class="imp-row imp-row-wide"><label for="f-description">物件説明</label><textarea id="f-description" rows="6"></textarea></div>
+        </fieldset>
+        <fieldset class="imp-group"><legend>こだわり条件</legend>
+          <div id="f-features" class="imp-checks"></div>
+        </fieldset>
+          <div id="validation" class="imp-result"></div>
+          <button type="button" id="add-row" class="btn btn-primary" disabled>一覧に追加</button>
+        </form>
+      </div>
+
+      <div class="imp-rows">
+        <h2 class="imp-rows-title">追加した物件（<span id="rows-count">0</span>件）</h2>
+        <div class="imp-table-wrap">
+          <table class="imp-table">
+            <thead><tr><th>物件番号</th><th>物件名</th><th>エリア</th><th>面積(坪)</th><th></th></tr></thead>
+            <tbody id="rows-body"></tbody>
+          </table>
+        </div>
+        <button type="button" id="download" class="btn btn-primary" disabled>CSVを書き出す</button>
+        <p class="imp-note">
+          書き出したCSVは <code>data/import/</code> に置き、Actionsの「物件をCSVから一括登録」で登録します。
+        </p>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="container footer-inner">
+    <div class="footer-brand">
+      <img src="images/logo-footer.png" width="272" height="136" alt="REMAX COMPASS" class="footer-logo">
+      <p class="footer-company">株式会社ロメッツ（屋号：REMAX COMPASS）</p>
+      <p class="footer-address">〒101-0061 東京都千代田区神田三崎町三丁目4番9号 横山ビル3F<br>TEL 03-6261-5098／宅地建物取引業免許番号 東京都知事(1)第110605号</p>
+    </div>
+    <nav class="footer-nav" aria-label="フッターナビゲーション">
+      <div>
+        <h3>賃貸で探す</h3>
+        <ul>
+          <li><a href="properties.html?type=shop">店舗</a></li>
+          <li><a href="properties.html?type=office">オフィス</a></li>
+          <li><a href="properties.html?type=warehouse">倉庫・工場</a></li>
+          <li><a href="properties.html?type=building">一棟ビル</a></li>
+          <li><a href="properties.html?type=land">事業用地</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3>売買で探す</h3>
+        <ul>
+          <li><a href="properties.html?deal=sale&amp;type=building">一棟ビル</a></li>
+          <li><a href="properties.html?deal=sale&amp;type=office">オフィス</a></li>
+          <li><a href="properties.html?deal=sale&amp;type=shop">店舗</a></li>
+          <li><a href="properties.html?deal=sale&amp;type=warehouse">倉庫・工場</a></li>
+          <li><a href="properties.html?deal=sale&amp;type=land">事業用地</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3>サービス</h3>
+        <ul>
+          <li><a href="properties.html">物件検索</a></li>
+          <li><a href="favorites.html">お気に入り</a></li>
+          <li><a href="owner.html">物件オーナー様へ</a></li>
+          <li><a href="contact.html">お問い合わせ</a></li>
+          <li><a href="privacy.html">プライバシーポリシー</a></li>
+        </ul>
+      </div>
+    </nav>
+  </div>
+  <div class="container footer-legal">
+    <p>掲載物件はすべて当社が媒介（仲介）する物件です。ご相談・物件のご紹介・内見に費用はかかりません。<strong>ご成約時に、宅地建物取引業法に定める報酬額を仲介手数料として申し受けます</strong>（賃貸：賃料の1ヶ月分（税別）／売買：売買価格の3%＋6万円（税別））。</p>
+    <p>掲載内容は情報更新日時点のものです。取引条件は変更される場合がありますので、最新の条件はお問い合わせください。表示価格・賃料は特記のない限り消費税別です。</p>
+  </div>
+  <div class="container footer-bottom">
+    <p class="footer-franchise">Each Office Independently Owned and Operated.</p>
+    <p>&copy; <span id="current-year">2026</span> LOMETS Inc. All rights reserved.</p>
+    <p class="footer-note">掲載物件はデモ用のサンプルデータです。</p>
+  </div>
+</footer>
+
+<script src="data/properties.js"></script>
+<script src="js/portal.js"></script>
+<script src="js/schema-core.js"></script>
+<script src="js/import-page.js" type="module"></script>
+</body>
+</html>
