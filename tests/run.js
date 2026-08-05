@@ -410,8 +410,10 @@ function section(title) { console.log('\n' + title); }
     check('確認をうながす案内が出る',
       (await page.textContent('#auto-result')).indexOf('必ず図面と見比べて') !== -1,
       await page.textContent('#auto-result'));
-    /* 物件番号は会社が決めるものなので、図面からは入れない */
-    check('物件番号は空のまま', (await page.inputValue('#f-id')) === '');
+    /* 物件番号は図面からは読まず、日付＋連番で自動採番する */
+    check('物件番号が自動で採番される',
+      /^CMP-\d{6}-\d{2}$/.test(await page.inputValue('#f-id')),
+      await page.inputValue('#f-id'));
 
     /* 人が直したら、確認済みとして色を外す */
     await page.fill('#f-rent', '900000'); await settle(200);
@@ -460,11 +462,14 @@ function section(title) { console.log('\n' + title); }
       await page.textContent('#validation'));
     check('埋めれば追加できる', !(await page.isDisabled('#add-row')));
 
+    const firstId = await page.inputValue('#f-id');
     await page.click('#add-row'); await settle(200);
     check('一覧に追加される', (await page.textContent('#rows-count')) === '1');
-    check('物件番号だけ空になる',
-      (await page.inputValue('#f-id')) === '' &&
-      (await page.inputValue('#f-title')) === 'テスト品川ビル 5F');
+    check('次の番号が入る',
+      (await page.inputValue('#f-id')) !== firstId &&
+      /^CMP-\d{6}-\d{2}$/.test(await page.inputValue('#f-id')),
+      firstId + ' → ' + (await page.inputValue('#f-id')));
+    check('物件名は残る', (await page.inputValue('#f-title')) === 'テスト品川ビル 5F');
 
     await page.fill('#f-id', 'CMP-9001'); await settle(150);
     check('同じ物件番号の重複が分かる',

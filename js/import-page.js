@@ -76,6 +76,42 @@
       .map(function (c) { return c.value; });
   }
 
+  /* ---------- 物件番号の自動採番 ---------- */
+  /* 例: CMP-260805-01
+     すでに掲載中の物件と、この画面で追加した分を見て、続きの番号にします。
+
+     ⚠ この画面から見えるのは「掲載中」の物件だけです。microCMSの下書きは
+     見えないため、同じ日に別の人が同時に作業すると番号が重なることがあります。
+     一括登録は「確認だけ」で番号を確かめてから本番実行してください。
+
+     番号の付け方を変えるときは、ここの ID_PREFIX と形を直せば済みます。
+     ただし、すでに公開した物件の番号は変えないでください（URLが変わり、
+     お客様のお気に入りや共有リンクが切れます）。 */
+  var ID_PREFIX = 'CMP';
+
+  function pad2(n) { return n < 10 ? '0' + n : String(n); }
+
+  function nextPropertyId() {
+    var d = new Date();
+    var prefix = ID_PREFIX + '-' + String(d.getFullYear()).slice(2) +
+      pad2(d.getMonth() + 1) + pad2(d.getDate()) + '-';
+    var used = (M.properties || []).map(function (p) { return String(p.id || ''); })
+      .concat(rows.map(function (r) { return String(r.id || ''); }));
+    var max = 0;
+    used.forEach(function (id) {
+      if (id.toUpperCase().indexOf(prefix) !== 0) return;
+      var n = Number(id.slice(prefix.length));
+      if (isFinite(n) && n > max) max = n;
+    });
+    return prefix + pad2(max + 1);
+  }
+
+  function fillNextId() {
+    var input = el('f-id');
+    input.value = nextPropertyId();
+    markFilled(input);
+  }
+
   /* ---------- 入力内容 → CSVの1行 ---------- */
   function currentValues() {
     var features = checkedValues('#f-features');
@@ -320,6 +356,7 @@
   document.addEventListener('DOMContentLoaded', function () {
     buildSelects();
     buildUsageOptions();
+    fillNextId();
     el('f-updatedAt').value = new Date().toISOString().slice(0, 10);
     renderRows();
     validate();
@@ -336,8 +373,9 @@
       rows.push(currentValues());
       renderRows();
       /* 同じ建物の別区画を続けて入れることが多いので、物件番号と区画だけ空にする */
-      ['f-id', 'f-floor', 'f-areaTsubo'].forEach(function (id) { el(id).value = ''; });
-      el('f-id').focus();
+      ['f-floor', 'f-areaTsubo'].forEach(function (id) { el(id).value = ''; });
+      fillNextId();          /* 物件番号は次の番号を入れておく */
+      el('f-floor').focus();
       validate();
     });
 
