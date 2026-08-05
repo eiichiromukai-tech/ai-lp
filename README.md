@@ -84,6 +84,7 @@ js/favorites.js     … お気に入りページ
 js/contact.js       … お問い合わせフォーム
 js/schema-core.js   … 項目の定義・検証・変換（Nodeとブラウザの両方で読む唯一の定義）
 js/import-page.js   … 図面からの下書きページ
+js/extract-core.js  … 図面の文字を入力欄に振り分ける（Nodeとブラウザの両方で読む）
 vendor/pdfjs/       … PDFの文字取り出し（pdf.js。import.htmlでのみ読み込む）
 images/             … ロゴ・ブランド素材
 images/properties/  … 物件写真（microCMSから自動で取り込まれる。手で置かないでください）

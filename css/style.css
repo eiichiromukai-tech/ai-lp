@@ -907,3 +907,12 @@ input[aria-invalid="true"], textarea[aria-invalid="true"] { border-color: var(--
   .imp-row { grid-template-columns: 1fr; }
   .imp-row small, .imp-row-wide small { grid-column: 1; }
 }
+
+/* 図面から自動で入れた欄。人が触るまで色を付けて、確認をうながす */
+.imp-row input.is-auto, .imp-row select.is-auto, .imp-row textarea.is-auto {
+  background: #fffbe6; border-color: #d4a017;
+}
+.imp-checks.is-auto { background: #fffbe6; border-radius: 6px; padding: 6px; }
+.imp-auto { background: #fffbe6; color: #6b4f00; }
+.imp-auto-btn { margin-top: var(--space-3); width: 100%; }
+#auto-result:empty { display: none; }

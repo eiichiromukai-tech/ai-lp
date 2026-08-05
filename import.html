@@ -80,8 +80,10 @@
             <input type="file" id="pdf-input" accept="application/pdf" hidden>
           </div>
           <p id="pdf-status" class="imp-pdf-status"></p>
-          <textarea id="pdf-text" class="imp-pdf-text" rows="24"
+          <textarea id="pdf-text" class="imp-pdf-text" rows="20"
             placeholder="ここに図面から取り出した文字が出ます。手で貼り付けても構いません。"></textarea>
+          <button type="button" id="auto-fill" class="btn btn-ghost imp-auto-btn">この文字から入力欄を埋める</button>
+          <div id="auto-result" class="imp-result"></div>
         </div>
 
         <form id="property-form" class="imp-form" autocomplete="off">
@@ -207,6 +209,7 @@
 <script src="data/properties.js"></script>
 <script src="js/portal.js"></script>
 <script src="js/schema-core.js"></script>
+<script src="js/extract-core.js"></script>
 <script src="js/import-page.js" type="module"></script>
 </body>
 </html>

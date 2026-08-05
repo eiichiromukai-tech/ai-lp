@@ -12,6 +12,7 @@
   'use strict';
 
   var SCHEMA = SCHEMA_CORE.create(window.PORTAL_DATA);
+  var EXTRACT = EXTRACT_CORE.create(window.PORTAL_DATA);
   var M = window.PORTAL_DATA;
   var rows = [];          /* 追加済みの物件（CSVの1行ぶんずつ） */
   var touched = false;    /* 一度でも入力されたか。開いた直後は指摘を出さない */
@@ -208,6 +209,79 @@
     URL.revokeObjectURL(a.href);
   }
 
+  /* ---------- 取り出した文字を入力欄に振り分ける ---------- */
+  /* CSVの列キー → 入力欄のid（features だけチェックボックスなので別扱い） */
+  function fieldId(key) {
+    return key === 'id' ? 'f-id' : key === 'updatedAt' ? 'f-updatedAt' : 'f-' + key;
+  }
+
+  function autoFill() {
+    var text = el('pdf-text').value;
+    var result = EXTRACT.extract(text);
+    var filled = [];
+
+    Object.keys(result.values).forEach(function (key) {
+      var value = result.values[key];
+      if (key === 'features') {
+        var hit = false;
+        [].slice.call(document.querySelectorAll('#f-features input')).forEach(function (c) {
+          if (value.indexOf(c.value) !== -1 && !c.checked) { c.checked = true; hit = true; }
+        });
+        if (hit) { filled.push('こだわり条件'); markFilled(el('f-features')); }
+        return;
+      }
+      var input = el(fieldId(key));
+      if (!input) return;
+      /* すでに人が入れているものは上書きしない */
+      if (String(input.value || '').trim() !== '') return;
+      if (input.tagName === 'SELECT') {
+        var has = [].slice.call(input.options).some(function (o) { return o.value === value; });
+        if (!has) return;
+      }
+      input.value = value;
+      markFilled(input);
+      filled.push(labelOf(input));
+    });
+
+    showAutoResult(filled, result.notes);
+    touched = true;
+    validate();
+  }
+
+  function labelOf(input) {
+    var row = input.closest('.imp-row');
+    var label = row ? row.querySelector('label') : null;
+    return label ? label.textContent : input.id;
+  }
+
+  /* 自動で入れた欄は色を付ける。人が触ったら普通の見た目に戻す */
+  function markFilled(input) {
+    input.classList.add('is-auto');
+    input.addEventListener('input', function () { input.classList.remove('is-auto'); }, { once: true });
+    input.addEventListener('change', function () { input.classList.remove('is-auto'); }, { once: true });
+  }
+
+  function showAutoResult(filled, notes) {
+    var box = el('auto-result');
+    if (!filled.length && !notes.length) {
+      box.className = 'imp-result imp-warn';
+      box.innerHTML = '図面から読み取れる項目がありませんでした。お手数ですが手で入力してください。';
+      return;
+    }
+    box.className = 'imp-result imp-auto';
+    box.innerHTML =
+      (filled.length
+        ? '<p class="imp-label">' + filled.length + '項目を自動入力しました（色の付いた欄）</p>' +
+          '<p>' + escapeHtml(filled.join('／')) + '</p>' +
+          '<p><strong>金額・面積・築年月は、必ず図面と見比べてください。</strong>' +
+          '読み取りを間違えることがあります。</p>'
+        : '') +
+      (notes.length
+        ? '<p class="imp-label">入れなかったもの</p><ul>' +
+          notes.map(function (n) { return '<li>' + escapeHtml(n) + '</li>'; }).join('') + '</ul>'
+        : '');
+  }
+
   /* ---------- PDFから文字を取り出す ---------- */
   function showPdfStatus(message, busy) {
     var s = el('pdf-status');
@@ -235,6 +309,7 @@
         showPdfStatus('文字を取り出せませんでした。画像として作られたPDFの可能性があります。', false);
       } else {
         showPdfStatus(doc.numPages + 'ページから ' + text.length + '文字を取り出しました。', false);
+        autoFill();   /* 取り出せたら、そのまま入力欄へ振り分ける */
       }
     } catch (e) {
       showPdfStatus('読み込めませんでした（' + (e && e.message ? e.message : e) + '）', false);
@@ -275,6 +350,8 @@
     });
 
     el('download').addEventListener('click', downloadCsv);
+    /* 手で貼り付けたときや、読み取り直したいときのために押せるようにしておく */
+    el('auto-fill').addEventListener('click', autoFill);
 
     var drop = el('pdf-drop');
     var input = el('pdf-input');

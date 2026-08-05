@@ -384,6 +384,51 @@ function section(title) { console.log('\n' + title); }
       (await page.textContent('#validation')).indexOf('上から入力してください') !== -1);
     check('最初は追加できない', await page.isDisabled('#add-row'));
 
+    /* 図面の文字から入力欄が埋まる（人が書き写さなくて済む） */
+    const ZUMEN = ['募集図面', '物件名　テスト五反田ビル', '所在地　東京都品川区西五反田一丁目1番1号',
+      '交通　　JR山手線「五反田」駅徒歩4分／都営浅草線「五反田」駅徒歩6分', '用途　　事務所',
+      '賃料　　850,000円（税別）', '共益費　85,000円', '敷金　　10ヶ月', '礼金　　無',
+      '面積　　140.5㎡', '階数　　5階／地上8階建', '構造　　SRC造', '竣工　　平成27年4月',
+      '契約形態　定期借家5年', '設備　　エレベーター・空調更新済'].join('\n');
+    await page.fill('#pdf-text', ZUMEN);
+    await page.click('#auto-fill'); await settle(400);
+    check('賃料が入る', (await page.inputValue('#f-rent')) === '850000',
+      await page.inputValue('#f-rent'));
+    check('m²を坪に換算して入る', (await page.inputValue('#f-areaTsubo')) === '42.5',
+      await page.inputValue('#f-areaTsubo'));
+    check('和暦の築年月を西暦で入れる', (await page.inputValue('#f-built')) === '2015-04',
+      await page.inputValue('#f-built'));
+    check('エリアが選ばれる', (await page.inputValue('#f-ward')) === '品川区');
+    check('物件種別が選ばれる', (await page.inputValue('#f-type')) === 'オフィス');
+    check('交通が図面どおりの文章で入る',
+      (await page.inputValue('#f-access')).indexOf('JR山手線「五反田」駅徒歩4分') === 0,
+      await page.inputValue('#f-access'));
+    check('こだわり条件が選ばれる',
+      await page.locator('#f-features input:checked').count() >= 2);
+    check('自動で入れた欄に色が付く', await page.locator('.is-auto').count() >= 10,
+      String(await page.locator('.is-auto').count()));
+    check('確認をうながす案内が出る',
+      (await page.textContent('#auto-result')).indexOf('必ず図面と見比べて') !== -1,
+      await page.textContent('#auto-result'));
+    /* 物件番号は会社が決めるものなので、図面からは入れない */
+    check('物件番号は空のまま', (await page.inputValue('#f-id')) === '');
+
+    /* 人が直したら、確認済みとして色を外す */
+    await page.fill('#f-rent', '900000'); await settle(200);
+    check('直した欄の色は消える',
+      (await page.getAttribute('#f-rent', 'class') || '').indexOf('is-auto') === -1,
+      await page.getAttribute('#f-rent', 'class'));
+
+    /* 以降の確認のため、いったん元に戻す */
+    await page.fill('#pdf-text', '');
+    for (const id of ['f-title', 'f-rent', 'f-managementFee', 'f-deposit', 'f-keyMoney',
+      'f-areaTsubo', 'f-built', 'f-floor', 'f-floorsTotal', 'f-structure', 'f-address',
+      'f-access', 'f-contractTerm']) {
+      await page.fill('#' + id, '');
+    }
+    for (const c of await page.locator('#f-features input:checked').all()) await c.uncheck();
+    await settle(200);
+
     /* 検証はサイト本体と同じルールで動く */
     await page.fill('#f-id', 'CMP-9001'); await settle(150);
     const impBlank = await page.textContent('#validation');
@@ -472,6 +517,7 @@ function section(title) { console.log('\n' + title); }
   runSub('microCMS取り込み', 'cms.js', '物件と写真の取り込み（検証・ページ送り・エラー処理）');
   runSub('まとめて下書きに戻す', 'unpublish.js', '宛先・送る内容・失敗したときの伝えかた');
   runSub('掲載を全部止めたとき', 'empty.js', '公開中が0件でも反映できる');
+  runSub('図面の読み取り', 'extract.js', '金額・面積・築年月・エリアの読み取りと、読めないものを埋めないこと');
 
   console.log('\n' + '='.repeat(50));
   if (failures.length) {
