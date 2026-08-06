@@ -155,6 +155,27 @@ function section(title) { console.log('\n' + title); }
     check('サムネイルで切り替わる', (await page.locator('#gallery-counter').textContent()).trim() === '3 / 10');
     check('キャプションが切り替わる', (await page.locator('#gallery-caption').textContent()).trim() === '厨房');
     check('番地まである住所は地図が出る', await page.locator('.detail-map iframe').count() === 1);
+
+    /* 地下のある建物は「地下◯階付◯階建」と出す（地上だけの表記では足りない） */
+    await go('/property.html?id=CMP-1001'); await settle(700);
+    const floorRow = await page.evaluate(function () {
+      var tr = [].filter.call(document.querySelectorAll('.spec-table tr'), function (t) {
+        return t.children[0].textContent.trim() === '階数';
+      })[0];
+      return tr ? tr.children[1].textContent.trim() : '';
+    });
+    check('地下のある建物は地下階数も出る',
+      floorRow.indexOf('地下2階付8階建') !== -1, floorRow);
+    await go('/property.html?id=CMP-1025'); await settle(700);
+    const floorRow2 = await page.evaluate(function () {
+      var tr = [].filter.call(document.querySelectorAll('.spec-table tr'), function (t) {
+        return t.children[0].textContent.trim() === '階数';
+      })[0];
+      return tr ? tr.children[1].textContent.trim() : '';
+    });
+    check('地下がない建物はこれまでどおり地上だけ',
+      floorRow2.indexOf('地上') !== -1 && floorRow2.indexOf('地下') === -1, floorRow2);
+    await go('/property.html?id=CMP-1025'); await settle(700);
     const listing = await page.evaluate(function () {
       return JSON.parse(document.getElementById('ld-listing').textContent);
     });
@@ -398,6 +419,7 @@ function section(title) { console.log('\n' + title); }
       await page.inputValue('#f-areaTsubo'));
     check('和暦の築年月を西暦で入れる', (await page.inputValue('#f-built')) === '2015-04',
       await page.inputValue('#f-built'));
+    check('地下階数の欄がある', await page.locator('#f-basementFloors').count() === 1);
     check('エリアが選ばれる', (await page.inputValue('#f-ward')) === '品川区');
     check('物件種別が選ばれる', (await page.inputValue('#f-type')) === 'オフィス');
     check('交通が図面どおりの文章で入る',

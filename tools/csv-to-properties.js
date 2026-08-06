@@ -143,6 +143,8 @@ function renderProperty(p) {
   lines.push('      areaTsubo: ' + p.areaTsubo + ',');
   lines.push('      floor: ' + q(p.floor) + ',');
   lines.push('      floorsTotal: ' + p.floorsTotal + ',');
+  /* 地下がある建物だけ書き出す（無い物件のデータを増やさないため） */
+  if (p.basementFloors) lines.push('      basementFloors: ' + p.basementFloors + ',');
   lines.push('      builtYear: ' + (p.builtYear == null ? 'null' : p.builtYear) + ',');
   if (p.builtMonth) lines.push('      builtMonth: ' + p.builtMonth + ',');
   lines.push('      structure: ' + q(p.structure) + ',');

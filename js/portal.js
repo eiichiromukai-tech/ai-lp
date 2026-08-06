@@ -162,6 +162,18 @@
     return p.areaTsubo.toFixed(1) + '坪（' + p.areaSqm.toFixed(1) + 'm²）';
   }
 
+  /* 建物の階数。地下がある建物は「地下1階付3階建」と書く。
+     図面や登記でよく使われる書き方に合わせている。
+     地下だけの建物（地上階の記載がないもの）も表せるようにしてある。 */
+  function formatFloors(p) {
+    var above = p.floorsTotal || 0;
+    var below = p.basementFloors || 0;
+    if (!above && !below) return '';
+    if (!below) return '（地上' + above + '階建）';
+    if (!above) return '（地下' + below + '階建）';
+    return '（地下' + below + '階付' + above + '階建）';
+  }
+
   /* 築年月。月が分からない物件は年だけ出す */
   function formatBuilt(p) {
     if (!p.builtYear) return '—';
@@ -839,6 +851,7 @@
     formatYen: formatYen,
     formatMonths: formatMonths,
     formatArea: formatArea,
+    formatFloors: formatFloors,
     formatBuilt: formatBuilt,
     formatDate: formatDate,
     nearestAccess: nearestAccess,

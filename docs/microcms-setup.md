@@ -125,7 +125,8 @@ node tools/make-cms-schema.js
 |---|---|---|---|
 | `areaTsubo` | 面積（坪） | 数値 | ✓ |
 | `floor` | 階数 | テキストフィールド | |
-| `floorsTotal` | 建物階数 | 数値 | |
+| `floorsTotal` | 建物階数（地上） | 数値 | |
+| `basementFloors` | 建物階数（地下） | 数値 | |
 | `built` | 築年月 | テキストフィールド | |
 | `structure` | 構造 | テキストフィールド | |
 | `features` | こだわり条件 | セレクトフィールド（**複数選択オン**） | |

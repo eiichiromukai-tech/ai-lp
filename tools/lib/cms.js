@@ -150,6 +150,7 @@ const FIELD_OF = {
   areaTsubo: 'areaTsubo',
   floor: 'floor',
   floorsTotal: 'floorsTotal',
+  basementFloors: 'basementFloors',
   built: 'built',
   structure: 'structure',
   zoning: 'zoning',

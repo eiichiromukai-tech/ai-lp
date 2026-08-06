@@ -176,8 +176,20 @@
           .replace(/^地下([0-9]+)階$/, 'B$1F')
           .replace(/^([0-9]+)階$/, '$1F');
       }
-      var total = /(?:地上)?\s*([0-9]+)\s*階建/.exec(text);
-      if (total) v.floorsTotal = total[1];
+      /* 建物の階数。図面には次のような書き方が出てくる。
+           地上8階建／地下1階付3階建て／地下1階〜地上4階／B1F〜4F
+         地上と地下を別々に取る。 */
+      var range = /地下\s*([0-9]+)\s*階\s*[~〜ー-]\s*地上\s*([0-9]+)\s*階/.exec(text) ||
+        /B\s*([0-9]+)\s*F\s*[~〜ー-]\s*([0-9]+)\s*F/i.exec(text);
+      if (range) {
+        v.basementFloors = range[1];
+        v.floorsTotal = range[2];
+      } else {
+        var basement = /地下\s*([0-9]+)\s*階\s*付/.exec(text);
+        if (basement) v.basementFloors = basement[1];
+        var total = /(?:地下\s*[0-9]+\s*階\s*付\s*)?(?:地上)?\s*([0-9]+)\s*階建/.exec(text);
+        if (total) v.floorsTotal = total[1];
+      }
 
       /* ---------- 築年月 ---------- */
       var wa = /(令和|平成|昭和)\s*(元|[0-9]+)\s*年\s*([0-9]+)?\s*月?/.exec(text);

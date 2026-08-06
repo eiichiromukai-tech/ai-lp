@@ -108,6 +108,17 @@ ok('容積率', get('容積率 500%', 'floorAreaRatio') === '500');
 ok('階数', get('5階', 'floor') === '5F', get('5階', 'floor'));
 ok('地下', get('地下1階', 'floor') === 'B1F', get('地下1階', 'floor'));
 ok('建物階数', get('地上8階建', 'floorsTotal') === '8', get('地上8階建', 'floorsTotal'));
+ok('地下がなければ地下階数は入れない',
+  get('地上8階建', 'basementFloors') === undefined, get('地上8階建', 'basementFloors'));
+
+console.log('\n地下のある建物');
+/* 図面には「地下1階付3階建」「地下1階〜地上4階」「B1F〜4F」などの書き方が出てくる */
+const chika = t => [get(t, 'floorsTotal'), get(t, 'basementFloors')].join('/');
+ok('地下◯階付◯階建', chika('鉄筋コンクリート造陸屋根地下1階付3階建て') === '3/1',
+  chika('鉄筋コンクリート造陸屋根地下1階付3階建て'));
+ok('地下◯階〜地上◯階', chika('地下1階〜地上4階') === '4/1', chika('地下1階〜地上4階'));
+ok('B1F〜4F の書き方', chika('B1F〜4F') === '4/1', chika('B1F〜4F'));
+ok('地下2階でも読める', chika('RC造 地下2階付10階建') === '10/2', chika('RC造 地下2階付10階建'));
 ok('こだわり条件を拾う', (get('1階路面・居抜き・飲食可', 'features') || []).join(',') === '1階路面,居抜き,飲食可',
   get('1階路面・居抜き・飲食可', 'features'));
 

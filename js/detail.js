@@ -184,7 +184,7 @@
                   row('礼金', P.formatMonths(p.keyMoney))) +
               (sale ? '' : row('契約期間', p.contractTerm || 'お問い合わせください')) +
               row('面積', P.formatArea(p)) +
-              row('階数', p.floor + (p.floorsTotal ? '（地上' + p.floorsTotal + '階建）' : '')) +
+              row('階数', p.floor + P.formatFloors(p)) +
               row('構造', p.structure) +
               row('築年月', P.formatBuilt(p)) +
               (p.zoning ? row('用途地域', p.zoning) : '') +

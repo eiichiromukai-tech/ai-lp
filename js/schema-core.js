@@ -69,6 +69,7 @@
       { key: 'areaTsubo', header: '面積(坪)' },
       { key: 'floor', header: '階数' },
       { key: 'floorsTotal', header: '建物階数' },
+      { key: 'basementFloors', header: '地下階数' },
       { key: 'built', header: '築年月' },
       { key: 'structure', header: '構造' },
       { key: 'zoning', header: '用途地域' },
@@ -311,6 +312,9 @@
       p.areaTsubo = num(get('areaTsubo'), '面積', rowLabel, errors, { required: true });
       p.floor = get('floor') || '—';
       p.floorsTotal = num(get('floorsTotal'), '建物階数', rowLabel, errors);
+      /* 地下がある建物のための欄。「地下1階付3階建」のように表示する。
+         空欄・0のときは、これまでどおり「地上◯階建」になる。 */
+      p.basementFloors = num(get('basementFloors'), '地下階数', rowLabel, errors);
 
       /* 築年月。「2005-04」「2005/4」「2005年4月」「2005」のいずれでも受け付ける。
          不動産の表示に関する公正競争規約では建築年月の表示が求められるため、

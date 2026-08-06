@@ -139,6 +139,7 @@
       areaTsubo: val('f-areaTsubo'),
       floor: val('f-floor'),
       floorsTotal: val('f-floorsTotal'),
+      basementFloors: val('f-basementFloors'),
       built: val('f-built'),
       structure: val('f-structure'),
       zoning: val('f-zoning'),
@@ -227,7 +228,7 @@
     var keys = ['propertyId', 'title', 'deal', 'type', 'status', 'ward', 'address', 'access',
       'rent', 'managementFee', 'deposit', 'keyMoney', 'contractTerm',
       'price', 'yieldRate', 'tenure', 'zoning', 'buildingCoverage', 'floorAreaRatio',
-      'privateRoad', 'buildingPermit', 'areaTsubo', 'floor', 'floorsTotal', 'built',
+      'privateRoad', 'buildingPermit', 'areaTsubo', 'floor', 'floorsTotal', 'basementFloors', 'built',
       'structure', 'features', 'usage', 'availableFrom', 'description', 'infoUpdatedAt'];
     var body = rows.map(function (r) {
       return keys.map(function (k) {

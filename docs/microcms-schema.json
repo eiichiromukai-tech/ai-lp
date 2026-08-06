@@ -604,7 +604,16 @@
     },
     {
       "fieldId": "floorsTotal",
-      "name": "建物階数",
+      "name": "建物階数（地上）",
+      "kind": "number",
+      "description": null,
+      "required": false,
+      "numberSizeLimitValidation": null,
+      "initialValue": null
+    },
+    {
+      "fieldId": "basementFloors",
+      "name": "建物階数（地下）",
       "kind": "number",
       "description": null,
       "required": false,
